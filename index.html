@@ -3,211 +3,283 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Muhammad Aamir | Technology Risk & Digital Transformation</title>
-<meta name="description" content="Muhammad Aamir, CISA: Technology Risk & Digital Transformation leader with 20+ years in IT audit, ERP (Oracle, SAP), data centres, cyber security and GRC. Author, educator and creator of Tech Update Now Pakistan.">
-<meta property="og:title" content="Muhammad Aamir | Technology Risk & Digital Transformation">
-<meta property="og:description" content="IT audit, ERP & cloud advisory, data centres, cyber security and GRC. Author of the CAF-3 Data, Systems & Risks Study Guide.">
+<title>Muhammad Aamir, CISA | Technology Risk & Digital Transformation</title>
+<meta name="description" content="Muhammad Aamir, CISA: Technology Risk & Digital Transformation leader with 20+ years in IT audit, ERP & cloud advisory, data centres, cyber security and GRC. Co-founder of CertPrepX, author and educator.">
+<meta property="og:title" content="Muhammad Aamir, CISA | Technology Risk & Digital Transformation">
+<meta property="og:description" content="IT audit, ERP & cloud advisory, cyber security and GRC. Co-founder of CertPrepX. Author of the CAF-3 Data, Systems & Risks Study Guide.">
 <meta property="og:image" content="https://aamir741.github.io/assets/aamir.jpg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
 <style>
-  :root{--navy:#031634;--navy2:#0B2550;--teal:#00706C;--teal2:#2BB3A3;--ink:#0b1633;--muted:#5b6b85;--line:#e3e9f2;--bg:#f6f8fb}
+  :root{--navy:#031634;--navy2:#0B2550;--teal:#00706C;--teal2:#2BB3A3;--ink:#0F1B33;--muted:#5A6A85;--line:#E3E9F1;--bg:#F5F7FA}
   *{box-sizing:border-box;margin:0;padding:0}
   html{scroll-behavior:smooth}
-  body{font-family:Poppins,Segoe UI,Arial,sans-serif;color:var(--ink);background:var(--bg);line-height:1.6}
+  body{font-family:Inter,Segoe UI,Arial,sans-serif;color:var(--ink);background:#fff;line-height:1.65;font-size:16px}
+  h1,h2,h3,.logo,.num{font-family:Poppins,Segoe UI,Arial,sans-serif}
   a{color:var(--teal);text-decoration:none}
-  .wrap{max-width:1120px;margin:0 auto;padding:0 20px}
-  nav{position:sticky;top:0;z-index:10;background:rgba(3,22,52,.96);backdrop-filter:blur(6px)}
-  nav .wrap{display:flex;align-items:center;justify-content:space-between;height:64px}
-  nav .logo{color:#fff;font-weight:800;letter-spacing:.5px}
-  nav .logo span{color:var(--teal2)}
-  nav ul{display:flex;gap:26px;list-style:none}
-  nav ul a{color:#cfd9ea;font-weight:500;font-size:15px}
+  .wrap{max-width:1140px;margin:0 auto;padding:0 24px}
+  svg.i{width:26px;height:26px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+  /* nav */
+  nav{position:sticky;top:0;z-index:20;background:rgba(3,22,52,.97);border-bottom:1px solid rgba(255,255,255,.06)}
+  nav .wrap{display:flex;align-items:center;justify-content:space-between;height:68px}
+  .logo{color:#fff;font-weight:700;font-size:18px;letter-spacing:.3px}
+  .logo span{color:var(--teal2)}
+  nav ul{display:flex;gap:28px;list-style:none}
+  nav ul a{color:#C9D5E7;font-weight:500;font-size:14.5px}
   nav ul a:hover{color:#fff}
-  header{background:radial-gradient(ellipse at 75% 20%,#0B2550 0%,#031634 55%,#010A1A 100%);color:#fff;padding:80px 0 90px;overflow:hidden}
-  .hero{display:grid;grid-template-columns:1.35fr 1fr;gap:50px;align-items:center}
-  .badge.cisa{background:#fff;color:#00706C;font-size:15px;box-shadow:0 0 0 3px #2BB3A3}
-  .badge{display:inline-block;background:var(--teal);color:#fff;font-weight:700;font-size:13px;letter-spacing:2px;padding:7px 16px;border-radius:30px}
-  h1{font-size:54px;line-height:1.1;font-weight:800;margin:18px 0 14px}
-  .role{font-size:20px;color:#bcd0e8;font-weight:500}
-  .creds{display:flex;flex-wrap:wrap;gap:8px;margin:22px 0 30px}
-  .creds span{border:1px solid rgba(43,179,163,.55);color:#dff5f2;border-radius:8px;padding:4px 12px;font-size:13px;font-weight:600}
+  /* hero */
+  header{background:radial-gradient(ellipse at 80% 10%,#0E3466 0%,#031634 55%,#010A1A 100%);color:#fff;padding:88px 0 96px}
+  .hero{display:grid;grid-template-columns:1.4fr 1fr;gap:56px;align-items:center}
+  .cisa{display:inline-flex;align-items:center;gap:10px;background:#fff;color:var(--teal);font-weight:700;font-size:14px;letter-spacing:1.2px;padding:9px 18px;border-radius:40px}
+  .cisa svg.i{width:20px;height:20px;stroke-width:2.4}
+  h1{font-size:52px;line-height:1.12;font-weight:700;margin:22px 0 14px}
+  .tagline{font-size:20px;color:#D7E2F1;font-weight:500;max-width:620px}
+  .roles{margin:18px 0 30px;color:#9FB3CE;font-size:15px}
+  .roles b{color:var(--teal2);font-weight:600}
   .btns{display:flex;flex-wrap:wrap;gap:12px}
-  .btn{display:inline-block;padding:12px 22px;border-radius:10px;font-weight:700;font-size:15px}
+  .btn{display:inline-flex;align-items:center;gap:9px;padding:13px 22px;border-radius:10px;font-weight:600;font-size:15px;transition:.15s}
+  .btn svg.i{width:19px;height:19px}
   .btn.primary{background:var(--teal);color:#fff}
-  .btn.ghost{border:2px solid rgba(255,255,255,.35);color:#fff}
-  .btn:hover{filter:brightness(1.12)}
-  .photo{justify-self:center;position:relative}
-  .photo img{width:340px;height:340px;object-fit:cover;object-position:center 20%;border-radius:50%;border:6px solid var(--teal);box-shadow:0 0 0 14px rgba(43,179,163,.15),0 30px 60px rgba(0,0,0,.45)}
-  .stats{background:#fff;border-bottom:1px solid var(--line)}
-  .stats .wrap{display:grid;grid-template-columns:repeat(5,1fr);text-align:center;padding:28px 20px}
-  .stats b{display:block;font-size:32px;font-weight:800;color:var(--teal)}
-  .stats small{color:var(--muted);font-size:13px;font-weight:500}
-  section{padding:76px 0}
-  section.alt{background:#fff}
-  h2{font-size:34px;font-weight:800;margin-bottom:8px}
-  .lead{color:var(--muted);max-width:760px;margin-bottom:34px}
+  .btn.primary:hover{background:#00827D}
+  .btn.ghost{border:1.5px solid rgba(255,255,255,.35);color:#fff}
+  .btn.ghost:hover{border-color:#fff}
+  .btn.outline{border:1.5px solid var(--teal);color:var(--teal)}
+  .photo{justify-self:center}
+  .photo img{width:330px;height:330px;object-fit:cover;object-position:center 18%;border-radius:50%;border:5px solid var(--teal2);box-shadow:0 0 0 12px rgba(43,179,163,.12),0 30px 60px rgba(0,0,0,.45)}
+  /* stats */
+  .stats{background:var(--bg);border-bottom:1px solid var(--line)}
+  .stats .wrap{display:grid;grid-template-columns:repeat(4,1fr);text-align:center;padding:30px 24px}
+  .num{display:block;font-size:30px;font-weight:700;color:var(--navy)}
+  .stats small{color:var(--muted);font-size:13.5px}
+  /* sections */
+  section{padding:84px 0}
+  section.alt{background:var(--bg)}
+  .eyebrow{color:var(--teal);font-weight:600;font-size:13px;letter-spacing:2px;text-transform:uppercase}
+  h2{font-size:34px;font-weight:700;margin:6px 0 12px;color:var(--navy)}
+  .lead{color:var(--muted);max-width:780px;margin-bottom:38px;font-size:17px}
   .grid{display:grid;gap:22px}
-  .g3{grid-template-columns:repeat(3,1fr)} .g2{grid-template-columns:repeat(2,1fr)}
-  .card{background:#fff;border:1px solid var(--line);border-radius:18px;padding:26px;box-shadow:0 8px 24px rgba(3,22,52,.05)}
-  section.alt .card{background:var(--bg)}
-  .card .ic{font-size:30px}
-  .card h3{font-size:19px;font-weight:700;margin:10px 0 6px}
+  .g3{grid-template-columns:repeat(3,1fr)} .g2{grid-template-columns:repeat(2,1fr)} .g4{grid-template-columns:repeat(4,1fr)}
+  .card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:28px;transition:.15s}
+  .card:hover{border-color:#C5D3E4;box-shadow:0 14px 34px rgba(3,22,52,.07)}
+  .ic{width:50px;height:50px;border-radius:12px;background:rgba(0,112,108,.1);color:var(--teal);display:flex;align-items:center;justify-content:center;margin-bottom:16px}
+  .card h3{font-size:18px;font-weight:600;color:var(--navy);margin-bottom:6px}
   .card p{color:var(--muted);font-size:15px}
-  .tl{border-left:3px solid var(--teal);padding-left:26px}
-  .tl .item{position:relative;margin-bottom:30px}
-  .tl .item:before{content:"";position:absolute;left:-35px;top:6px;width:15px;height:15px;border-radius:50%;background:var(--teal);border:3px solid #fff;box-shadow:0 0 0 2px var(--teal)}
-  .tl h3{font-size:19px;font-weight:700}
-  .tl .when{color:var(--teal);font-weight:600;font-size:14px}
+  /* venture */
+  .venture{display:grid;grid-template-columns:auto 1fr auto;gap:34px;align-items:center;background:linear-gradient(135deg,#fff 0%,#F2FAF9 100%);border:1px solid #CFE7E4;border-radius:20px;padding:34px 38px}
+  .venture img{width:120px;height:auto}
+  .venture h3{font-size:24px;color:var(--navy)}
+  .venture .role{color:var(--teal);font-weight:600;font-size:14px;letter-spacing:1px;text-transform:uppercase}
+  .venture p{color:var(--muted);margin-top:6px}
+  /* timeline */
+  .tl{border-left:2px solid var(--line);margin-left:8px;padding-left:30px}
+  .tl .item{position:relative;margin-bottom:34px}
+  .tl .item:before{content:"";position:absolute;left:-38px;top:5px;width:14px;height:14px;border-radius:50%;background:#fff;border:3px solid var(--teal)}
+  .tl .when{color:var(--teal);font-weight:600;font-size:13.5px;letter-spacing:.5px}
+  .tl h3{font-size:19px;font-weight:600;color:var(--navy)}
   .tl ul{margin:8px 0 0 18px;color:var(--muted);font-size:15px}
-  .book{display:grid;grid-template-columns:150px 1fr;gap:24px;align-items:center}
-  .cover{height:200px;border-radius:10px;background:linear-gradient(160deg,var(--navy2),var(--navy));color:#fff;padding:18px 14px;display:flex;flex-direction:column;justify-content:space-between;box-shadow:0 14px 30px rgba(3,22,52,.3)}
-  .cover b{font-size:18px;line-height:1.15}
-  .cover small{font-size:11px;color:var(--teal2);font-weight:600}
-  .tag{display:inline-block;background:rgba(0,112,108,.12);color:var(--teal);font-weight:700;font-size:12px;padding:3px 10px;border-radius:20px;margin-bottom:8px}
+  /* books */
+  .book{display:grid;grid-template-columns:170px 1fr;gap:30px;align-items:center}
+  .cover{height:236px;border-radius:6px 12px 12px 6px;background:linear-gradient(160deg,var(--navy2),var(--navy));color:#fff;padding:20px 16px;display:flex;flex-direction:column;justify-content:space-between;box-shadow:-6px 0 0 var(--teal) inset,0 16px 34px rgba(3,22,52,.3)}
+  .cover b{font-family:Poppins;font-size:19px;line-height:1.15}
+  .cover small{font-size:10.5px;color:var(--teal2);font-weight:600;letter-spacing:1px}
+  .cover em{font-style:normal;font-size:11px;color:#C9D5E7}
+  .pill{display:inline-block;font-weight:600;font-size:12px;padding:4px 12px;border-radius:20px;margin-bottom:10px;letter-spacing:.5px}
+  .pill.ok{background:rgba(0,112,108,.12);color:var(--teal)} .pill.soon{background:#EEF2F7;color:var(--muted)}
+  .book h3{font-size:20px} .book p{margin-bottom:16px}
+  .meta{color:var(--muted);font-size:13px;margin-top:10px}
+  /* certs */
   .certs{display:flex;flex-wrap:wrap;gap:10px}
-  .certs span{background:#fff;border:1px solid var(--line);border-radius:10px;padding:10px 16px;font-weight:600;font-size:14px}
-  .cta{background:linear-gradient(135deg,var(--navy) 0%,var(--navy2) 60%,#05403F 100%);color:#fff;border-radius:22px;padding:44px;display:grid;grid-template-columns:1.4fr 1fr;gap:30px;align-items:center}
-  .cta p{color:#c9d6ea}
-  footer{background:var(--navy);color:#9fb0c9;padding:30px 0;font-size:14px}
+  .certs span{background:#fff;border:1px solid var(--line);border-radius:10px;padding:10px 16px;font-weight:500;font-size:14.5px}
+  .certs span.top{border-color:var(--teal);color:var(--teal);font-weight:600}
+  /* contact */
+  .cta{background:linear-gradient(135deg,var(--navy) 0%,var(--navy2) 60%,#05403F 100%);color:#fff;border-radius:22px;padding:48px;display:grid;grid-template-columns:1.2fr 1fr;gap:30px;align-items:center}
+  .cta h2{color:#fff} .cta p{color:#C9D5E7}
+  .cta .btns{flex-direction:column;align-items:stretch}
+  footer{background:var(--navy);color:#8FA3BF;padding:28px 0;font-size:14px}
   footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px}
-  footer a{color:#cfe9e5}
-  @media (max-width:860px){
+  footer a{color:#CFE9E5}
+  @media (max-width:900px){
     nav ul{display:none}
-    .hero,.cta{grid-template-columns:1fr} .photo{order:-1}
-    .photo img{width:220px;height:220px}
-    h1{font-size:38px} .role{font-size:17px}
-    .stats .wrap{grid-template-columns:repeat(2,1fr);gap:18px}
-    .g3,.g2{grid-template-columns:1fr}
-    .book{grid-template-columns:110px 1fr} .cover{height:150px}
-    section{padding:56px 0} header{padding:50px 0 60px} .cta{padding:28px}
+    .hero,.cta,.venture{grid-template-columns:1fr} .photo{order:-1}
+    .photo img{width:210px;height:210px}
+    h1{font-size:36px} .tagline{font-size:17px}
+    .stats .wrap{grid-template-columns:repeat(2,1fr);gap:20px}
+    .g3,.g2,.g4{grid-template-columns:1fr}
+    .book{grid-template-columns:120px 1fr;gap:18px} .cover{height:170px}
+    section{padding:60px 0} header{padding:52px 0 64px} .cta,.venture{padding:28px}
   }
 </style>
 </head>
 <body>
 
+<svg width="0" height="0" style="position:absolute">
+  <symbol id="check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></symbol>
+  <symbol id="shield" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></symbol>
+  <symbol id="refresh" viewBox="0 0 24 24"><path d="M21 12a9 9 0 0 1-15.5 6.2L3 16"/><path d="M3 12a9 9 0 0 1 15.5-6.2L21 8"/><path d="M21 3v5h-5M3 21v-5h5"/></symbol>
+  <symbol id="layers" viewBox="0 0 24 24"><path d="m12 2 10 5-10 5L2 7l10-5z"/><path d="m2 17 10 5 10-5M2 12l10 5 10-5"/></symbol>
+  <symbol id="clipboard" viewBox="0 0 24 24"><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="m9 14 2 2 4-4"/></symbol>
+  <symbol id="server" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="7" rx="2"/><rect x="3" y="14" width="18" height="7" rx="2"/><path d="M7 6.5h.01M7 17.5h.01"/></symbol>
+  <symbol id="chart" viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="m7 15 4-4 3 3 5-6"/></symbol>
+  <symbol id="briefcase" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></symbol>
+  <symbol id="cap" viewBox="0 0 24 24"><path d="M22 10 12 5 2 10l10 5 10-5z"/><path d="M6 12v5c3 2 9 2 12 0v-5"/></symbol>
+  <symbol id="mic" viewBox="0 0 24 24"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 10a7 7 0 0 0 14 0M12 17v5"/></symbol>
+  <symbol id="target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/></symbol>
+  <symbol id="play" viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="4"/><path d="m10 9 5 3-5 3V9z"/></symbol>
+  <symbol id="mail" viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 6-10 7L2 6"/></symbol>
+  <symbol id="in" viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="4"/><path d="M7 10v7M7 7h.01M11 17v-4a2 2 0 0 1 4 0v4M11 10v7"/></symbol>
+  <symbol id="download" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5M12 15V3"/></symbol>
+  <symbol id="book" viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20V2H6.5A2.5 2.5 0 0 0 4 4.5v15z"/><path d="M4 19.5A2.5 2.5 0 0 0 6.5 22H20v-5"/></symbol>
+</svg>
+
 <nav><div class="wrap">
   <a class="logo" href="#">MUHAMMAD <span>AAMIR</span></a>
   <ul>
-    <li><a href="#about">About</a></li><li><a href="#expertise">Expertise</a></li>
-    <li><a href="#experience">Experience</a></li><li><a href="#books">Books</a></li>
-    <li><a href="#teaching">Teaching</a></li><li><a href="#contact">Contact</a></li>
+    <li><a href="#about">About</a></li><li><a href="#services">Services</a></li><li><a href="#certprepx">CertPrepX</a></li>
+    <li><a href="#experience">Experience</a></li><li><a href="#books">Books</a></li><li><a href="#contact">Contact</a></li>
   </ul>
 </div></nav>
 
 <header><div class="wrap hero">
   <div>
-    <span class="badge cisa">✔ CISA CERTIFIED</span> <span class="badge">ISO 27001 LA · 20+ YEARS</span>
+    <span class="cisa"><svg class="i"><use href="#shield"/></svg>CISA CERTIFIED</span>
     <h1>Muhammad Aamir</h1>
-    <p class="role">Technology Risk & Digital Transformation Leader · ERP & Cloud Advisory · IT Audit & GRC · Author & Educator</p>
-    <div class="creds">
-      <span>CISA</span><span>ISO 27001 Lead Auditor</span><span>CDCP</span><span>CNCDP</span><span>OCI 2025 AI</span><span>COBIT</span><span>SOC 2</span>
-    </div>
+    <p class="tagline">Technology Risk & Digital Transformation Leader helping organisations govern, secure and modernise their technology.</p>
+    <p class="roles">Senior Manager, IT Risk Assurance &nbsp;·&nbsp; <b>Co-founder, CertPrepX</b> &nbsp;·&nbsp; Author &nbsp;·&nbsp; Educator</p>
     <div class="btns">
-      <a class="btn primary" href="#books">My Books</a>
-      <a class="btn ghost" href="https://www.youtube.com/@TechUpdateNowPK" target="_blank" rel="noopener">▶ YouTube</a>
-      <a class="btn ghost" href="https://linkedin.com/in/aamiryaqoob" target="_blank" rel="noopener">LinkedIn</a>
+      <a class="btn primary" href="#books"><svg class="i"><use href="#download"/></svg>Free CAF-3 Study Guide</a>
+      <a class="btn ghost" href="https://linkedin.com/in/aamiryaqoob" target="_blank" rel="noopener"><svg class="i"><use href="#in"/></svg>LinkedIn</a>
+      <a class="btn ghost" href="https://www.youtube.com/@TechUpdateNowPK" target="_blank" rel="noopener"><svg class="i"><use href="#play"/></svg>YouTube</a>
     </div>
   </div>
-  <div class="photo"><img src="assets/aamir.jpg" alt="Muhammad Aamir"></div>
+  <div class="photo"><img src="assets/aamir.jpg" alt="Muhammad Aamir, CISA"></div>
 </div></header>
 
 <div class="stats"><div class="wrap">
-  <div><b>CISA</b><small>Certified Information Systems Auditor</small></div>
-  <div><b>20+</b><small>Years in technology</small></div>
-  <div><b>50+</b><small>IT audits directed</small></div>
-  <div><b>40+</b><small>Professionals mentored</small></div>
-  <div><b>130+</b><small>Site SD-WAN rollout</small></div>
-  
+  <div><span class="num">CISA</span><small>Certified Information Systems Auditor</small></div>
+  <div><span class="num">20+</span><small>Years in technology & risk</small></div>
+  <div><span class="num">100+</span><small>Professionals mentored</small></div>
+  <div><span class="num">ISO 27001</span><small>Lead Auditor (IRCA)</small></div>
 </div></div>
 
 <section id="about"><div class="wrap">
-  <h2>About me</h2>
-  <p class="lead"><b style="color:#00706C">Certified Information Systems Auditor (CISA)</b> and ISO 27001 Lead Auditor.</p>
-  <p class="lead">Senior Manager in IT Risk Assurance & Technology Advisory with over twenty years of experience leading IT audits, technology risk, enterprise transformation, ERP modernisation, automation and data integration across financial services, energy, healthcare, manufacturing, telecommunications and the public sector.</p>
+  <span class="eyebrow">About</span>
+  <h2>Two decades at the intersection of technology, risk and business</h2>
+  <p class="lead">I am a Certified Information Systems Auditor (CISA) and Senior Manager in IT Risk Assurance & Technology Advisory, with over twenty years of experience leading IT audits, technology risk, ERP modernisation, automation and data integration across financial services, energy, healthcare, manufacturing, telecommunications and the public sector.</p>
   <div class="grid g2">
-    <div class="card"><div class="ic">🏛️</div><h3>Advisor to leadership</h3><p>I advise senior executives on digital transformation, cloud adoption, data strategy and GRC, aligning technology investment with business strategy, governance and regulatory requirements.</p></div>
-    <div class="card"><div class="ic">🎓</div><h3>Developing future professionals</h3><p>I teach Data Systems Risks to Chartered Accountancy students and create free videos that explain technology, risk and AI in plain language, because well-governed technology should benefit everyone.</p></div>
+    <div class="card"><div class="ic"><svg class="i"><use href="#briefcase"/></svg></div><h3>Trusted advisor to leadership</h3><p>I advise senior executives on digital transformation, cloud adoption, data strategy and GRC, aligning technology investment with business strategy, governance and regulatory requirements.</p></div>
+    <div class="card"><div class="ic"><svg class="i"><use href="#cap"/></svg></div><h3>Developing future professionals</h3><p>I teach Data Systems Risks to Chartered Accountancy students, co-founded CertPrepX for certification candidates, and publish free explainers on technology, risk and AI.</p></div>
+  </div>
+</div></section>
+
+<section id="services" class="alt"><div class="wrap">
+  <span class="eyebrow">Services</span>
+  <h2>How I can help</h2>
+  <p class="lead">Advisory, training and coaching grounded in real programme experience.</p>
+  <div class="grid g4">
+    <div class="card"><div class="ic"><svg class="i"><use href="#target"/></svg></div><h3>Technology Advisory</h3><p>IT strategy and roadmaps, ERP and cloud programmes, technology selection and programme assurance.</p></div>
+    <div class="card"><div class="ic"><svg class="i"><use href="#shield"/></svg></div><h3>IT Risk & Audit</h3><p>IT audits, ISO 27001 readiness, GRC frameworks and cyber security assessments.</p></div>
+    <div class="card"><div class="ic"><svg class="i"><use href="#mic"/></svg></div><h3>Corporate Training & Speaking</h3><p>Workshops on IT governance, cyber awareness, responsible AI and digital transformation.</p></div>
+    <div class="card"><div class="ic"><svg class="i"><use href="#cap"/></svg></div><h3>Exam Coaching</h3><p>CISA and ICAP CAF-3 Data, Systems & Risks preparation, from concepts to exam technique.</p></div>
+  </div>
+</div></section>
+
+<section id="certprepx"><div class="wrap">
+  <div class="venture">
+    <img src="assets/certprepx.png" alt="CertPrepX logo">
+    <div>
+      <span class="role">Co-founder</span>
+      <h3>CertPrepX</h3>
+      <p>Exam-preparation platform for CISA, AAIA and ISO 27001 Lead Auditor candidates: realistic practice questions, mock exams, analytics and an adaptive study engine that shows exactly when you're ready to pass.</p>
+    </div>
+    <a class="btn primary" href="https://certprepx.com/" target="_blank" rel="noopener">Visit CertPrepX</a>
   </div>
 </div></section>
 
 <section id="expertise" class="alt"><div class="wrap">
-  <h2>Expertise</h2>
-  <p class="lead">From the boardroom strategy to the data centre floor.</p>
+  <span class="eyebrow">Expertise</span>
+  <h2>From boardroom strategy to the data centre floor</h2>
+  <p class="lead">Hands-on depth across the full technology and risk landscape.</p>
   <div class="grid g3">
-    <div class="card"><div class="ic">🔄</div><h3>Digital Transformation</h3><p>Enterprise transformation strategy, legacy modernisation, cloud migration, automation and business process re-engineering.</p></div>
-    <div class="card"><div class="ic">🧩</div><h3>ERP & Core Systems</h3><p>Technical Director on Oracle EBS, Oracle Fusion, Oracle APEX, SAP S/4HANA and Temenos T24 programmes, including the first Exadata/Exalogic implementation in Pakistan's banking sector.</p></div>
-    <div class="card"><div class="ic">📋</div><h3>IT Audit & GRC</h3><p>50+ IT audits, VAPT engagements and compromise assessments for banks, telcos, energy companies and government bodies, aligned with COBIT, ISO 27001 and SBP requirements.</p></div>
-    <div class="card"><div class="ic">🔐</div><h3>Cyber Security</h3><p>Defence-in-depth architectures, ISO 27001/22301 policy frameworks for 10+ clients, and readiness for GDPR, PCI-DSS and SBP mandates.</p></div>
-    <div class="card"><div class="ic">🏢</div><h3>Data Centres & Infrastructure</h3><p>Lead consultant for TIA-942 Tier III data centres and a 130+ site SD-WAN deployment; enterprise platform sizing for HA, DR and DLP.</p></div>
-    <div class="card"><div class="ic">📈</div><h3>Programme Assurance</h3><p>End-to-end governance for large programmes: procurement of ~USD 35M under World Bank and PPRA rules and lifecycle cost analysis for ~USD 44M.</p></div>
+    <div class="card"><div class="ic"><svg class="i"><use href="#refresh"/></svg></div><h3>Digital Transformation</h3><p>Enterprise transformation strategy, legacy modernisation, cloud migration, automation and business process re-engineering.</p></div>
+    <div class="card"><div class="ic"><svg class="i"><use href="#layers"/></svg></div><h3>ERP & Core Systems</h3><p>Technical Director on Oracle EBS, Oracle Fusion, Oracle APEX, SAP S/4HANA and Temenos T24 programmes, including the first Exadata/Exalogic implementation in Pakistan's banking sector.</p></div>
+    <div class="card"><div class="ic"><svg class="i"><use href="#clipboard"/></svg></div><h3>IT Audit & GRC</h3><p>IT audits, VAPT engagements and compromise assessments for banks, telecoms, energy companies and government bodies, aligned with COBIT, ISO 27001 and SBP requirements.</p></div>
+    <div class="card"><div class="ic"><svg class="i"><use href="#shield"/></svg></div><h3>Cyber Security</h3><p>Defence-in-depth architectures, ISO 27001/22301 policy frameworks and readiness for GDPR, PCI-DSS and SBP mandates.</p></div>
+    <div class="card"><div class="ic"><svg class="i"><use href="#server"/></svg></div><h3>Data Centres & Infrastructure</h3><p>Lead consultant for TIA-942 Tier III data centres; enterprise platform sizing for high availability, disaster recovery and data loss prevention.</p></div>
+    <div class="card"><div class="ic"><svg class="i"><use href="#chart"/></svg></div><h3>Programme Assurance</h3><p>Governance for large programmes, including procurement of ~USD 35M under World Bank and PPRA rules and lifecycle cost analysis for ~USD 44M.</p></div>
   </div>
 </div></section>
 
 <section id="experience"><div class="wrap">
-  <h2>Experience</h2>
+  <span class="eyebrow">Experience</span>
+  <h2>Career</h2>
   <p class="lead">Selected transformation programmes across energy, healthcare, manufacturing and banking.</p>
   <div class="tl">
-    <div class="item"><span class="when">2009 – Present</span><h3>PwC Pakistan (A. F. Ferguson & Co.)</h3>
+    <div class="item"><span class="when">2009 – PRESENT</span><h3>PwC Pakistan (A. F. Ferguson & Co.)</h3>
       <ul><li>Senior Manager, IT Risk Assurance & Technology Advisory (2023 – present)</li><li>Manager (2019 – 2022) · Assistant Manager (2013 – 2019) · Senior Associate (2009 – 2013)</li>
       <li>Technical Director for ERP and digital transformation programmes across multiple industries</li></ul></div>
+    <div class="item"><span class="when">CO-FOUNDER</span><h3>CertPrepX</h3><ul><li>Exam-preparation platform for CISA, AAIA and ISO 27001 Lead Auditor candidates</li></ul></div>
     <div class="item"><span class="when">2005 – 2009</span><h3>Rahmat Law · Manager</h3><ul><li>Led a nationwide digital law record retrieval system for tax and law practitioners</li></ul></div>
     <div class="item"><span class="when">2003 – 2005</span><h3>E-Trendz · Developer</h3><ul><li>Web, e-commerce and custom ERP solutions</li></ul></div>
   </div>
 </div></section>
 
 <section id="books" class="alt"><div class="wrap">
-  <h2>Books</h2>
+  <span class="eyebrow">Books</span>
+  <h2>Publications</h2>
   <p class="lead">Study guides written for learners from non-IT backgrounds: plain language first, technical terms second.</p>
   <div class="grid g2">
     <div class="card book">
-      <div class="cover"><b>CAF 3<br>Data, Systems &amp; Risks</b><small>A COMPLETE STUDY GUIDE</small></div>
-      <div><span class="tag">COMING SOON</span><h3>CAF-3 Data, Systems & Risks: A Complete Study Guide</h3>
-        <p>All 17 chapters of the ICAP CAF-3 syllabus in plain language, with Pakistani examples, exam tips, sticky-note revision and hundreds of practice questions.</p></div>
+      <div class="cover"><b>CAF 3<br>Data, Systems &amp; Risks</b><small>A COMPLETE STUDY GUIDE</small><em>Muhammad Aamir, CISA</em></div>
+      <div><span class="pill ok">FREE DOWNLOAD</span><h3>CAF-3 Data, Systems & Risks: A Complete Study Guide</h3>
+        <p>All 17 chapters of the ICAP CAF-3 syllabus in plain language, with Pakistani examples, exam tips, sticky-note revision and hundreds of practice questions.</p>
+        <a class="btn primary" href="books/CAF3-DSR-Study-Guide-Muhammad-Aamir.pdf" download><svg class="i"><use href="#download"/></svg>Download PDF</a>
+        <div class="meta">457 pages · PDF · 41.5 MB</div></div>
     </div>
     <div class="card book">
-      <div class="cover"><b>CISA<br>Cheat Sheet</b><small>HIGH-YIELD REVISION</small></div>
-      <div><span class="tag">IN PROGRESS</span><h3>CISA High-Yield Cheat Sheet</h3>
-        <p>All five CISA domains on a few pages: key definitions, exam traps and decision rules. Practise with free questions on <a href="https://certprepx.com/" target="_blank" rel="noopener">CertPrepX</a>.</p></div>
+      <div class="cover"><b>CISA<br>High-Yield<br>Cheat Sheet</b><small>CERTPREPX.COM</small><em>Muhammad Aamir, CISA</em></div>
+      <div><span class="pill soon">COMING SOON</span><h3>CISA High-Yield Cheat Sheet</h3>
+        <p>All five CISA domains condensed: key definitions, exam traps and decision rules for fast revision.</p>
+        <a class="btn outline" href="https://certprepx.com/" target="_blank" rel="noopener"><svg class="i"><use href="#book"/></svg>Practise on CertPrepX</a></div>
     </div>
   </div>
 </div></section>
 
 <section id="teaching"><div class="wrap">
-  <h2>Teaching & Content</h2>
-  <p class="lead">Sharing two decades of practical experience with the next generation.</p>
+  <span class="eyebrow">Teaching & Content</span>
+  <h2>Sharing what I've learned</h2>
+  <p class="lead">Two decades of practical experience, passed on to the next generation.</p>
   <div class="grid g3">
-    <div class="card"><div class="ic">🏫</div><h3>SKANS School of Accountancy</h3><p>Visiting Lecturer, Data Systems Risks, Islamabad.</p></div>
-    <div class="card"><div class="ic">🎓</div><h3>The University of Lahore</h3><p>Visiting Faculty (2013 – 2016): Software Engineering, Computer Architecture, System Programming, OOP.</p></div>
-    <div class="card"><div class="ic">▶️</div><h3>Tech Update Now Pakistan</h3><p>Short explainers on AI, cyber security, IT audit and CISA prep. <a href="https://www.youtube.com/@TechUpdateNowPK" target="_blank" rel="noopener">Watch on YouTube →</a></p></div>
+    <div class="card"><div class="ic"><svg class="i"><use href="#cap"/></svg></div><h3>SKANS School of Accountancy</h3><p>Visiting Lecturer, Data Systems Risks, Islamabad.</p></div>
+    <div class="card"><div class="ic"><svg class="i"><use href="#book"/></svg></div><h3>The University of Lahore</h3><p>Visiting Faculty (2013 – 2016): Software Engineering, Computer Architecture, System Programming and OOP.</p></div>
+    <div class="card"><div class="ic"><svg class="i"><use href="#play"/></svg></div><h3>Tech Update Now Pakistan</h3><p>Short explainers on AI, cyber security, IT audit and CISA preparation. <a href="https://www.youtube.com/@TechUpdateNowPK" target="_blank" rel="noopener">Watch on YouTube →</a></p></div>
   </div>
 </div></section>
 
 <section class="alt"><div class="wrap">
+  <span class="eyebrow">Credentials</span>
   <h2>Certifications & Education</h2>
   <p class="lead">MS Computer Science, The University of Lahore · Master of Computer Science, NUML Islamabad · BSc, University of Karachi</p>
   <div class="certs">
-    <span>Certified Information Systems Auditor (CISA)</span><span>ISO 27001 Lead Auditor (IRCA)</span>
-    <span>EXIN EPI CDCP</span><span>EXIN EPI CNCDP</span><span>Oracle Cloud Infrastructure 2025</span>
-    <span>OCI 2025 AI Foundations</span><span>MCITP · MCSE</span><span>EC-Council Network & Cyber Security</span>
+    <span class="top">Certified Information Systems Auditor (CISA)</span><span class="top">ISO 27001 Lead Auditor (IRCA)</span>
+    <span>EXIN EPI Certified Data Centre Professional (CDCP)</span><span>EXIN EPI Certified Network Cabling Design Professional (CNCDP)</span>
+    <span>Oracle Cloud Infrastructure 2025</span><span>OCI 2025 AI Foundations</span><span>MCITP · MCSE</span><span>EC-Council Network & Cyber Security</span>
   </div>
 </div></section>
 
 <section id="contact"><div class="wrap">
   <div class="cta">
-    <div><h2>Let's connect</h2><p>For advisory, training, speaking or book enquiries, reach me by email or LinkedIn.</p></div>
+    <div><span class="eyebrow" style="color:#2BB3A3">Contact</span><h2>Let's work together</h2><p>For advisory, training, speaking, coaching or book enquiries, I'd be glad to hear from you.</p></div>
     <div class="btns">
-      <a class="btn primary" href="mailto:aamir.yaqoob@outlook.com">✉ aamir.yaqoob@outlook.com</a>
-      <a class="btn primary" href="mailto:aamir741@gmail.com">✉ aamir741@gmail.com</a>
-      <a class="btn ghost" href="https://linkedin.com/in/aamiryaqoob" target="_blank" rel="noopener">LinkedIn</a>
-      <a class="btn ghost" href="https://certprepx.com/" target="_blank" rel="noopener">CertPrepX</a>
+      <a class="btn primary" href="mailto:aamir.yaqoob@outlook.com"><svg class="i"><use href="#mail"/></svg>aamir.yaqoob@outlook.com</a>
+      <a class="btn primary" href="mailto:aamir741@gmail.com"><svg class="i"><use href="#mail"/></svg>aamir741@gmail.com</a>
+      <a class="btn ghost" href="https://linkedin.com/in/aamiryaqoob" target="_blank" rel="noopener"><svg class="i"><use href="#in"/></svg>Connect on LinkedIn</a>
     </div>
   </div>
 </div></section>
 
 <footer><div class="wrap">
-  <span>© 2026 Muhammad Aamir · Views are my own.</span>
+  <span>© 2026 Muhammad Aamir. Views are my own.</span>
   <span><a href="privacy.html">Privacy</a> · <a href="terms.html">Terms</a></span>
 </div></footer>
 
