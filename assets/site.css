@@ -145,3 +145,5 @@ article.blog blockquote{border-left:4px solid var(--teal);background:#F3FAEC;pad
 @media (max-width:900px){.vgrid,.post-list{grid-template-columns:1fr}.pagehead h1{font-size:32px}}
 .coverimg{width:100%;height:auto;display:block;border-radius:4px 10px 10px 4px;box-shadow:0 16px 34px rgba(0,42,116,.3);transition:.15s}
 .coverimg:hover{transform:translateY(-3px)}
+.brandbar{background:#fff;border-top:1px solid var(--line);padding:26px 0;text-align:center}
+.brandbar img{height:56px;width:auto}
