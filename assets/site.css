@@ -143,3 +143,5 @@ article.blog blockquote{border-left:4px solid var(--teal);background:#F2FAF9;pad
 .authorbox{max-width:760px;margin:40px auto 0;display:flex;gap:18px;align-items:center;background:var(--bg);border-radius:16px;padding:22px}
 .authorbox img{width:72px;height:72px;border-radius:50%;object-fit:cover;object-position:center 15%}
 @media (max-width:900px){.vgrid,.post-list{grid-template-columns:1fr}.pagehead h1{font-size:32px}}
+.coverimg{width:100%;height:auto;display:block;border-radius:4px 10px 10px 4px;box-shadow:0 16px 34px rgba(3,22,52,.3);transition:.15s}
+.coverimg:hover{transform:translateY(-3px)}
