@@ -32,7 +32,7 @@ def feed():
     for e in ET.fromstring(xml).findall("a:entry", NS):
         vid = e.find("yt:videoId", NS).text
         title = e.find("a:title", NS).text or ""
-        if "/shorts/" in (e.find("a:link", NS).get("href") or ""):
+        if title.strip().lower() in ("untitled video", "") or title.strip().lower().endswith(" is live!"):
             continue
         out.append({"id": vid, "title": title, "date": e.find("a:published", NS).text[:10],
                     "description": "", "thumb": f"https://i.ytimg.com/vi/{vid}/hqdefault.jpg"})
@@ -78,9 +78,11 @@ def main():
         text = post.read_text(encoding="utf-8")
 
         def fill(m):
-            match = m.group(1).strip().lower()
+            match = html.unescape(m.group(1)).strip().lower()
             video = next((v for v in videos if match and match in v["title"].lower()), None)
-            return f"<!--EMBED:{m.group(1)}-->{embed(video) if video else ''}<!--/EMBED-->"
+            if not video:
+                return m.group(0)  # no public match yet: leave the post as it is
+            return f"<!--EMBED:{m.group(1)}-->{embed(video)}<!--/EMBED-->"
 
         new = re.sub(r"<!--EMBED:(.*?)-->.*?<!--/EMBED-->", fill, text, flags=re.S)
         if new != text:
