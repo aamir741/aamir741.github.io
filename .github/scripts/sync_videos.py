@@ -6,6 +6,7 @@ sections on the home page and /videos/, and fills blog-post embeds whose marker 
 import datetime
 import html
 import json
+import time
 import re
 import urllib.request
 import xml.etree.ElementTree as ET
@@ -27,7 +28,16 @@ def nice_date(iso):
 
 def feed():
     url = f"https://www.youtube.com/feeds/videos.xml?channel_id={CHANNEL_ID}"
-    xml = urllib.request.urlopen(urllib.request.Request(url, headers={"User-Agent": "mirakx-sync"}), timeout=30).read()
+    xml = None
+    for attempt in range(3):  # YouTube's feed is occasionally flaky (404/5xx); retry before giving up
+        try:
+            xml = urllib.request.urlopen(urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0 mirakx-sync"}), timeout=30).read()
+            break
+        except Exception as e:
+            print(f"Feed attempt {attempt + 1} failed: {e}")
+            time.sleep(20)
+    if xml is None:
+        return []
     out = []
     for e in ET.fromstring(xml).findall("a:entry", NS):
         vid = e.find("yt:videoId", NS).text
@@ -60,7 +70,7 @@ def main():
     known = json.loads(DATA.read_text(encoding="utf-8")) if DATA.exists() else []
     latest = feed()
     if not latest:
-        return print("Feed empty; nothing to do.")
+        return print("YouTube feed unavailable right now; the next scheduled run will try again.")
     live_ids = {v["id"] for v in latest}
     oldest_in_feed = min(v["date"] for v in latest)
     # keep older videos the feed no longer lists; drop recent ones that disappeared (made private or deleted)
