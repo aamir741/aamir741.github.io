@@ -110,7 +110,8 @@ a.c3-ch:hover{transform:translateY(-3px);box-shadow:0 16px 34px rgba(0,42,116,.1
 /* mock builder */
 .mk-chapters{display:grid;grid-template-columns:1fr 1fr;gap:4px 18px;margin-top:12px}
 .mk-ch{margin:4px 0;font-size:14.5px}.mk-ch b{color:var(--navy)}
-.mk-pattern{list-style:none;display:grid;gap:8px;margin-bottom:14px}
+.mk-pattern{list-style:none;display:grid;gap:8px;margin:14px 0}
+.mk-pattern[hidden],.mk-mcqonly[hidden]{display:none}
 .mk-pattern li{background:var(--bg);border-radius:10px;padding:10px 14px;font-size:14.5px;color:var(--muted)}
 .mk-pattern b{color:var(--navy)}
 .mk-intro h3,.mk-next h3{font-size:20px}

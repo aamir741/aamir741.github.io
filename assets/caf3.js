@@ -404,7 +404,9 @@
   }
 
   // ---------------------------------------------------------------- mock exam
-  var MCQ_COUNT = 20, SECB_COUNT = 6, SECB_MARKS = 80, MOCK_SECONDS = MCQ_COUNT * SEC_PER_Q;
+  // Full mock = the real ICAP paper: Question 1 has 15 MCQs (15 marks), Questions 2-7 carry 85 marks.
+  // An MCQ-only mock lets the student choose any number of MCQs instead, with no written part.
+  var MCQ_COUNT = 15, SECB_COUNT = 6, SECB_MARKS = 85, MCQ_ONLY_MAX = 100;
 
   function mock(root) {
     var DATA = null, USED = "caf3:mock:used", PAPERS = "caf3:mock:papers";
@@ -429,10 +431,13 @@
       return out;
     }
 
-    function buildPaper(chapters) {
+    function newCode() { return "MX-" + Date.now().toString(36).slice(-4).toUpperCase() + Math.random().toString(36).slice(2, 5).toUpperCase(); }
+
+    function buildPaper(chapters, mcqOnly) {
       var used = load(USED, { mcq: [], secb: [] });
-      var mcq = spread(DATA.mcq, chapters, MCQ_COUNT, used.mcq);
-      // Try many Section B combinations; keep the one with the fewest repeats whose marks come closest to 80.
+      var mcq = spread(DATA.mcq, chapters, mcqOnly || MCQ_COUNT, used.mcq);
+      if (mcqOnly) return { type: "mcq", code: newCode(), date: new Date().toISOString(), chapters: chapters, mcq: mcq.map(function (q) { return q.id; }), secb: [] };
+      // Try many Section B combinations; keep the one with the fewest repeats whose marks come closest to 85.
       var best = null;
       for (var t = 0; t < 300; t++) {
         var set = spread(DATA.secb, chapters, SECB_COUNT, used.secb);
@@ -442,8 +447,7 @@
         if (!best || score < best.score) best = { set: set, score: score };
         if (score === 0) break;
       }
-      var code = "MX-" + Date.now().toString(36).slice(-4).toUpperCase() + Math.random().toString(36).slice(2, 5).toUpperCase();
-      return { code: code, date: new Date().toISOString(), chapters: chapters, mcq: mcq.map(function (q) { return q.id; }),
+      return { type: "full", code: newCode(), date: new Date().toISOString(), chapters: chapters, mcq: mcq.map(function (q) { return q.id; }),
         secb: best.set.map(function (q) { return q.id; }) };
     }
 
@@ -460,26 +464,50 @@
         '<div class="mk-chapters">' + DATA.chapters.map(function (c) {
           return '<label class="qz-check mk-ch"><input type="checkbox" value="' + c.chapter + '"><span><b>Ch ' + c.chapter + "</b> " + esc(c.title) + "</span></label>";
         }).join("") + "</div>" +
-        "<h3>2. Your paper</h3>" +
-        '<ul class="mk-pattern"><li><b>Question 1</b> · ' + MCQ_COUNT + " MCQs, 1 mark each, taken online and timed (" + MOCK_SECONDS / 60 + " minutes)</li>" +
-        "<li><b>Questions 2 to 7</b> · descriptive and scenario questions (about " + SECB_MARKS + " marks), downloaded as a PDF paper with a separate model-answer PDF</li></ul>" +
+        "<h3>2. Choose the type of mock</h3>" +
+        '<div class="qz-modes"><label class="qz-mode"><input type="radio" name="mtype" value="full" checked><span><b>Full mock exam</b>' +
+        "The real ICAP paper pattern: 7 questions, 100 marks.</span></label>" +
+        '<label class="qz-mode"><input type="radio" name="mtype" value="mcq"><span><b>MCQ-only mock</b>' +
+        "Just MCQs, timed. You choose how many.</span></label></div>" +
+        '<ul class="mk-pattern mk-full"><li><b>Question 1</b> · ' + MCQ_COUNT + " MCQs, 1 mark each, taken online and timed (" + Math.round(MCQ_COUNT * SEC_PER_Q / 60) + " minutes)</li>" +
+        "<li><b>Questions 2 to 7</b> · descriptive and scenario questions (" + SECB_MARKS + " marks), downloaded as a PDF paper with a separate " +
+        "model-answer PDF, then marked by AI or by you</li></ul>" +
+        '<div class="mk-mcqonly" hidden><p class="qz-note" style="margin:12px 0 8px">How many MCQs? (1.5 minutes each)</p><div class="qz-chips">' +
+        [15, 20, 30, 50].map(function (n) { return '<button type="button" class="qz-chip" data-n="' + n + '">' + n + "</button>"; }).join("") +
+        '<label class="qz-custom">Custom <input type="number" min="5" max="' + MCQ_ONLY_MAX + '" value="20" aria-label="Number of MCQs"></label></div></div>' +
         '<p class="qz-note">Every paper is generated for you: questions are drawn at random from the chosen chapters, and questions you have already had come last.</p>' +
         '<p class="qz-err" role="alert"></p><button type="button" class="btn primary mk-go">Generate my mock paper →</button></div>' +
         (papers.length ? '<div class="qz-card"><h3 style="margin-top:0">Your recent mock papers</h3>' + papers.map(function (p, k) {
+          var mcqOnly = p.type === "mcq";
           return '<div class="mk-paper"><span><b>' + esc(p.code) + "</b> · " + new Date(p.date).toLocaleDateString() + " · " + esc(chapterLabel(p.chapters)) +
-            (p.secA != null ? " · Q1 " + p.secA + "/" + MCQ_COUNT : "") + (p.secB != null ? " · Q2–7 " + p.secB : "") + "</span>" +
-            '<span><button type="button" class="qz-link" data-pdf="q" data-k="' + k + '">Paper PDF</button><button type="button" class="qz-link" data-pdf="a" data-k="' + k + '">Answers PDF</button>' +
-            (ENDPOINT && GCLIENT && p.secA != null && !p.ai ? '<button type="button" class="qz-link" data-grade="' + k + '">Upload answers for AI marking</button>' : "") + "</span></div>";
+            (mcqOnly ? " · MCQ-only: " + p.secA + "/" + p.mcq.length
+              : (p.secA != null ? " · Q1 " + p.secA + "/" + p.mcq.length : "") + (p.secB != null ? " · Q2–7 " + p.secB : "")) + "</span>" +
+            (mcqOnly ? "" : '<span><button type="button" class="qz-link" data-pdf="q" data-k="' + k + '">Paper PDF</button><button type="button" class="qz-link" data-pdf="a" data-k="' + k + '">Answers PDF</button>' +
+              (ENDPOINT && GCLIENT && p.secA != null && !p.ai ? '<button type="button" class="qz-link" data-grade="' + k + '">Upload answers for AI marking</button>' : "") + "</span>") + "</div>";
         }).join("") + "</div>" : "");
       var boxes = root.querySelectorAll(".mk-chapters input");
+      var countIn = root.querySelector(".mk-mcqonly input");
+      function markCount() { root.querySelectorAll(".mk-mcqonly .qz-chip").forEach(function (c) { c.classList.toggle("on", +c.dataset.n === +countIn.value); }); }
+      root.querySelectorAll(".mk-mcqonly .qz-chip").forEach(function (c) { c.onclick = function () { countIn.value = c.dataset.n; markCount(); }; });
+      countIn.oninput = markCount;
+      markCount();
+      root.querySelectorAll('input[name="mtype"]').forEach(function (r) {
+        r.onchange = function () {
+          var mcq = root.querySelector('input[name="mtype"]:checked').value === "mcq";
+          root.querySelector(".mk-full").hidden = mcq;
+          root.querySelector(".mk-mcqonly").hidden = !mcq;
+        };
+      });
       on(root, ".qz-all", function () { boxes.forEach(function (b) { b.checked = true; }); });
       on(root, ".qz-none", function () { boxes.forEach(function (b) { b.checked = false; }); });
       on(root, ".qz-edit", function () { register(root, builder, builder); });
       on(root, ".mk-go", function () {
         var chs = [].filter.call(boxes, function (b) { return b.checked; }).map(function (b) { return +b.value; });
         if (!chs.length) { root.querySelector(".qz-err").textContent = "Tick at least one chapter."; return; }
-        var paper = buildPaper(chs);
-        track("caf3_mock_start", { chapters: chs.join(","), paper: paper.code });
+        var mcqOnly = root.querySelector('input[name="mtype"]:checked').value === "mcq"
+          ? Math.max(5, Math.min(MCQ_ONLY_MAX, parseInt(countIn.value, 10) || 20)) : 0;
+        var paper = buildPaper(chs, mcqOnly);
+        track("caf3_mock_start", { chapters: chs.join(","), paper: paper.code, type: paper.type, questions: paper.mcq.length });
         sectionA(paper);
       });
       root.querySelectorAll("[data-pdf]").forEach(function (b) {
@@ -489,7 +517,7 @@
         b.onclick = function () {
           var p = papers[+b.dataset.grade];
           root.innerHTML = '<div class="qz-card mk-next"><span class="pill ok">' + esc(p.code) + "</span><h3>AI marking for Questions 2–7</h3>" +
-            '<p class="qz-meta">' + esc(chapterLabel(p.chapters)) + " · Question 1: " + p.secA + "/" + MCQ_COUNT + "</p>" +
+            '<p class="qz-meta">' + esc(chapterLabel(p.chapters)) + " · Question 1: " + p.secA + "/" + p.mcq.length + "</p>" +
             '<div class="mk-ai"></div><button type="button" class="qz-link mk-new">← Back to the mock builder</button></div>';
           on(root, ".mk-new", builder);
           aiGrade(root.querySelector(".mk-ai"), p);
@@ -569,7 +597,7 @@
     }
 
     function showGrade(box, paper, d) {
-      var q1 = paper.secA || 0, grand = q1 + d.total, max = MCQ_COUNT + d.max, pct = Math.round(grand / max * 100);
+      var q1 = paper.secA || 0, q1max = paper.mcq.length, grand = q1 + d.total, max = q1max + d.max, pct = Math.round(grand / max * 100);
       var secbPct = d.max ? Math.round(d.total / d.max * 100) : 0, chap = {};
       d.questions.forEach(function (q) { chap[q.ch] = chap[q.ch] || [0, 0]; chap[q.ch][0] += q.marks; chap[q.ch][1] += q.max; });
       var ps = load(PAPERS, []);
@@ -582,7 +610,7 @@
       track("caf3_ai_grade_done", { paper: paper.code, score_pct: secbPct });
       box.innerHTML = '<div class="mk-aicard mk-graded"><h3>Your AI-marked result</h3>' +
         '<div class="mk-scores"><div><b>' + d.total + " / " + d.max + "</b><small>Questions 2–7</small></div>" +
-        "<div><b>" + q1 + " / " + MCQ_COUNT + "</b><small>Question 1</small></div>" +
+        "<div><b>" + q1 + " / " + q1max + "</b><small>Question 1</small></div>" +
         '<div class="tot"><b>' + grand + " / " + max + "</b><small>Mock total · " + pct + "%</small></div></div>" +
         (d.legibility === "poor" ? '<p class="qz-timeup">Parts of your script were hard to read, so some marks may be missing. Clearer photos give fairer marks.</p>' : "") +
         (d.overall ? '<p class="mk-overall">' + esc(d.overall) + "</p>" : "") +
@@ -598,13 +626,14 @@
     }
 
     function sectionA(paper) {
-      var M = byId(DATA.mcq);
-      root.innerHTML = '<div class="qz-card mk-intro"><span class="pill ok">' + esc(paper.code) + "</span><h3>Question 1: Multiple-choice questions</h3>" +
-        "<p>" + MCQ_COUNT + " MCQs from " + esc(chapterLabel(paper.chapters)) + ". You have <b>" + MOCK_SECONDS / 60 + " minutes</b>; the paper submits itself when time runs out. " +
-        "After Question 1 you will download Questions 2 to 7.</p>" +
-        '<button type="button" class="btn primary mk-start">Start Question 1 →</button></div>';
+      var M = byId(DATA.mcq), mcqOnly = paper.type === "mcq", n = paper.mcq.length, secs = n * SEC_PER_Q;
+      root.innerHTML = '<div class="qz-card mk-intro"><span class="pill ok">' + esc(paper.code) + "</span><h3>" +
+        (mcqOnly ? "MCQ-only mock" : "Question 1: Multiple-choice questions") + "</h3>" +
+        "<p>" + n + " MCQs from " + esc(chapterLabel(paper.chapters)) + ". You have <b>" + clock(secs) + " minutes</b>; the paper submits itself when time runs out. " +
+        (mcqOnly ? "You will see your score and a full review at the end." : "After Question 1 you will download Questions 2 to 7.") + "</p>" +
+        '<button type="button" class="btn primary mk-start">Start ' + (mcqOnly ? "the MCQs" : "Question 1") + " →</button></div>";
       on(root, ".mk-start", function () {
-        runQuiz(root, paper.mcq.map(function (id) { return prep(M[id]); }), { mode: "test", seconds: MOCK_SECONDS, label: "Q1",
+        runQuiz(root, paper.mcq.map(function (id) { return prep(M[id]); }), { mode: "test", seconds: secs, label: mcqOnly ? "MCQ mock" : "Q1",
           onFinish: function (r) { afterA(paper, r); } });
       });
     }
@@ -616,6 +645,7 @@
       var papers = load(PAPERS, []);
       papers.unshift(paper);
       save(PAPERS, papers.slice(0, 15));
+      if (paper.type === "mcq") return mcqResult(paper, r);
       track("caf3_mock_secA", { paper: paper.code, score_pct: r.pct });
       send({ type: "attempt", kind: "Mock Q1 (MCQs) " + paper.code, chapters: paper.chapters.join(","), mode: "Mock",
         questions: r.qs.length, correct: r.right, pct: r.pct, seconds: Math.round(r.secs), detail: { mcq: chapterStats(r.qs) } });
@@ -642,7 +672,7 @@
       on(root, ".mk-save", function () {
         var b = Math.max(0, Math.min(total, parseInt(root.querySelector(".mk-secb").value, 10)));
         if (isNaN(b)) return;
-        var grand = r.right + b, max = MCQ_COUNT + total, pct = Math.round(grand / max * 100);
+        var grand = r.right + b, max = paper.mcq.length + total, pct = Math.round(grand / max * 100);
         root.querySelector(".mk-total").innerHTML = "Your mock total: <b>" + grand + " / " + max + " (" + pct + "%)</b>";
         var ps = load(PAPERS, []);
         ps.forEach(function (p) { if (p.code === paper.code) p.secB = b + "/" + total; });
@@ -650,6 +680,22 @@
         send({ type: "attempt", kind: "Mock total (self-marked Q2-7) " + paper.code, chapters: paper.chapters.join(","), mode: "Mock",
           questions: max, correct: grand, pct: pct, seconds: "" });
       });
+      wireReview(root);
+      root.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+
+    function mcqResult(paper, r) {
+      track("caf3_mock_mcq_only", { paper: paper.code, questions: r.qs.length, score_pct: r.pct });
+      send({ type: "attempt", kind: "MCQ-only mock " + paper.code, chapters: paper.chapters.join(","), mode: "Mock",
+        questions: r.qs.length, correct: r.right, pct: r.pct, seconds: Math.round(r.secs), detail: { mcq: chapterStats(r.qs) } });
+      var b = band(r.pct);
+      root.innerHTML = '<div class="qz-card qz-result ' + b[0] + '">' +
+        (r.timeUp ? '<p class="qz-timeup">Time is up. Your mock was submitted automatically.</p>' : "") +
+        '<span class="pill ok">' + esc(paper.code) + "</span><h3>MCQ-only mock result</h3>" + scoreRing(r) +
+        "<h3>" + b[1] + "</h3>" +
+        '<p class="qz-meta">Time ' + clock(r.secs) + " · " + esc(chapterLabel(paper.chapters)) + ' · <a href="/caf3/progress/">See your readiness score</a></p>' +
+        '<div class="qz-actions"><button type="button" class="btn primary mk-new">Build another mock</button></div></div>' + review(r.qs);
+      on(root, ".mk-new", builder);
       wireReview(root);
       root.scrollIntoView({ behavior: "smooth", block: "start" });
     }
