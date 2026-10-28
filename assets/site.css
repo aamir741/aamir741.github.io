@@ -175,6 +175,14 @@ article.blog blockquote{border-left:4px solid var(--teal);background:#F3FAEC;pad
 .contactbar em{margin-left:auto;font-style:italic;font-weight:600;font-size:15px;line-height:1.3;border-bottom:2px solid #F07C1B;padding-bottom:3px}
 @media (max-width:900px){.crgrid{grid-template-columns:repeat(2,1fr);gap:22px 0}.cr{border-right:none}
  .skgrid{grid-template-columns:repeat(2,1fr)}.skgrid li{border-right:1px solid var(--line);border-bottom:1px solid var(--line)}.skgrid li:nth-child(2n){border-right:none}.skgrid li:nth-last-child(-n+4){border-bottom:1px solid var(--line)}.skgrid li:nth-last-child(-n+2){border-bottom:none}.contactbar em{margin-left:0}}
+/* home hero: three main buttons on one row, small social links under them */
+@media (min-width:901px){.hero{grid-template-columns:1.7fr 1fr}}
+.hero .btns{gap:10px}
+.hero .btn{padding:13px 17px}
+.social{display:flex;gap:22px;margin-top:20px}
+.social a{display:inline-flex;align-items:center;gap:7px;color:#9FB3CE;font-size:14px;font-weight:500}
+.social a:hover{color:#fff}
+.social svg.i{width:18px;height:18px}
 /* home: CAF-3 DSR Exam Prep banner */
 section.exam{background:linear-gradient(135deg,var(--navy) 0%,var(--navy2) 60%,#0B5A3C 100%);color:#fff}
 section.exam .eyebrow{color:var(--teal2)}
