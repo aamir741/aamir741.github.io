@@ -1,6 +1,10 @@
 /* CAF-3 practice hub, chapter pages and quiz engine (loaded after site.css) */
 .crumbs{font-size:14px;color:#9FB3CE;margin-bottom:6px}.crumbs a{color:#C9D5E7}.crumbs a:hover{color:#fff}
 .pagehead .btns{margin-top:22px}
+.pagehead .c3-sub{font-family:Poppins,sans-serif;font-size:24px;font-weight:600;color:#9CD20C;margin:-4px 0 14px}
+.c3-chips{list-style:none;display:flex;flex-wrap:wrap;gap:10px;margin-top:18px}
+.c3-chips li{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);color:#fff;border-radius:30px;padding:6px 14px;font-size:14.5px;font-weight:500}
+@media (max-width:900px){.pagehead .c3-sub{font-size:19px}}
 .c3-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
 .c3-ch{position:relative;background:#fff;border:1px solid var(--line);border-radius:14px;padding:20px 22px;color:inherit;display:flex;flex-direction:column;gap:6px;transition:.15s}
 a.c3-ch:hover{transform:translateY(-3px);box-shadow:0 16px 34px rgba(0,42,116,.1);border-color:#C5D3E4}

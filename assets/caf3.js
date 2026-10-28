@@ -1,4 +1,4 @@
-/* CAF-3 DSR practice tools on mirakx.com/caf3/
+/* CAF-3 DSR Exam Prep tools on mirakx.com/caf3/
    - #quiz : chapter practice. Bank embedded as <script id="bank" type="application/json">.
    - #mock : mock exam builder. Bank fetched from data-bank (MCQs + Section B questions of the live chapters).
    Students register once per device; their details and every finished attempt are posted to the Google Apps Script
@@ -140,7 +140,7 @@
       field("phone", "Mobile number", "tel", 'autocomplete="tel" placeholder="03001234567" maxlength="20"') +
       field("city", "City", "text", 'autocomplete="address-level2" placeholder="e.g. Lahore" maxlength="60"') +
       field("institute", "Institute / college", "text", 'placeholder="e.g. your CA tuition institute" maxlength="120"') + "</div>" +
-      '<label class="qz-check"><input type="checkbox" name="consent"' + (me ? " checked" : "") + '><span>I agree that my details and practice results are stored as described in the <a href="/caf3/privacy/" target="_blank">CAF-3 DSR practice privacy notice</a>.</span></label>' +
+      '<label class="qz-check"><input type="checkbox" name="consent"' + (me ? " checked" : "") + '><span>I agree that my details and practice results are stored as described in the <a href="/caf3/privacy/" target="_blank">CAF-3 DSR Exam Prep privacy notice</a>.</span></label>' +
       '<p class="qz-err" role="alert"></p><button type="submit" class="btn primary">' + (me ? "Save details" : "Continue →") + "</button>" +
       (cancel ? ' <button type="button" class="qz-link qz-cancel">Cancel</button>' : "") + "</form>";
     var form = root.querySelector("form"), google = !!(me && me.google);
