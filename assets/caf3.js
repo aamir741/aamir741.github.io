@@ -1,8 +1,10 @@
 /* CAF-3 DSR Exam Prep tools on mirakx.com/caf3/
-   - #quiz : chapter practice. Bank embedded as <script id="bank" type="application/json">.
-   - #mock : mock exam builder. Bank fetched from data-bank (MCQs + Section B questions of the live chapters).
-   Students register once per device; their details and every finished attempt are posted to the Google Apps Script
-   web app in data-endpoint. Scores, seen/used questions and recent mock papers are also kept in this browser. */
+   - #quiz     : chapter practice (data-ch, data-total, data-title)
+   - #mock     : mock exam builder (chapter list in <script id="chapters" type="application/json">)
+   - #progress : readiness score (full access)
+   The question bank is not on the website: the Google Apps Script web app in data-endpoint serves questions and mock papers
+   to students signed in with Google, and enforces the free allowance (100 MCQs and 1 mock paper) until full access is
+   approved. Details and every finished attempt are posted there too. Best scores and recent mock papers are kept in this browser. */
 (function () {
   "use strict";
   var LETTERS = "ABCD", SEC_PER_Q = 90;
@@ -38,21 +40,12 @@
   }
 
   // ---------------------------------------------------------------- student details
-  var SKEY = "caf3:student", HKEY = "caf3:history", ENDPOINT = "", GCLIENT = "";
+  var SKEY = "caf3:student", ENDPOINT = "", GCLIENT = "";
   var me = load(SKEY, null);
-
-  // This device's own record of attempts, used by the progress page when the student is not signed in with Google.
-  function remember(a) {
-    var h = load(HKEY, []);
-    h.unshift({ t: new Date().toISOString(), kind: a.kind, chapters: a.chapters, mode: a.mode,
-      questions: a.questions, correct: a.correct, pct: a.pct, detail: a.detail || {} });
-    save(HKEY, h.slice(0, 400));
-  }
+  function ready() { return !!(me && me.google); }   // registered with Google (older form-only registrations must sign in again)
 
   function send(payload) {
-    if (!me) return;
-    if (payload.type === "attempt") remember(payload);
-    if (!ENDPOINT) return;
+    if (!me || !ENDPOINT) return;
     payload.student = me;
     payload.page = location.pathname;
     if (me.google && tokenValid()) payload.idToken = idToken;
@@ -67,8 +60,36 @@
     payload.student = me;
     payload.page = location.pathname;
     return fetch(ENDPOINT, { method: "POST", body: JSON.stringify(payload) })
-      .then(function (r) { return r.json(); })
-      .then(function (d) { if (d.status !== "ok") throw new Error(d.error || "Something went wrong. Please try again."); return d; });
+      .then(function (r) { return r.json(); }, function () { throw new Error("Could not reach the server. Please check your connection and try again."); })
+      .then(function (d) {
+        if (d.access) ACCESS = d.access;
+        if (d.status !== "ok") { var e = new Error(d.error || "Something went wrong. Please try again."); e.code = d.code; throw e; }
+        return d;
+      });
+  }
+
+  // Signed-in request: shows the Google button in box when the sign-in has expired, and signs in again once if the server asks.
+  function api(box, payload, why) {
+    function go() {
+      return needGoogle(box, why || "Please sign in with Google again to continue.").then(function () { payload.idToken = idToken; return call(payload); });
+    }
+    return go().catch(function (e) {
+      if (e.code !== "auth") throw e;
+      idToken = null;
+      idExp = 0;
+      return go();
+    });
+  }
+
+  function waitBox(root, msg) {
+    root.innerHTML = '<div class="qz-card"><p class="mk-spin">' + msg + '</p><div class="qz-wait"></div></div>';
+    return root.querySelector(".qz-wait");
+  }
+
+  function failed(root, e, retry) {
+    root.innerHTML = '<div class="qz-card"><p class="qz-err">' + esc(e.message) + "</p>" +
+      (retry ? '<button type="button" class="btn outline qz-reload">Try again</button>' : "") + "</div>";
+    on(root, ".qz-reload", retry);
   }
 
   // ---------------------------------------------------------------- Google sign-in
@@ -104,11 +125,13 @@
   }
 
   // Draws Google's "Continue with Google" button into el; cb(payload) runs after a successful sign-in.
-  function googleButton(el, cb) {
+  // auto: also offer Google's one-tap prompt, which signs a returning student straight back in.
+  function googleButton(el, cb, auto) {
     if (!GCLIENT || !el) return;
     gsi().then(function () {
       onCredential = cb;
       window.google.accounts.id.renderButton(el, { theme: "filled_blue", size: "large", shape: "pill", text: "continue_with", width: 280 });
+      if (auto) try { window.google.accounts.id.prompt(); } catch (e) { }
     }, function () { el.textContent = "Google sign-in could not load. Please check your connection."; });
   }
 
@@ -118,11 +141,63 @@
     return new Promise(function (ok) {
       box.innerHTML = '<div class="g-need"><p>' + why + '</p><div class="g-btn"></div></div>';
       googleButton(box.querySelector(".g-btn"), function (p) {
-        if (!me.google) { me.google = true; me.email = p.email; save(SKEY, me); }
+        if (me && (me.email !== p.email || !me.google)) { me.google = true; me.email = p.email; me.id = "G" + p.sub; save(SKEY, me); }
         box.innerHTML = "";
         ok();
-      });
+      }, true);
     });
+  }
+
+  // ---------------------------------------------------------------- free allowance and full access
+  var FREE_MCQS = 100, FREE_MOCKS = 1;
+  var ACCESS = null;   // from the server: {access: free | requested | approved | blocked, mcqLeft, mocksLeft, freeMcqs, freeMocks, requested}
+
+  function full() { return !!ACCESS && ACCESS.access === "approved"; }
+
+  function accessBar() {
+    var a = ACCESS;
+    if (!a) return "";
+    if (a.access === "approved") return '<p class="ax-bar full">✔ <b>Full access</b></p>';
+    return '<div class="ax-bar"><span>' + (a.access === "requested" ? "Full access requested" : "Free access") + " · <b>" + a.mcqLeft + "</b> of " +
+      a.freeMcqs + " MCQs and <b>" + a.mocksLeft + "</b> of " + a.freeMocks + " mock paper left</span>" +
+      (a.access === "free" ? '<button type="button" class="qz-link ax-open">Get full access →</button>' : "") + '<div class="ax-req"></div></div>';
+  }
+
+  function lockCard(title, why) {
+    return '<div class="qz-card ax-lock"><span class="pill ok">FULL ACCESS</span><h3>' + title + "</h3><p>" + why + "</p>" +
+      "<p><b>Full access includes:</b></p><ul class=\"ax-list\"><li>Every MCQ in all 17 chapters</li><li>More mock papers in the ICAP pattern</li>" +
+      "<li>AI marking of your handwritten Questions 2 to 7</li><li>Your exam readiness score and the chapters to work on next</li></ul>" +
+      '<div class="ax-req"></div></div>';
+  }
+
+  // Fills every .ax-req box in root: the request form, or the state of the student's request. Bars open the form on click.
+  function wireAccess(root) {
+    root.querySelectorAll(".ax-lock .ax-req").forEach(reqBox);
+    root.querySelectorAll(".ax-open").forEach(function (b) {
+      b.onclick = function () { b.remove(); reqBox(b.parentNode.querySelector(".ax-req")); };
+    });
+  }
+
+  function reqBox(box) {
+    var a = ACCESS || { access: "free" };
+    if (a.access === "approved") { box.innerHTML = ""; return; }
+    if (a.access === "blocked") { box.innerHTML = '<p class="qz-err">Your access has been paused. Please email aamir@mirakx.com.</p>'; return; }
+    if (a.access === "requested") {
+      box.innerHTML = '<p class="ax-sent">⏳ Your request was sent' + (a.requested ? " on " + new Date(a.requested).toLocaleDateString() : "") +
+        ". We will email you at <b>" + esc(me.email) + "</b> as soon as it is approved.</p>";
+      return;
+    }
+    box.innerHTML = '<label class="qz-field"><span>Anything we should know? (optional, e.g. your class or teacher)</span>' +
+      '<input type="text" maxlength="300" class="ax-note"></label><p class="qz-err" role="alert"></p>' +
+      '<button type="button" class="btn primary ax-send">Request full access →</button><div class="ax-g"></div>';
+    var btn = box.querySelector(".ax-send");
+    btn.onclick = function () {
+      btn.disabled = true;
+      api(box.querySelector(".ax-g"), { action: "request", note: box.querySelector(".ax-note").value.trim() }).then(function () {
+        track("caf3_access_request", { page: location.pathname });
+        reqBox(box);
+      }, function (e) { box.querySelector(".qz-err").textContent = e.message; btn.disabled = false; });
+    };
   }
 
   function register(root, done, cancel) {
@@ -130,61 +205,62 @@
     function field(name, label, type, extra) {
       return '<label class="qz-field"><span>' + label + '</span><input name="' + name + '" type="' + type + '" value="' + esc(v[name] || "") + '" required ' + (extra || "") + "></label>";
     }
+    var again = ready();
     root.innerHTML = '<form class="qz-card qz-reg" novalidate>' +
-      "<h3>Before you start: your details</h3>" +
-      '<p class="qz-note">Free, one time on this device. Your results help us improve the questions, and we may contact you about CAF-3 DSR classes and material.</p>' +
-      (GCLIENT ? '<div class="g-row"><div class="g-btn"></div><span class="g-hint">Recommended: keeps your progress across devices and unlocks AI marking of mock answer sheets.</span></div>' +
-        '<div class="g-or"><span>or fill in the form</span></div>' : "") +
-      '<div class="qz-fields">' + field("name", "Full name", "text", 'autocomplete="name" maxlength="80"') +
-      field("email", "Email address", "email", 'autocomplete="email" maxlength="120"') +
+      "<h3>" + (again ? "Your details" : "Before you start: sign in and add your details") + "</h3>" +
+      (again ? "" : '<p class="qz-note">Start free with ' + FREE_MCQS + " MCQs and " + FREE_MOCKS + " mock paper. Sign in once with your Google account, " +
+        "then add your mobile, city and institute. We may contact you about CAF-3 DSR classes and material.</p>") +
+      '<div class="g-row"><div class="g-btn"></div><span class="g-hint">We only receive your name and email address from Google, never your password.</span></div>' +
+      '<div class="qz-after" hidden><div class="qz-fields">' + field("name", "Full name", "text", 'autocomplete="name" maxlength="80"') +
+      field("email", "Email address", "email", 'autocomplete="email" maxlength="120" readonly') +
       field("phone", "Mobile number", "tel", 'autocomplete="tel" placeholder="03001234567" maxlength="20"') +
       field("city", "City", "text", 'autocomplete="address-level2" placeholder="e.g. Lahore" maxlength="60"') +
       field("institute", "Institute / college", "text", 'placeholder="e.g. your CA tuition institute" maxlength="120"') + "</div>" +
-      '<label class="qz-check"><input type="checkbox" name="consent"' + (me ? " checked" : "") + '><span>I agree that my details and practice results are stored as described in the <a href="/caf3/privacy/" target="_blank">CAF-3 DSR Exam Prep privacy notice</a>.</span></label>' +
-      '<p class="qz-err" role="alert"></p><button type="submit" class="btn primary">' + (me ? "Save details" : "Continue →") + "</button>" +
+      '<label class="qz-check"><input type="checkbox" name="consent"' + (again ? " checked" : "") + '><span>I agree that my details and practice results are stored as described in the <a href="/caf3/privacy/" target="_blank">CAF-3 DSR Exam Prep privacy notice</a>.</span></label>' +
+      '<p class="qz-err" role="alert"></p><button type="submit" class="btn primary">' + (again ? "Save details" : "Continue →") + "</button></div>" +
       (cancel ? ' <button type="button" class="qz-link qz-cancel">Cancel</button>' : "") + "</form>";
-    var form = root.querySelector("form"), google = !!(me && me.google);
+    var form = root.querySelector("form"), signed = null;
     on(root, ".qz-cancel", cancel);
-    // Signed in with Google: name and email come from the Google account, the student adds mobile, city and institute.
+    // Name and email come from the Google account; the student adds mobile, city and institute.
     function useGoogle(p) {
-      google = true;
+      signed = p;
       if (!form.elements.name.value) form.elements.name.value = p.name || "";
       form.elements.email.value = p.email;
-      form.elements.email.readOnly = true;
-      var row = root.querySelector(".g-row");
-      if (row) row.innerHTML = '<p class="g-ok">✔ Signed in with Google as <b>' + esc(p.email) + "</b>. Now add your mobile, city and institute.</p>";
-      var or = root.querySelector(".g-or");
-      if (or) or.remove();
+      root.querySelector(".g-row").innerHTML = '<p class="g-ok">✔ Signed in with Google as <b>' + esc(p.email) + "</b>." +
+        (again ? "" : " Now add your mobile, city and institute.") + "</p>";
+      root.querySelector(".qz-after").hidden = false;
       form.elements.phone.focus();
     }
-    if (google && tokenValid()) useGoogle(jwtPayload(idToken));
-    else googleButton(root.querySelector(".g-btn"), useGoogle);
+    if (tokenValid()) useGoogle(jwtPayload(idToken));
+    else googleButton(root.querySelector(".g-btn"), useGoogle, again);
     form.onsubmit = function (e) {
       e.preventDefault();
       var d = {}, err = "";
       ["name", "email", "phone", "city", "institute"].forEach(function (k) { d[k] = form.elements[k].value.trim(); });
-      if (google) d.google = true;
+      d.google = true;
       d.phone = d.phone.replace(/[\s-]/g, "");
-      if (d.name.length < 3) err = "Please enter your full name.";
+      if (!signed) err = "Please sign in with Google first.";
+      else if (d.name.length < 3) err = "Please enter your full name.";
       else if (!/^\S+@\S+\.\S{2,}$/.test(d.email)) err = "Please enter a valid email address.";
       else if (!/^(03\d{9}|\+923\d{9}|\+\d{10,15})$/.test(d.phone)) err = "Please enter a valid mobile number, e.g. 03001234567.";
       else if (d.city.length < 2) err = "Please enter your city.";
       else if (d.institute.length < 2) err = "Please enter your institute or college.";
       else if (!form.elements.consent.checked) err = "Please tick the box to agree to the privacy notice.";
       if (err) { root.querySelector(".qz-err").textContent = err; return; }
-      d.id = google && tokenValid() ? "G" + jwtPayload(idToken).sub
-        : (me && me.id) || "S" + Date.now().toString(36).toUpperCase() + Math.random().toString(36).slice(2, 6).toUpperCase();
+      d.id = "G" + signed.sub;
+      var first = !again;
       me = d;
       save(SKEY, me);
-      send({ type: "register", device: navigator.userAgent });
+      ACCESS = null;   // re-read, which also saves the new details on the server
+      if (first) send({ type: "register", device: navigator.userAgent });
       track("caf3_register", { page: location.pathname });
       done();
     };
   }
 
   function whoBar() {
-    return '<p class="qz-me">Practising as <b>' + esc(me.name) + "</b> · " + esc(me.city) + (me.google ? ' · <span class="g-tag">Google</span>' : "") +
-      ' <button type="button" class="qz-link qz-edit">Change details</button> · <a href="/caf3/progress/">My progress</a></p>';
+    return '<p class="qz-me">Practising as <b>' + esc(me.name) + "</b> · " + esc(me.city) + ' · <span class="g-tag">Google</span>' +
+      ' <button type="button" class="qz-link qz-edit">Change details</button> · <a href="/caf3/progress/">My progress</a></p>' + accessBar();
   }
 
   // ---------------------------------------------------------------- quiz runner
@@ -317,21 +393,28 @@
 
   // ---------------------------------------------------------------- chapter practice
   function practice(root) {
-    var bank = JSON.parse(document.getElementById("bank").textContent);
-    var ALL = bank.questions, CH = bank.chapter, KEY = "caf3:ch" + CH;
+    var CH = +root.dataset.ch, TITLE = root.dataset.title || "", total = +root.dataset.total || 60, KEY = "caf3:ch" + CH;
+    var got = {};   // questions received this visit, by id, so wrong answers can be retried without asking the server
 
-    function pick(n, preferNew, onlyIds) {
-      var seen = load(KEY, {}).seen || [], pool = ALL;
-      if (onlyIds) pool = ALL.filter(function (q) { return onlyIds.indexOf(q.id) >= 0; });
-      var fresh = shuffle(pool.filter(function (q) { return seen.indexOf(q.id) < 0; }));
-      var old = shuffle(pool.filter(function (q) { return seen.indexOf(q.id) >= 0; }));
-      return (preferNew ? fresh.concat(old) : shuffle(pool)).slice(0, n).map(prep);
+    // Free students who have used their allowance see the full-access card instead of the settings.
+    function locked() {
+      root.innerHTML = '<div class="qz-card qz-setup">' + whoBar() + "</div>" +
+        lockCard("You have used your " + ACCESS.freeMcqs + " free MCQs", "Thank you for practising with CAF-3 DSR Exam Prep. " +
+          "To keep practising every chapter, request full access below. We review requests and email you when yours is approved.");
+      on(root, ".qz-edit", function () { register(root, function () { setup(); }, function () { setup(); }); });
+      var dup = root.querySelector(".qz-setup .ax-open");   // the card below already has the request form
+      if (dup) dup.remove();
+      wireAccess(root);
     }
 
     function setup(prev) {
-      var cfg = prev || { count: Math.min(20, ALL.length), mode: "learn", fresh: true };
-      if (!me) return register(root, function () { setup(cfg); });
-      var s = load(KEY, {}), seenCount = (s.seen || []).length, total = ALL.length;
+      var cfg = prev || { count: Math.min(20, total), mode: "learn", fresh: true };
+      if (!ready()) return register(root, function () { setup(cfg); });
+      if (!ACCESS) return api(waitBox(root, "Checking your access…"), { action: "status" }, "Sign in with Google to continue practising.")
+        .then(function () { setup(cfg); }, function (e) { failed(root, e, function () { setup(cfg); }); });
+      if (ACCESS.access === "blocked") return failed(root, { message: "Your access has been paused. Please email aamir@mirakx.com." });
+      if (!full() && ACCESS.mcqLeft <= 0) return locked();
+      var s = load(KEY, {}), seenCount = (s.seen || []).length;
       var presets = [10, 20, 30].filter(function (n) { return n < total; }).concat([total]);
       root.innerHTML =
         '<div class="qz-card qz-setup">' + whoBar() +
@@ -344,6 +427,7 @@
         '<label class="qz-mode"><input type="radio" name="mode" value="learn"><span><b>Learn mode</b>See the answer and explanation after every question. Best for first reading.</span></label>' +
         '<label class="qz-mode"><input type="radio" name="mode" value="test"><span><b>Test mode</b>Timed (' + (SEC_PER_Q / 60) + " min per question), exam-style. Results and review at the end.</span></label></div>" +
         '<label class="qz-check"><input type="checkbox" name="fresh"' + (cfg.fresh ? " checked" : "") + "> Show questions I haven't seen first</label>" +
+        (full() ? "" : '<p class="qz-note">Free access: you have <b>' + ACCESS.mcqLeft + "</b> new MCQs left. Questions you have already had never count again.</p>") +
         '<button type="button" class="btn primary qz-start">Start practice →</button>' +
         (seenCount ? ' <button type="button" class="qz-link qz-reset">Reset my progress</button>' : "") + "</div>";
       var input = root.querySelector(".qz-custom input");
@@ -355,10 +439,21 @@
       on(root, ".qz-edit", function () { register(root, function () { setup(cfg); }, function () { setup(cfg); }); });
       on(root, ".qz-start", function () {
         var n = Math.max(1, Math.min(total, parseInt(input.value, 10) || 10));
-        var c = { count: n, mode: root.querySelector('input[name="mode"]:checked').value, fresh: root.querySelector('input[name="fresh"]').checked };
-        start(c, pick(n, c.fresh));
+        fetchSet({ count: n, mode: root.querySelector('input[name="mode"]:checked').value, fresh: root.querySelector('input[name="fresh"]').checked });
       });
-      on(root, ".qz-reset", function () { if (confirm("Clear your saved scores and seen questions for this chapter?")) { save(KEY, {}); setup(cfg); } });
+      on(root, ".qz-reset", function () { if (confirm("Clear your saved scores for this chapter on this device?")) { save(KEY, {}); setup(cfg); } });
+      wireAccess(root);
+    }
+
+    function fetchSet(cfg) {
+      api(waitBox(root, "Loading your questions…"), { action: "mcq", ch: CH, n: cfg.count, fresh: cfg.fresh }, "Sign in with Google to continue practising.")
+        .then(function (d) {
+          d.questions.forEach(function (q) { got[q.id] = q; });
+          start(cfg, d.questions.map(prep));
+        }, function (e) {
+          if (e.code === "limit") return locked();
+          failed(root, e, function () { setup(cfg); });
+        });
     }
 
     function start(cfg, qs) {
@@ -383,20 +478,22 @@
         (r.timeUp ? '<p class="qz-timeup">Time is up. Your test was submitted automatically.</p>' : "") +
         scoreRing(r) + "<h3>" + b[1] + "</h3>" +
         '<p class="qz-meta">' + (cfg.mode === "test" ? "Test mode" : "Learn mode") + " · Time " + clock(r.secs) + " · Best on this device " + s.best + "%</p>" +
+        (full() ? "" : accessBar()) +
         '<div class="qz-actions">' +
         (r.wrong.length ? '<button type="button" class="btn primary qz-retry">Retry my ' + r.wrong.length + " wrong answer" + (r.wrong.length > 1 ? "s" : "") + "</button>" : "") +
         '<button type="button" class="btn outline qz-again">New set of questions</button>' +
         '<button type="button" class="btn outline qz-settings">Change settings</button></div>' +
         shareLinks("I scored " + r.right + "/" + r.qs.length + " (" + r.pct + "%) on CAF-3 DSR Chapter " + CH + " MCQ practice. Try it free: " + pageUrl(),
           "My CAF-3 DSR Chapter " + CH + " practice result",
-          "CAF-3 DSR Chapter " + CH + ": " + bank.title + "\nScore: " + r.right + "/" + r.qs.length + " (" + r.pct + "%)\nTime: " + clock(r.secs) +
+          "CAF-3 DSR Chapter " + CH + ": " + TITLE + "\nScore: " + r.right + "/" + r.qs.length + " (" + r.pct + "%)\nTime: " + clock(r.secs) +
           "\n\nQuestions to revise:\n" + (r.wrong.map(function (x) { return "- " + x.q; }).join("\n") || "None, all correct!") + "\n\n" + pageUrl()) +
         "</div>" + review(r.qs);
-      on(root, ".qz-retry", function () { var ids = r.wrong.map(function (x) { return x.id; }); start(cfg, pick(ids.length, false, ids)); });
-      on(root, ".qz-again", function () { start(cfg, pick(cfg.count, true)); });
+      on(root, ".qz-retry", function () { start(cfg, shuffle(r.wrong.map(function (x) { return prep(got[x.id]); }))); });
+      on(root, ".qz-again", function () { fetchSet(cfg); });
       on(root, ".qz-settings", function () { setup(cfg); });
       wireCopy(root);
       wireReview(root);
+      wireAccess(root);
       root.scrollIntoView({ behavior: "smooth", block: "start" });
     }
 
@@ -406,62 +503,38 @@
   // ---------------------------------------------------------------- mock exam
   // Full mock = the real ICAP paper: Question 1 has 15 MCQs (15 marks), Questions 2-7 carry 85 marks.
   // An MCQ-only mock lets the student choose any number of MCQs instead, with no written part.
-  var MCQ_COUNT = 15, SECB_COUNT = 6, SECB_MARKS = 85, MCQ_ONLY_MAX = 100;
+  // The papers themselves are built by the server; these sizes are for the builder's text and the custom-count box.
+  var MCQ_COUNT = 15, SECB_MARKS = 85, MCQ_ONLY_MAX = 100;
 
   function mock(root) {
-    var DATA = null, USED = "caf3:mock:used", PAPERS = "caf3:mock:papers";
-    root.innerHTML = '<div class="qz-card"><p>Loading question bank…</p></div>';
-    fetch(root.dataset.bank).then(function (r) { return r.json(); }).then(function (d) { DATA = d; builder(); },
-      function () { root.innerHTML = '<div class="qz-card"><p>Could not load the question bank. Please refresh the page.</p></div>'; });
-
-    function byId(list) { var m = {}; list.forEach(function (q) { m[q.id] = q; }); return m; }
-
-    // Spread picks across the chosen chapters, questions this student has not had before first.
-    function spread(pool, chapters, n, used) {
-      var per = {}, out = [];
-      chapters.forEach(function (c) {
-        var qs = pool.filter(function (q) { return q.ch === c; });
-        per[c] = shuffle(qs.filter(function (q) { return used.indexOf(q.id) < 0; })).concat(shuffle(qs.filter(function (q) { return used.indexOf(q.id) >= 0; })));
-      });
-      var order = shuffle(chapters), i = 0;
-      while (out.length < n && order.some(function (c) { return per[c].length; })) {
-        var c = order[i++ % order.length];
-        if (per[c].length) out.push(per[c].shift());
-      }
-      return out;
-    }
-
-    function newCode() { return "MX-" + Date.now().toString(36).slice(-4).toUpperCase() + Math.random().toString(36).slice(2, 5).toUpperCase(); }
-
-    function buildPaper(chapters, mcqOnly) {
-      var used = load(USED, { mcq: [], secb: [] });
-      var mcq = spread(DATA.mcq, chapters, mcqOnly || MCQ_COUNT, used.mcq);
-      if (mcqOnly) return { type: "mcq", code: newCode(), date: new Date().toISOString(), chapters: chapters, mcq: mcq.map(function (q) { return q.id; }), secb: [] };
-      // Try many Section B combinations; keep the one with the fewest repeats whose marks come closest to 85.
-      var best = null;
-      for (var t = 0; t < 300; t++) {
-        var set = spread(DATA.secb, chapters, SECB_COUNT, used.secb);
-        var marks = set.reduce(function (a, q) { return a + q.marks; }, 0);
-        var repeats = set.filter(function (q) { return used.secb.indexOf(q.id) >= 0; }).length;
-        var score = repeats * 100 + Math.abs(marks - SECB_MARKS);
-        if (!best || score < best.score) best = { set: set, score: score };
-        if (score === 0) break;
-      }
-      return { type: "full", code: newCode(), date: new Date().toISOString(), chapters: chapters, mcq: mcq.map(function (q) { return q.id; }),
-        secb: best.set.map(function (q) { return q.id; }) };
-    }
+    var CHS = JSON.parse(document.getElementById("chapters").textContent), PAPERS = "caf3:mock:papers";
+    builder();
 
     function chapterLabel(chs) {
-      return chs.length === DATA.chapters.length ? "All chapters" : "Chapter" + (chs.length > 1 ? "s " : " ") + chs.join(", ");
+      return chs.length === CHS.length ? "All chapters" : "Chapter" + (chs.length > 1 ? "s " : " ") + chs.join(", ");
+    }
+
+    // Papers are kept on this device: in full until Question 1 is done (so a refresh cannot lose the paper), then without
+    // the Question 1 MCQs. Papers saved by the older version (question ids only) are left out.
+    function keep(paper) {
+      var slim = Object.assign({}, paper);
+      if (paper.secA != null) slim.mcq = paper.mcq.map(function (q) { return q.id || q; });
+      save(PAPERS, [slim].concat(load(PAPERS, []).filter(function (p) { return p.code !== paper.code; })).slice(0, 15));
+    }
+    function papersKept() {
+      return load(PAPERS, []).filter(function (p) { return p.secb && (!p.secb.length || typeof p.secb[0] === "object") && (p.secA != null || typeof p.mcq[0] === "object"); });
     }
 
     function builder() {
-      if (!me) return register(root, builder);
-      var papers = load(PAPERS, []);
+      if (!ready()) return register(root, builder);
+      if (!ACCESS) return api(waitBox(root, "Checking your access…"), { action: "status" }, "Sign in with Google to build a mock paper.")
+        .then(builder, function (e) { failed(root, e, builder); });
+      if (ACCESS.access === "blocked") return failed(root, { message: "Your access has been paused. Please email aamir@mirakx.com." });
+      var papers = papersKept(), canBuild = ACCESS.mocksLeft > 0;
       root.innerHTML = '<div class="qz-card qz-setup">' + whoBar() +
         "<h3>1. Choose chapters</h3>" +
         '<div class="qz-chips"><button type="button" class="qz-chip qz-all">Select all</button><button type="button" class="qz-chip qz-none">Clear</button></div>' +
-        '<div class="mk-chapters">' + DATA.chapters.map(function (c) {
+        '<div class="mk-chapters">' + CHS.map(function (c) {
           return '<label class="qz-check mk-ch"><input type="checkbox" value="' + c.chapter + '"><span><b>Ch ' + c.chapter + "</b> " + esc(c.title) + "</span></label>";
         }).join("") + "</div>" +
         "<h3>2. Choose the type of mock</h3>" +
@@ -475,15 +548,22 @@
         '<div class="mk-mcqonly" hidden><p class="qz-note" style="margin:12px 0 8px">How many MCQs? (1.5 minutes each)</p><div class="qz-chips">' +
         [15, 20, 30, 50].map(function (n) { return '<button type="button" class="qz-chip" data-n="' + n + '">' + n + "</button>"; }).join("") +
         '<label class="qz-custom">Custom <input type="number" min="5" max="' + MCQ_ONLY_MAX + '" value="20" aria-label="Number of MCQs"></label></div></div>' +
-        '<p class="qz-note">Every paper is generated for you: questions are drawn at random from the chosen chapters, and questions you have already had come last.</p>' +
-        '<p class="qz-err" role="alert"></p><button type="button" class="btn primary mk-go">Generate my mock paper →</button></div>' +
+        '<p class="qz-note">Every paper is generated for you: questions are drawn at random from the chosen chapters, and questions you have already had come last.' +
+        (full() ? "" : " Free access includes " + ACCESS.freeMocks + " mock paper.") + "</p>" +
+        '<p class="qz-err" role="alert"></p>' + (canBuild ? '<button type="button" class="btn primary mk-go">Generate my mock paper →</button><div class="mk-gw"></div>'
+          : full() ? '<p class="qz-timeup">You have built today\'s mock papers. You can build your next one tomorrow.</p>' : "") + "</div>" +
+        (!canBuild && !full() ? lockCard("You have used your free mock paper", "To build more mock papers and get your written answers marked by AI, " +
+          "request full access below. We review requests and email you when yours is approved.") : "") +
         (papers.length ? '<div class="qz-card"><h3 style="margin-top:0">Your recent mock papers</h3>' + papers.map(function (p, k) {
           var mcqOnly = p.type === "mcq";
+          if (p.secA == null) return '<div class="mk-paper"><span><b>' + esc(p.code) + "</b> · " + new Date(p.date).toLocaleDateString() + " · " +
+            esc(chapterLabel(p.chapters)) + " · not started</span><span><button type=\"button\" class=\"qz-link\" data-resume=\"" + k + "\">Start " +
+            (mcqOnly ? "the MCQs" : "Question 1") + " →</button></span></div>";
           return '<div class="mk-paper"><span><b>' + esc(p.code) + "</b> · " + new Date(p.date).toLocaleDateString() + " · " + esc(chapterLabel(p.chapters)) +
             (mcqOnly ? " · MCQ-only: " + p.secA + "/" + p.mcq.length
-              : (p.secA != null ? " · Q1 " + p.secA + "/" + p.mcq.length : "") + (p.secB != null ? " · Q2–7 " + p.secB : "")) + "</span>" +
+              : " · Q1 " + p.secA + "/" + p.mcq.length + (p.secB != null ? " · Q2–7 " + p.secB : "")) + "</span>" +
             (mcqOnly ? "" : '<span><button type="button" class="qz-link" data-pdf="q" data-k="' + k + '">Paper PDF</button><button type="button" class="qz-link" data-pdf="a" data-k="' + k + '">Answers PDF</button>' +
-              (ENDPOINT && GCLIENT && p.secA != null && !p.ai ? '<button type="button" class="qz-link" data-grade="' + k + '">Upload answers for AI marking</button>' : "") + "</span>") + "</div>";
+              (ENDPOINT && GCLIENT && !p.ai ? '<button type="button" class="qz-link" data-grade="' + k + '">Upload answers for AI marking</button>' : "") + "</span>") + "</div>";
         }).join("") + "</div>" : "");
       var boxes = root.querySelectorAll(".mk-chapters input");
       var countIn = root.querySelector(".mk-mcqonly input");
@@ -502,17 +582,34 @@
       on(root, ".qz-none", function () { boxes.forEach(function (b) { b.checked = false; }); });
       on(root, ".qz-edit", function () { register(root, builder, builder); });
       on(root, ".mk-go", function () {
+        var err = root.querySelector(".qz-err"), go = root.querySelector(".mk-go");
         var chs = [].filter.call(boxes, function (b) { return b.checked; }).map(function (b) { return +b.value; });
-        if (!chs.length) { root.querySelector(".qz-err").textContent = "Tick at least one chapter."; return; }
+        if (!chs.length) { err.textContent = "Tick at least one chapter."; return; }
         var mcqOnly = root.querySelector('input[name="mtype"]:checked').value === "mcq"
           ? Math.max(5, Math.min(MCQ_ONLY_MAX, parseInt(countIn.value, 10) || 20)) : 0;
-        var paper = buildPaper(chs, mcqOnly);
-        track("caf3_mock_start", { chapters: chs.join(","), paper: paper.code, type: paper.type, questions: paper.mcq.length });
-        sectionA(paper);
+        if (!full() && !confirm("This uses your free mock paper. Build it now?")) return;
+        err.textContent = "";
+        go.disabled = true;
+        go.textContent = "Building your paper…";
+        api(root.querySelector(".mk-gw"), { action: "mock", chapters: chs, type: mcqOnly ? "mcq" : "full", n: mcqOnly }, "Sign in with Google to build your mock paper.")
+          .then(function (d) {
+            keep(d.paper);
+            track("caf3_mock_start", { chapters: chs.join(","), paper: d.paper.code, type: d.paper.type, questions: d.paper.mcq.length });
+            sectionA(d.paper);
+          }, function (e) {
+            if (e.code === "limit" || e.code === "daily") return builder();
+            err.textContent = e.message;
+            go.disabled = false;
+            go.textContent = "Generate my mock paper →";
+          });
+      });
+      root.querySelectorAll("[data-resume]").forEach(function (b) {
+        b.onclick = function () { sectionA(papers[+b.dataset.resume]); };
       });
       root.querySelectorAll("[data-pdf]").forEach(function (b) {
         b.onclick = function () { pdf(papers[+b.dataset.k], b.dataset.pdf === "a"); };
       });
+      wireAccess(root);
       root.querySelectorAll("[data-grade]").forEach(function (b) {
         b.onclick = function () {
           var p = papers[+b.dataset.grade];
@@ -529,6 +626,11 @@
     // ------------------------------------------------------------ AI marking of the handwritten Q2-Q7 script
     function aiGrade(box, paper) {
       if (!ENDPOINT || !GCLIENT || !box) return;
+      if (!full()) {
+        box.innerHTML = lockCard("AI marking is part of full access", "With full access, upload photos or a PDF of your handwritten Questions 2 to 7 " +
+          "and get marks and feedback for every part, plus your total out of 100. Until then, mark yourself with the model-answer PDF.");
+        return wireAccess(box);
+      }
       var files = [];
       box.innerHTML = '<div class="mk-aicard"><h3>Get Questions 2–7 marked by AI <span class="pill ok">BETA</span></h3>' +
         '<p class="qz-note">When you have finished, take a clear photo of each answer page in order (or scan them into one PDF) and upload them here. ' +
@@ -552,15 +654,13 @@
         err.textContent = "";
         if (files.length > 15) { err.textContent = "Please upload at most 15 pages."; return; }
         btn.disabled = true;
-        needGoogle(wait, "Sign in with Google to use AI marking. It keeps your marked papers and progress safe across devices.").then(function () {
-          wait.innerHTML = '<p class="mk-spin">Preparing your pages…</p>';
-          return Promise.all(files.map(encode));
-        }).then(function (enc) {
+        wait.innerHTML = '<p class="mk-spin">Preparing your pages…</p>';
+        Promise.all(files.map(encode)).then(function (enc) {
           var size = enc.reduce(function (s, f) { return s + f.data.length; }, 0);
           if (size > 26e6) throw new Error("These files are too large. Please upload fewer or smaller photos, or a smaller PDF.");
-          wait.innerHTML = '<p class="mk-spin">Marking your script… this usually takes 1–2 minutes. Please keep this page open.</p>';
+          wait.innerHTML = '<p class="mk-spin">Marking your script… this usually takes 1–2 minutes. Please keep this page open.</p><div class="mk-gg"></div>';
           track("caf3_ai_grade_start", { paper: paper.code, pages: enc.length });
-          return call({ action: "grade", idToken: idToken, paper: { code: paper.code, chapters: paper.chapters, secb: paper.secb }, files: enc });
+          return api(wait.querySelector(".mk-gg"), { action: "grade", paper: { code: paper.code }, files: enc }, "Sign in with Google again to send your answers for marking.");
         }).then(function (d) {
           wait.innerHTML = "";
           showGrade(box, paper, d);
@@ -603,8 +703,6 @@
       var ps = load(PAPERS, []);
       ps.forEach(function (p) { if (p.code === paper.code) { p.secB = d.total + "/" + d.max; p.ai = { total: d.total, max: d.max }; } });
       save(PAPERS, ps);
-      remember({ kind: "Mock Q2-7 (AI graded) " + paper.code, chapters: paper.chapters.join(","), mode: "Mock",
-        questions: d.max, correct: d.total, pct: secbPct, detail: { secb: chap } });
       send({ type: "attempt", kind: "Mock total (AI-graded Q2-7) " + paper.code, chapters: paper.chapters.join(","), mode: "Mock",
         questions: max, correct: grand, pct: pct, seconds: "" });
       track("caf3_ai_grade_done", { paper: paper.code, score_pct: secbPct });
@@ -626,31 +724,27 @@
     }
 
     function sectionA(paper) {
-      var M = byId(DATA.mcq), mcqOnly = paper.type === "mcq", n = paper.mcq.length, secs = n * SEC_PER_Q;
+      var mcqOnly = paper.type === "mcq", n = paper.mcq.length, secs = n * SEC_PER_Q;
       root.innerHTML = '<div class="qz-card mk-intro"><span class="pill ok">' + esc(paper.code) + "</span><h3>" +
         (mcqOnly ? "MCQ-only mock" : "Question 1: Multiple-choice questions") + "</h3>" +
         "<p>" + n + " MCQs from " + esc(chapterLabel(paper.chapters)) + ". You have <b>" + clock(secs) + " minutes</b>; the paper submits itself when time runs out. " +
         (mcqOnly ? "You will see your score and a full review at the end." : "After Question 1 you will download Questions 2 to 7.") + "</p>" +
         '<button type="button" class="btn primary mk-start">Start ' + (mcqOnly ? "the MCQs" : "Question 1") + " →</button></div>";
       on(root, ".mk-start", function () {
-        runQuiz(root, paper.mcq.map(function (id) { return prep(M[id]); }), { mode: "test", seconds: secs, label: mcqOnly ? "MCQ mock" : "Q1",
+        runQuiz(root, paper.mcq.map(prep), { mode: "test", seconds: secs, label: mcqOnly ? "MCQ mock" : "Q1",
           onFinish: function (r) { afterA(paper, r); } });
       });
     }
 
     function afterA(paper, r) {
       paper.secA = r.right;
-      var used = load(USED, { mcq: [], secb: [] });
-      save(USED, { mcq: uniq(used.mcq.concat(paper.mcq)), secb: uniq(used.secb.concat(paper.secb)) });
-      var papers = load(PAPERS, []);
-      papers.unshift(paper);
-      save(PAPERS, papers.slice(0, 15));
+      keep(paper);
       if (paper.type === "mcq") return mcqResult(paper, r);
       track("caf3_mock_secA", { paper: paper.code, score_pct: r.pct });
       send({ type: "attempt", kind: "Mock Q1 (MCQs) " + paper.code, chapters: paper.chapters.join(","), mode: "Mock",
         questions: r.qs.length, correct: r.right, pct: r.pct, seconds: Math.round(r.secs), detail: { mcq: chapterStats(r.qs) } });
 
-      var S = byId(DATA.secb), total = paper.secb.reduce(function (a, id) { return a + S[id].marks; }, 0);
+      var total = paper.secb.reduce(function (a, q) { return a + q.marks; }, 0);
       root.innerHTML = '<div class="qz-card qz-result ' + band(r.pct)[0] + '">' +
         (r.timeUp ? '<p class="qz-timeup">Time is up. Question 1 was submitted automatically.</p>' : "") +
         '<span class="pill ok">' + esc(paper.code) + "</span><h3>Question 1 result</h3>" + scoreRing(r) +
@@ -661,7 +755,7 @@
         '<div class="qz-actions" style="justify-content:flex-start"><button type="button" class="btn primary mk-pdfq">Download Questions 2–7 (PDF)</button>' +
         '<button type="button" class="btn outline mk-pdfa">Download model answers (PDF)</button></div>' +
         '<div class="mk-ai"></div>' +
-        '<details class="mk-selfwrap"><summary>Prefer to mark yourself?</summary>' +
+        '<details class="mk-selfwrap"' + (full() ? "" : " open") + "><summary>" + (full() ? "Prefer to mark yourself?" : "Mark yourself") + "</summary>" +
         '<div class="mk-self"><label class="qz-field"><span>After marking: your marks for Questions 2–7 (out of ' + total + ')</span>' +
         '<input type="number" min="0" max="' + total + '" class="mk-secb"></label><button type="button" class="btn outline mk-save">Save my total</button></div>' +
         '<p class="mk-total"></p></details><button type="button" class="qz-link mk-new">Build another mock</button></div>' + review(r.qs);
@@ -720,9 +814,9 @@
     }
 
     function writePdf(paper, answers) {
-      var S = byId(DATA.secb), doc = new window.jspdf.jsPDF({ unit: "mm", format: "a4" });
+      var doc = new window.jspdf.jsPDF({ unit: "mm", format: "a4" });
       var W = 210, H = 297, M = 18, y = M, LH = 5.2;
-      var navy = [0, 42, 116], qs = paper.secb.map(function (id) { return S[id]; });
+      var navy = [0, 42, 116], qs = paper.secb;
       var total = qs.reduce(function (a, q) { return a + q.marks; }, 0);
 
       // Faint diagonal "mirakx.com · All rights reserved", drawn once per page before its content so it sits behind the text.
@@ -852,12 +946,11 @@
     CH.forEach(function (c) { info[c.chapter] = c; });
     function pc(x) { return x == null ? "–" : Math.round(x * 100) + "%"; }
 
-    function render(hist, source) {
+    function render(hist) {
       if (!hist.length) {
         root.innerHTML = '<div class="qz-card"><h3 style="margin-top:0">No practice recorded yet</h3><p class="qz-note">Answer some chapter MCQs or sit a mock, ' +
-          "and your readiness score will appear here.</p>" + (CH[0] ? '<a class="btn primary" href="/caf3/' + CH[0].slug + '/">Start with Chapter 1 →</a>' : "") + "</div>" +
-          '<div class="pg-sync"></div>';
-        return sync();
+          "and your readiness score will appear here.</p>" + (CH[0] ? '<a class="btn primary" href="/caf3/' + CH[0].slug + '/">Start with Chapter 1 →</a>' : "") + "</div>";
+        return;
       }
       var r = analyse(hist);
       var band = r.readiness >= 75 ? ["great", "Exam-ready"] : r.readiness >= 60 ? ["good", "Nearly there"]
@@ -886,22 +979,23 @@
           return '<div class="mk-paper"><span>' + (a.t ? new Date(a.t).toLocaleDateString() : "") + " · " + esc(a.kind || "") + "</span><b>" +
             (a.correct != null && a.questions ? a.correct + "/" + a.questions + " (" + a.pct + "%)" : "") + "</b></div>";
         }).join("") + "</div>" +
-        '<p class="qz-note pg-src">' + (source === "google" ? "Showing results from all your devices (signed in with Google)." : "Showing results saved on this device.") + "</p>" +
-        '<div class="pg-sync"></div>';
-      if (source !== "google") sync();
+        '<p class="qz-note pg-src">Showing your results from all your devices (signed in with Google as ' + esc(me.email) + ").</p>";
     }
 
-    // Signed-in students get their full history from the server (every device); otherwise this device's record is used.
-    function sync() {
-      var box = root.querySelector(".pg-sync");
-      if (!ENDPOINT || !GCLIENT || !box || !me) return;
-      needGoogle(box, "Sign in with Google to combine your results from all your devices.").then(function () {
-        box.innerHTML = '<p class="mk-spin">Loading your history…</p>';
-        return call({ action: "me", idToken: idToken });
-      }).then(function (d) { render(d.attempts, "google"); }, function (e) { box.innerHTML = '<p class="qz-err">' + esc(e.message) + "</p>"; });
+    // The readiness score is part of full access; free students see the full-access card.
+    function start() {
+      if (!ENDPOINT || !GCLIENT) return;
+      if (!ready()) return register(root, start);
+      api(waitBox(root, "Loading your progress…"), { action: "me" }, "Sign in with Google to see your progress.").then(function (d) { render(d.attempts); },
+        function (e) {
+          if (e.code !== "locked") return failed(root, e, start);
+          root.innerHTML = lockCard("Your exam readiness score is part of full access", "With full access, this page turns all your practice and " +
+            "marked mock papers into one readiness score out of 100, weighted by the ICAP syllabus, and shows the chapters to work on next.");
+          wireAccess(root);
+        });
     }
 
-    render(load(HKEY, []), "device");
+    start();
   }
 
   // ---------------------------------------------------------------- start
