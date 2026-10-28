@@ -158,15 +158,17 @@
     var a = ACCESS;
     if (!a) return "";
     if (a.access === "approved") return '<p class="ax-bar full">✔ <b>Full access</b></p>';
-    return '<div class="ax-bar"><span>' + (a.access === "requested" ? "Full access requested (under review)" : "Free access") + " · <b>" + a.mcqLeft + "</b> of " +
+    return '<div class="ax-bar"><span>' + (a.access === "requested" ? "Full access requested (under review)" : "Starter access") + " · <b>" + a.mcqLeft + "</b> of " +
       a.freeMcqs + " MCQs and <b>" + a.mocksLeft + "</b> of " + a.freeMocks + " mock paper left</span>" +
-      (a.access === "free" ? '<button type="button" class="qz-link ax-open">Get full access →</button>' : "") + '<div class="ax-req"></div></div>';
+      (a.access === "free" ? '<button type="button" class="qz-link ax-open">Unlock everything, free →</button>' : "") + '<div class="ax-req"></div></div>';
   }
 
+  // Everything is free; the request only keeps the platform for genuine CAF-3 students and protects the questions.
   function lockCard(title, why) {
-    return '<div class="qz-card ax-lock"><span class="pill ok">FULL ACCESS</span><h3>' + title + "</h3><p>" + why + "</p>" +
+    return '<div class="qz-card ax-lock"><span class="pill ok">FREE FULL ACCESS</span><h3>' + title + "</h3><p>" + why + "</p>" +
       "<p><b>Full access includes:</b></p><ul class=\"ax-list\"><li>Every MCQ in all 17 chapters</li><li>More mock papers in the ICAP pattern</li>" +
       "<li>AI marking of your handwritten Questions 2 to 7</li><li>Your exam readiness score and the chapters to work on next</li></ul>" +
+      '<p class="qz-note">There is no charge. Requests only help us keep the platform for genuine CAF-3 students and protect the questions from being copied.</p>' +
       '<div class="ax-req"></div></div>';
   }
 
@@ -186,11 +188,12 @@
       box.innerHTML = '<div class="ax-sent"><b>✔ Your full access request is under review.</b><br>Request received' +
         (a.requested ? " on " + new Date(a.requested).toLocaleDateString() : "") + ". Access will be granted shortly, and we will email you at <b>" +
         esc(me.email) + "</b> as soon as it is approved. Until then, you can keep using your free allowance.</div>";
-      document.querySelectorAll(".ax-bar:not(.full) > span").forEach(function (s) { s.innerHTML = s.innerHTML.replace(/^Free access/, "Full access requested (under review)"); });
+      document.querySelectorAll(".ax-bar:not(.full) > span").forEach(function (s) { s.innerHTML = s.innerHTML.replace(/^Starter access/, "Full access requested (under review)"); });
       document.querySelectorAll(".ax-open").forEach(function (o) { o.remove(); });
       return;
     }
-    box.innerHTML = '<label class="qz-field"><span>Anything we should know? (optional, e.g. your class or teacher)</span>' +
+    box.innerHTML = (box.closest(".ax-lock") ? "" : '<p class="qz-note" style="margin:6px 0">Full access is free. Requests only help us keep the platform for genuine CAF-3 students.</p>') +
+      '<label class="qz-field"><span>Anything we should know? (optional, e.g. your class or teacher)</span>' +
       '<input type="text" maxlength="300" class="ax-note"></label><p class="qz-err" role="alert"></p>' +
       '<button type="button" class="btn primary ax-send">Request full access →</button><div class="ax-g"></div>';
     var btn = box.querySelector(".ax-send");
@@ -213,7 +216,7 @@
     var again = ready();
     root.innerHTML = '<form class="qz-card qz-reg" novalidate>' +
       "<h3>" + (again ? "Your details" : "Before you start: sign in and add your details") + "</h3>" +
-      (again ? "" : '<p class="qz-note">Start free with ' + FREE_MCQS + " MCQs and " + FREE_MOCKS + " mock paper. Sign in once with your Google account, " +
+      (again ? "" : '<p class="qz-note">Completely free. Start straight away with ' + FREE_MCQS + " MCQs and " + FREE_MOCKS + " mock paper. Sign in once with your Google account, " +
         "then add your mobile, city and institute. We may contact you about CAF-3 DSR classes and material.</p>") +
       '<div class="g-row"><div class="g-btn"></div><span class="g-hint">We only receive your name and email address from Google, never your password.</span></div>' +
       '<div class="qz-after" hidden><div class="qz-fields">' + field("name", "Full name", "text", 'autocomplete="name" maxlength="80"') +
@@ -404,8 +407,8 @@
     // Free students who have used their allowance see the full-access card instead of the settings.
     function locked() {
       root.innerHTML = '<div class="qz-card qz-setup">' + whoBar() + "</div>" +
-        lockCard("You have used your " + ACCESS.freeMcqs + " free MCQs", "Thank you for practising with CAF-3 DSR Exam Prep. " +
-          "To keep practising every chapter, request full access below. We review requests and email you when yours is approved.");
+        lockCard("You have practised your first " + ACCESS.freeMcqs + " MCQs", "Thank you for practising with CAF-3 DSR Exam Prep. " +
+          "To keep practising every chapter, send a free access request below. We review requests and email you as soon as yours is approved.");
       on(root, ".qz-edit", function () { register(root, function () { setup(); }, function () { setup(); }); });
       var dup = root.querySelector(".qz-setup .ax-open");   // the card below already has the request form
       if (dup) dup.remove();
@@ -432,7 +435,7 @@
         '<label class="qz-mode"><input type="radio" name="mode" value="learn"><span><b>Learn mode</b>See the answer and explanation after every question. Best for first reading.</span></label>' +
         '<label class="qz-mode"><input type="radio" name="mode" value="test"><span><b>Test mode</b>Timed (' + (SEC_PER_Q / 60) + " min per question), exam-style. Results and review at the end.</span></label></div>" +
         '<label class="qz-check"><input type="checkbox" name="fresh"' + (cfg.fresh ? " checked" : "") + "> Show questions I haven't seen first</label>" +
-        (full() ? "" : '<p class="qz-note">Free access: you have <b>' + ACCESS.mcqLeft + "</b> new MCQs left. Questions you have already had never count again.</p>") +
+        (full() ? "" : '<p class="qz-note">Starter access: you have <b>' + ACCESS.mcqLeft + "</b> new MCQs left. Questions you have already had never count again.</p>") +
         '<button type="button" class="btn primary qz-start">Start practice →</button>' +
         (seenCount ? ' <button type="button" class="qz-link qz-reset">Reset my progress</button>' : "") + "</div>";
       var input = root.querySelector(".qz-custom input");
@@ -554,11 +557,11 @@
         [15, 20, 30, 50].map(function (n) { return '<button type="button" class="qz-chip" data-n="' + n + '">' + n + "</button>"; }).join("") +
         '<label class="qz-custom">Custom <input type="number" min="5" max="' + MCQ_ONLY_MAX + '" value="20" aria-label="Number of MCQs"></label></div></div>' +
         '<p class="qz-note">Every paper is generated for you: questions are drawn at random from the chosen chapters, and questions you have already had come last.' +
-        (full() ? "" : " Free access includes " + ACCESS.freeMocks + " mock paper.") + "</p>" +
+        (full() ? "" : " Starter access includes " + ACCESS.freeMocks + " mock paper; full access (free on request) gives you more.") + "</p>" +
         '<p class="qz-err" role="alert"></p>' + (canBuild ? '<button type="button" class="btn primary mk-go">Generate my mock paper →</button><div class="mk-gw"></div>'
           : full() ? '<p class="qz-timeup">You have built today\'s mock papers. You can build your next one tomorrow.</p>' : "") + "</div>" +
-        (!canBuild && !full() ? lockCard("You have used your free mock paper", "To build more mock papers and get your written answers marked by AI, " +
-          "request full access below. We review requests and email you when yours is approved.") : "") +
+        (!canBuild && !full() ? lockCard("You have sat your first mock paper", "To build more mock papers and get your written answers marked by AI, " +
+          "send a free access request below. We review requests and email you as soon as yours is approved.") : "") +
         (papers.length ? '<div class="qz-card"><h3 style="margin-top:0">Your recent mock papers</h3>' + papers.map(function (p, k) {
           var mcqOnly = p.type === "mcq";
           if (p.secA == null) return '<div class="mk-paper"><span><b>' + esc(p.code) + "</b> · " + new Date(p.date).toLocaleDateString() + " · " +
