@@ -158,7 +158,7 @@
     var a = ACCESS;
     if (!a) return "";
     if (a.access === "approved") return '<p class="ax-bar full">✔ <b>Full access</b></p>';
-    return '<div class="ax-bar"><span>' + (a.access === "requested" ? "Full access requested" : "Free access") + " · <b>" + a.mcqLeft + "</b> of " +
+    return '<div class="ax-bar"><span>' + (a.access === "requested" ? "Full access requested (under review)" : "Free access") + " · <b>" + a.mcqLeft + "</b> of " +
       a.freeMcqs + " MCQs and <b>" + a.mocksLeft + "</b> of " + a.freeMocks + " mock paper left</span>" +
       (a.access === "free" ? '<button type="button" class="qz-link ax-open">Get full access →</button>' : "") + '<div class="ax-req"></div></div>';
   }
@@ -174,7 +174,7 @@
   function wireAccess(root) {
     root.querySelectorAll(".ax-lock .ax-req").forEach(reqBox);
     root.querySelectorAll(".ax-open").forEach(function (b) {
-      b.onclick = function () { b.remove(); reqBox(b.parentNode.querySelector(".ax-req")); };
+      b.onclick = function () { var bar = b.parentNode; b.remove(); reqBox(bar.querySelector(".ax-req")); };
     });
   }
 
@@ -183,8 +183,11 @@
     if (a.access === "approved") { box.innerHTML = ""; return; }
     if (a.access === "blocked") { box.innerHTML = '<p class="qz-err">Your access has been paused. Please email aamir@mirakx.com.</p>'; return; }
     if (a.access === "requested") {
-      box.innerHTML = '<p class="ax-sent">⏳ Your request was sent' + (a.requested ? " on " + new Date(a.requested).toLocaleDateString() : "") +
-        ". We will email you at <b>" + esc(me.email) + "</b> as soon as it is approved.</p>";
+      box.innerHTML = '<div class="ax-sent"><b>✔ Your full access request is under review.</b><br>Request received' +
+        (a.requested ? " on " + new Date(a.requested).toLocaleDateString() : "") + ". Access will be granted shortly, and we will email you at <b>" +
+        esc(me.email) + "</b> as soon as it is approved. Until then, you can keep using your free allowance.</div>";
+      document.querySelectorAll(".ax-bar:not(.full) > span").forEach(function (s) { s.innerHTML = s.innerHTML.replace(/^Free access/, "Full access requested (under review)"); });
+      document.querySelectorAll(".ax-open").forEach(function (o) { o.remove(); });
       return;
     }
     box.innerHTML = '<label class="qz-field"><span>Anything we should know? (optional, e.g. your class or teacher)</span>' +
@@ -193,10 +196,12 @@
     var btn = box.querySelector(".ax-send");
     btn.onclick = function () {
       btn.disabled = true;
-      api(box.querySelector(".ax-g"), { action: "request", note: box.querySelector(".ax-note").value.trim() }).then(function () {
+      btn.textContent = "Sending your request…";
+      box.querySelector(".qz-err").textContent = "";
+      api(box.querySelector(".ax-g"),{ action: "request", note: box.querySelector(".ax-note").value.trim() }).then(function () {
         track("caf3_access_request", { page: location.pathname });
         reqBox(box);
-      }, function (e) { box.querySelector(".qz-err").textContent = e.message; btn.disabled = false; });
+      }, function (e) { box.querySelector(".qz-err").textContent = e.message; btn.disabled = false; btn.textContent = "Request full access →"; });
     };
   }
 
