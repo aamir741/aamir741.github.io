@@ -13,6 +13,7 @@ import xml.etree.ElementTree as ET
 from pathlib import Path
 
 CHANNEL_ID = "UCNe_bMAoNrQXzPuK4oRscgQ"
+VIDEOS_FROM = "2025-01-01"  # keep in step with build_site.py
 ROOT = Path(__file__).resolve().parents[2]
 DATA = ROOT / "data" / "videos.json"
 NS = {"a": "http://www.w3.org/2005/Atom", "yt": "http://www.youtube.com/xml/schemas/2015"}
@@ -78,6 +79,7 @@ def main():
     videos = sorted(latest + kept, key=lambda v: v["date"], reverse=True)
     DATA.write_text(json.dumps(videos, indent=1, ensure_ascii=False), encoding="utf-8")
 
+    videos = [v for v in videos if v["date"] >= VIDEOS_FROM]  # same cutoff as build_site.py
     grid = f'<div class="vgrid">{cards(videos)}</div>'
     for rel, content in (("index.html", f'<div class="vgrid">{cards(videos[:3])}</div>'), ("videos/index.html", grid)):
         p = ROOT / rel
