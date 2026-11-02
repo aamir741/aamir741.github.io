@@ -241,3 +241,9 @@ article.blog img{max-width:100%;height:auto;display:block;margin:8px auto 28px;b
 .cmsg{color:#fff;font-weight:500;min-height:1.4em}
 :focus-visible{outline:3px solid var(--teal2);outline-offset:2px}
 @media (max-width:900px){.h1home{font-size:32px}.cform .row2{grid-template-columns:1fr}}
+/* 3D tilting cards (tilt.js adds .tilt) */
+.tilt{transition:transform .18s ease-out,box-shadow .18s;transform-style:preserve-3d;will-change:transform;position:relative}
+.tilt:hover{box-shadow:0 28px 60px rgba(0,42,116,.22)}
+.tilt:after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;opacity:0;transition:opacity .2s;background:radial-gradient(circle at var(--gx,50%) var(--gy,50%),rgba(255,255,255,.55),transparent 55%)}
+.tilt:hover:after{opacity:1}
+.tilt .ic{transform:translateZ(30px)}
