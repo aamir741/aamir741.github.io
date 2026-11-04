@@ -1,4 +1,4 @@
-/* CAF-3 DSR Exam Prep tools on mirakx.com/academy/caf3/
+/* CAF-3 DSR Exam Prep tools on mirakx.com/learn/icap/caf3/
    - #quiz     : chapter practice (data-ch, data-total, data-title)
    - #mock     : mock exam builder (chapter list in <script id="chapters" type="application/json">)
    - #progress : readiness score (full access)
@@ -224,7 +224,7 @@
       field("phone", "Mobile number", "tel", 'autocomplete="tel" placeholder="03001234567" maxlength="20"') +
       field("city", "City", "text", 'autocomplete="address-level2" placeholder="e.g. Lahore" maxlength="60"') +
       field("institute", "Institute / college", "text", 'placeholder="e.g. your CA tuition institute" maxlength="120"') + "</div>" +
-      '<label class="qz-check"><input type="checkbox" name="consent"' + (again ? " checked" : "") + '><span>I agree that my details and practice results are stored as described in the <a href="/academy/caf3/privacy/" target="_blank">CAF-3 DSR Exam Prep privacy notice</a>.</span></label>' +
+      '<label class="qz-check"><input type="checkbox" name="consent"' + (again ? " checked" : "") + '><span>I agree that my details and practice results are stored as described in the <a href="/learn/icap/caf3/privacy/" target="_blank">CAF-3 DSR Exam Prep privacy notice</a>.</span></label>' +
       '<p class="qz-err" role="alert"></p><button type="submit" class="btn primary">' + (again ? "Save details" : "Continue →") + "</button></div>" +
       (cancel ? ' <button type="button" class="qz-link qz-cancel">Cancel</button>' : "") + "</form>";
     var form = root.querySelector("form"), signed = null;
@@ -268,7 +268,7 @@
 
   function whoBar() {
     return '<p class="qz-me">Practising as <b>' + esc(me.name) + "</b> · " + esc(me.city) + ' · <span class="g-tag">Google</span>' +
-      ' <button type="button" class="qz-link qz-edit">Change details</button> · <a href="/academy/caf3/progress/">My progress</a></p>' + accessBar();
+      ' <button type="button" class="qz-link qz-edit">Change details</button> · <a href="/learn/icap/caf3/progress/">My progress</a></p>' + accessBar();
   }
 
   // ---------------------------------------------------------------- quiz runner
@@ -728,7 +728,7 @@
         }).join("") +
         '<p class="qz-note">AI marking is an estimate. Check any mark you disagree with against the model-answer PDF. ' +
         (d.gradesLeft > 0 ? "You can have " + d.gradesLeft + " more paper" + (d.gradesLeft > 1 ? "s" : "") + " marked today." : "That was your last AI marking for today.") +
-        ' <a href="/academy/caf3/progress/">See your readiness score →</a></p></div>';
+        ' <a href="/learn/icap/caf3/progress/">See your readiness score →</a></p></div>';
     }
 
     function sectionA(paper) {
@@ -795,7 +795,7 @@
         (r.timeUp ? '<p class="qz-timeup">Time is up. Your mock was submitted automatically.</p>' : "") +
         '<span class="pill ok">' + esc(paper.code) + "</span><h3>MCQ-only mock result</h3>" + scoreRing(r) +
         "<h3>" + b[1] + "</h3>" +
-        '<p class="qz-meta">Time ' + clock(r.secs) + " · " + esc(chapterLabel(paper.chapters)) + ' · <a href="/academy/caf3/progress/">See your readiness score</a></p>' +
+        '<p class="qz-meta">Time ' + clock(r.secs) + " · " + esc(chapterLabel(paper.chapters)) + ' · <a href="/learn/icap/caf3/progress/">See your readiness score</a></p>' +
         '<div class="qz-actions"><button type="button" class="btn primary mk-new">Build another mock</button></div></div>' + review(r.qs);
       on(root, ".mk-new", builder);
       wireReview(root);
@@ -957,7 +957,7 @@
     function render(hist) {
       if (!hist.length) {
         root.innerHTML = '<div class="qz-card"><h3 style="margin-top:0">No practice recorded yet</h3><p class="qz-note">Answer some chapter MCQs or sit a mock, ' +
-          "and your readiness score will appear here.</p>" + (CH[0] ? '<a class="btn primary" href="/academy/caf3/' + CH[0].slug + '/">Start with Chapter 1 →</a>' : "") + "</div>";
+          "and your readiness score will appear here.</p>" + (CH[0] ? '<a class="btn primary" href="/learn/icap/caf3/' + CH[0].slug + '/">Start with Chapter 1 →</a>' : "") + "</div>";
         return;
       }
       var r = analyse(hist);
@@ -976,11 +976,11 @@
         '<div class="qz-card"><h3 style="margin-top:0">Work on these next</h3><div class="pg-focus">' + focus.map(function (c) {
           var why = !c.answered && c.sb == null ? "Not practised yet" : c.conf < 1 ? "Only " + c.answered + " MCQs answered so far"
             : c.sb != null && (c.mcq == null || c.sb < c.mcq) ? "Q2–7 written answers " + pc(c.sb) : "MCQ accuracy " + pc(c.mcq);
-          return '<a href="/academy/caf3/' + info[c.ch].slug + '/"><b>Chapter ' + c.ch + "</b> " + esc(info[c.ch].title) + "<small>" + why + "</small></a>";
+          return '<a href="/learn/icap/caf3/' + info[c.ch].slug + '/"><b>Chapter ' + c.ch + "</b> " + esc(info[c.ch].title) + "<small>" + why + "</small></a>";
         }).join("") + "</div></div>" +
         '<div class="qz-card"><h3 style="margin-top:0">By chapter</h3><table class="pg-table"><tr><th>Chapter</th><th>MCQs</th><th>MCQ score</th><th>Q2–7</th><th>Mastery</th></tr>' +
         r.chapters.map(function (c) {
-          return '<tr><td><a href="/academy/caf3/' + info[c.ch].slug + '/">' + c.ch + ". " + esc(info[c.ch].title) + "</a></td><td>" + c.answered + "</td><td>" + pc(c.mcq) +
+          return '<tr><td><a href="/learn/icap/caf3/' + info[c.ch].slug + '/">' + c.ch + ". " + esc(info[c.ch].title) + "</a></td><td>" + c.answered + "</td><td>" + pc(c.mcq) +
             "</td><td>" + pc(c.sb) + '</td><td><div class="pg-bar"><i style="width:' + Math.round(c.eff * 100) + '%"></i></div></td></tr>';
         }).join("") + "</table></div>" +
         '<div class="qz-card"><h3 style="margin-top:0">Recent activity</h3>' + hist.slice(0, 12).map(function (a) {
