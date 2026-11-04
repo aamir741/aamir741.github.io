@@ -45,6 +45,8 @@ def feed():
         title = e.find("a:title", NS).text or ""
         if title.strip().lower() in ("untitled video", "") or title.strip().lower().endswith(" is live!"):
             continue
+        if "/shorts/" in (e.find("a:link", NS).get("href") or ""):  # the site lists full lessons only; Shorts stay on YouTube
+            continue
         out.append({"id": vid, "title": title, "date": e.find("a:published", NS).text[:10],
                     "description": "", "thumb": f"https://i.ytimg.com/vi/{vid}/hqdefault.jpg"})
     return out
