@@ -1,0 +1,326 @@
+<!doctype html>
+<html lang="en">
+<head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-TSKF7YS9F5"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-TSKF7YS9F5');
+</script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CISA Domain 1.4: ITGC vs Application Controls Explained | Muhammad Aamir</title>
+<meta name="description" content="CISA Domain 1.4 types of controls: ITGC vs application controls, input checks, hash totals, preventive, detective and corrective controls, with practice questions.">
+<meta name="author" content="Muhammad Aamir">
+<link rel="canonical" href="https://mirakx.com/blog/cisa-domain-1-4-types-of-controls-itgc-application/">
+<meta property="og:type" content="article"><meta property="og:site_name" content="Muhammad Aamir">
+<meta property="og:title" content="CISA Domain 1.4: ITGC vs Application Controls Explained | Muhammad Aamir"><meta property="og:description" content="CISA Domain 1.4 types of controls: ITGC vs application controls, input checks, hash totals, preventive, detective and corrective controls, with practice questions.">
+<meta property="og:url" content="https://mirakx.com/blog/cisa-domain-1-4-types-of-controls-itgc-application/"><meta property="og:image" content="https://mirakx.com/assets/og-image.jpg">
+<meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="CISA Domain 1.4: ITGC vs Application Controls Explained | Muhammad Aamir">
+<meta name="twitter:description" content="CISA Domain 1.4 types of controls: ITGC vs application controls, input checks, hash totals, preventive, detective and corrective controls, with practice questions."><meta name="twitter:image" content="https://mirakx.com/assets/og-image.jpg">
+<link rel="icon" type="image/png" href="/assets/favicon-64.png"><link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+<meta name="theme-color" content="#002A74">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BlogPosting", "headline": "CISA Domain 1.4: ITGC vs Application Controls Explained", "description": "CISA Domain 1.4 types of controls: ITGC vs application controls, input checks, hash totals, preventive, detective and corrective controls, with practice questions.", "datePublished": "2026-11-09", "dateModified": "2026-11-09", "mainEntityOfPage": "https://mirakx.com/blog/cisa-domain-1-4-types-of-controls-itgc-application/", "image": "https://mirakx.com/assets/og-image.jpg", "author": {"@type": "Person", "name": "Muhammad Aamir", "url": "https://mirakx.com/"}, "publisher": {"@type": "Person", "name": "Muhammad Aamir"}}</script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<nav class="top"><div class="wrap">
+  <a class="logo" href="/"><img src="/assets/aamir-avatar.jpg" alt=""><span>MUHAMMAD <b>AAMIR</b></span></a>
+  <button class="burger" type="button" aria-label="Menu" aria-expanded="false" aria-controls="navlinks"
+    onclick="var o=this.getAttribute('aria-expanded')!=='true';this.setAttribute('aria-expanded',o);document.body.classList.toggle('navopen',o)"><span></span></button>
+  <ul id="navlinks">
+    <li><a href="/profile/">Profile</a></li>
+    <li><a href="/ai/">AI</a></li>
+    <li class="dd"><a href="/learn/">Learn</a><ul>
+      <li><a href="/learn/cisa/">CISA</a></li><li><a href="/learn/icap/">ICAP</a></li><li><a href="/learn/icap/caf3/">CAF-3 DSR Exam Prep</a></li><li><a href="/learn/#study-guide">Free CAF-3 Study Guide</a></li></ul></li>
+    <li class="dd"><a href="/projects/">Projects</a><ul>
+      <li><a href="https://certprepx.com/" target="_blank" rel="noopener">CertPrepX</a></li><li><a href="/learn/icap/caf3/">CAF-3 DSR Exam Prep</a></li></ul></li>
+    <li class="dd"><a href="/blog/">Blog</a><ul>
+      <li><a href="/blog/">Articles</a></li><li><a href="/videos/">Videos</a></li></ul></li>
+    <li><a class="btn primary navcta" href="/#contact">Contact</a></li>
+  </ul>
+</div></nav>
+<header class="pagehead" id="main"><div class="wrap"><span class="eyebrow" style="color:#9CD20C">Blog</span><h1>CISA Domain 1.4: ITGC vs Application Controls Explained</h1><p>CISA Domain 1.4 types of controls: ITGC vs application controls, input checks, hash totals, preventive, detective and corrective controls, with practice questions.</p><div class="byline"><img src="/assets/aamir-avatar.jpg" alt="Muhammad Aamir"><span>Muhammad Aamir · 9 November 2026</span></div></div></header>
+<section><div class="wrap"><article class="blog"><!--EMBED:cisa domain 1.4:--><!--/EMBED--><p>Is restoring a backup preventive, detective or corrective? Does a passed range check prove the data is right? This lesson covers CISA Domain 1, Section 1.4: what a control is, how to classify it, and what an auditor checks before relying on it. Watch the full lesson above, or read the notes below.</p>
+<h2>1.4.1 Internal controls</h2>
+<p><strong>Internal controls</strong> are the policies, procedures, practices and organisational arrangements that give <strong>reasonable assurance</strong> that objectives will be achieved. They:</p>
+<ul>
+<li><strong>Protect assets</strong> such as money, data and equipment</li>
+<li>Support <strong>reliable information</strong> that people can trust</li>
+<li>Promote <strong>effective operations</strong></li>
+<li>Meet <strong>compliance</strong> obligations</li>
+</ul>
+<p><strong>Management</strong> designs and operates controls. The <strong>auditor</strong> evaluates whether their design and operation address the risk.</p>
+<h2>1.4.2 Control objectives and control measures</h2>
+<p>Think of a control in three levels, using one example:</p>
+<table>
+<thead>
+<tr>
+<th>Level</th>
+<th>Meaning</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Control objective</strong></td>
+<td>The desired result</td>
+<td>Prevent unauthorised supplier changes</td>
+</tr>
+<tr>
+<td><strong>Control</strong></td>
+<td>The measure</td>
+<td>Approval by a second, separate person</td>
+</tr>
+<tr>
+<td><strong>Control practice</strong></td>
+<td>How it's carried out</td>
+<td>Compare a verified bank instruction with the requested change before release</td>
+</tr>
+</tbody>
+</table>
+<p>Remember that a procedure can exist on paper while the control isn't operating.</p>
+<h3>How it's implemented vs what it's for</h3>
+<p>These are two separate questions:</p>
+<ul>
+<li><strong>Implementation:</strong> <strong>administrative</strong> controls set direction (policies, training), <strong>technical</strong> controls enforce or record activity in systems, and <strong>physical</strong> controls protect premises and equipment.</li>
+<li><strong>Purpose:</strong> preventive, detective or corrective.</li>
+</ul>
+<p>So a technical control can be preventive or detective.</p>
+<h3>IT general controls vs application controls</h3>
+<table>
+<thead>
+<tr>
+<th>IT general controls (ITGCs)</th>
+<th>Application controls</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Access administration, change control, operations, physical protection</td>
+<td>Specific transaction processing</td>
+</tr>
+<tr>
+<td>Support the whole environment</td>
+<td>Work at input, processing and output</td>
+</tr>
+</tbody>
+</table>
+<p>Take an invoice application. It <strong>rejects an unknown supplier</strong> at input, <strong>calculates the amount</strong> during processing, and <strong>restricts who gets the payment report</strong> at output. Those are application controls. But if an administrator can change the program without approval, weak general controls undermine all three.</p>
+<blockquote>
+<p><strong>Exam tip:</strong> before relying on an automated control, test the general controls it depends on, especially <strong>change management</strong> and <strong>privileged access</strong>.</p>
+</blockquote>
+<h3>Input checks the exam loves</h3>
+<table>
+<thead>
+<tr>
+<th>Check</th>
+<th>What it does</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Validity</strong></td>
+<td>Confirms a value exists in an approved set</td>
+<td>Supplier ID is in the master file</td>
+</tr>
+<tr>
+<td><strong>Check digit</strong></td>
+<td>A calculated extra digit</td>
+<td>Catches a mistyped identifier</td>
+</tr>
+<tr>
+<td><strong>Sequence</strong></td>
+<td>Finds gaps</td>
+<td>A missing invoice number</td>
+</tr>
+<tr>
+<td><strong>Duplicate</strong></td>
+<td>Flags repeats</td>
+<td>Same invoice entered twice</td>
+</tr>
+<tr>
+<td><strong>Completeness</strong></td>
+<td>Confirms required fields are present</td>
+<td>No blank mandatory fields</td>
+</tr>
+<tr>
+<td><strong>Range / limit</strong></td>
+<td>Value lies between bounds</td>
+<td>Month from 1 to 12</td>
+</tr>
+<tr>
+<td><strong>Reasonableness</strong></td>
+<td>Value is plausible in context</td>
+<td>Overtime against hours worked</td>
+</tr>
+<tr>
+<td><strong>Exception report</strong></td>
+<td>Lists items outside the rules</td>
+<td>Items for investigation</td>
+</tr>
+</tbody>
+</table>
+<p>Each check catches only its own error. A month of 18 fails the range check. A month of 8 passes it, even if the invoice belongs in September. <strong>Passing one check never proves every part of a record is correct.</strong></p>
+<h3>Control totals</h3>
+<ul>
+<li><strong>Batch total:</strong> sums a meaningful amount, like invoice value.</li>
+<li><strong>Hash total:</strong> sums a numeric field used only as a check, like account numbers. It is <strong>not</strong> a cryptographic hash.</li>
+<li><strong>Record count:</strong> checks the number of records.</li>
+<li><strong>Run-to-run totals:</strong> reconcile records accepted, rejected and posted across processing stages.</li>
+</ul>
+<p>Matching totals can hide offsetting errors. If two records are lost and two duplicates are added, the record count still matches. A financial total, an identifier comparison or a transaction-level reconciliation could reveal what the count alone misses.</p>
+<h3>Risk shapes the controls</h3>
+<p>Different applications need a different focus:</p>
+<ul>
+<li><strong>E-commerce:</strong> internet-facing inputs can enable injection, so check secure design and input validation.</li>
+<li><strong>EDI:</strong> partner identity, message integrity and duplicate handling.</li>
+<li><strong>Industrial control systems (ICS/SCADA):</strong> safety, segmentation and controlled remote access.</li>
+<li><strong>AI and expert systems:</strong> validation, bias and human oversight.</li>
+</ul>
+<h2>1.4.3 Control classifications</h2>
+<h3>Design vs operating effectiveness</h3>
+<table>
+<thead>
+<tr>
+<th>Design effectiveness</th>
+<th>Operating effectiveness</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Could</strong> the control address the risk if performed properly?</td>
+<td>Did it <strong>actually</strong> work, consistently, during the period?</td>
+</tr>
+<tr>
+<td>Payroll example: the business owner approves access before provisioning</td>
+<td>Approvals exist, they're genuine, and they predate the access</td>
+</tr>
+</tbody>
+</table>
+<h3>Five control purposes</h3>
+<ul>
+<li><strong>Preventive:</strong> stops an unwanted event, like requiring approval before a payment.</li>
+<li><strong>Detective:</strong> identifies it, like a reconciliation that spots an unauthorised payment.</li>
+<li><strong>Corrective:</strong> repairs the consequences, like correcting the record and recovering funds.</li>
+<li><strong>Deterrent:</strong> discourages misconduct, like visible monitoring notices.</li>
+<li><strong>Compensating:</strong> addresses the objective when the preferred control is impractical, like a separate review where full segregation of duties isn't possible.</li>
+</ul>
+<blockquote>
+<p><strong>Exam tip:</strong> controls can have more than one purpose, so classify the <strong>function the question describes</strong>. A log that records an event is detective. An automated response that blocks the activity is preventive.</p>
+</blockquote>
+<h2>1.4.4 Controls and risk</h2>
+<p>A control should address an identified risk to a business objective.</p>
+<ul>
+<li><strong>Preventive</strong> controls reduce likelihood.</li>
+<li><strong>Detective and corrective</strong> controls help find and limit the consequences.</li>
+</ul>
+<p>So assess the combination, and the <strong>residual exposure</strong>. Adding a control is useful only if it addresses the risk and its benefit justifies its cost.</p>
+<h2>1.4.5 Prescriptive controls and frameworks</h2>
+<p>Common references:</p>
+<table>
+<thead>
+<tr>
+<th>Framework</th>
+<th>Focus</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>CIS Critical Security Controls</strong></td>
+<td>Prioritised security safeguards</td>
+</tr>
+<tr>
+<td><strong>PCI DSS</strong></td>
+<td>Payment card data, where scope matters</td>
+</tr>
+<tr>
+<td><strong>CSA Cloud Controls Matrix (CCM)</strong></td>
+<td>Provider and customer responsibilities</td>
+</tr>
+<tr>
+<td><strong>COBIT</strong></td>
+<td>Connects business needs, IT processes and assurance</td>
+</tr>
+</tbody>
+</table>
+<p>Selecting a framework is <strong>not evidence</strong> that its controls work. Map the relevant requirements to risk, identify the evidence, and document justified exclusions. A green dashboard is only useful if the measurement behind it is complete, accurate and relevant.</p>
+<h2>1.4.6 Evaluating the control environment</h2>
+<p>The <strong>control environment</strong> is the culture, oversight and accountability that support control.</p>
+<table>
+<thead>
+<tr>
+<th>Management monitors</th>
+<th>Audit evaluates</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Reviews exceptions and reconciles activity</td>
+<td>Corroborates self-reported results through records, observation and testing</td>
+</tr>
+<tr>
+<td>Tracks corrective action</td>
+<td>Looks closely at what happens when controls fail</td>
+</tr>
+</tbody>
+</table>
+<p>A report produced but never reviewed isn't monitoring. A well-written policy can't make up for <strong>routine override</strong>. Every control is limited by error, collusion, override and cost, so controls give <strong>reasonable assurance, never absolute</strong>.</p>
+<h2>Exam traps</h2>
+<ol>
+<li><strong>Calling a backup restore preventive.</strong> It acts after the event, so it's corrective.</li>
+<li><strong>Assuming a passed validation check proves the record is right.</strong> Each check catches one kind of error.</li>
+<li><strong>Relying on an automated control without testing the general controls behind it.</strong></li>
+<li><strong>Treating a chosen framework as evidence that controls work.</strong> Selecting isn't testing.</li>
+</ol>
+<h2>Practice questions</h2>
+<p><strong>Question 1.</strong> After a storage failure, operations staff restore a customer database from the previous night's backup. Which classification BEST describes the restoration?</p>
+<p>A) Preventive, because it limits the loss of customer data
+B) Detective, because it reveals the corruption to operators
+C) Corrective, because it recovers from an event's effects
+D) Compensating, because it offsets weak storage controls</p>
+<p><strong>Answer: C.</strong> Restoration acts after the loss, so it isn't preventive, and detection happened before the restore. A compensating control substitutes for a missing control, while restoration is a primary recovery measure.</p>
+<p><strong>Question 2.</strong> During a batch transfer, two payment records are lost and two other records are duplicated. Which control is LEAST likely to detect the problem?</p>
+<p>A) A comparison of record counts before and after transfer
+B) A batch total of payment amounts before and after transfer
+C) A comparison of transaction identifiers across both files
+D) A transaction-level reconciliation of the two files</p>
+<p><strong>Answer: A.</strong> Two lost plus two added leaves the count unchanged. A batch total would usually change unless the values happen to offset, and identifier comparisons and reconciliations match record by record.</p>
+<p><strong>Question 3.</strong> An IS auditor plans to rely on an automated three-way match in the payables application. Which area is MOST important to test before placing that reliance?</p>
+<p>A) The accuracy of last month's payables exception report
+B) Controls over changes to the application program
+C) The completeness of supplier master data fields
+D) Management's approval of the invoice payment policy</p>
+<p><strong>Answer: B.</strong> An exception report shows one month's output but says nothing about whether the matching logic stayed unchanged. Master data is an input concern, and an approved policy shows intent, not operation.</p>
+<h2>Keep going</h2>
+<ul>
+<li>Read the free companion book, the <a href="/learn/cisa/">CISA Complete Study Guide (First Edition 2026)</a> by Muhammad Aamir.</li>
+<li>Watch the full <a href="https://www.youtube.com/playlist?list=PLHzAINATBrBs">CISA Complete Course by Mirak X</a>. Next up is Section 1.5, Audit Project Management.</li>
+<li><a href="https://www.youtube.com/@MirakXOfficial?sub_confirmation=1">Subscribe to Mirak X on YouTube</a>. New lesson every day at 6 PM (PKT).</li>
+<li>Try free CISA practice questions and mock exams at <a href="https://certprepx.com/">https://certprepx.com/</a>.</li>
+</ul>
+<p><em>This is independent study material and is not affiliated with or endorsed by ISACA. CISA is a registered trademark of ISACA.</em></p></article><div class="authorbox"><img src="/assets/aamir-avatar.jpg" alt="Muhammad Aamir"><div><b>Muhammad Aamir</b><br><span style="color:var(--muted);font-size:15px">Technology risk and digital transformation leader, co-founder of <a href="https://certprepx.com/" target="_blank" rel="noopener">CertPrepX</a>, author and educator. More explainers on <a href="https://www.youtube.com/@MirakXOfficial" target="_blank" rel="noopener">YouTube</a>.</span></div></div></div></section>
+<section class="creds" aria-label="Certifications of Muhammad Aamir"><div class="wrap">
+  <h2 class="vh">Certifications of Muhammad Aamir</h2>
+  <ul class="crgrid"><li class="cr"><div class="crl"><img src="/assets/logos/cisa.png" alt="CISA logo" width="58" height="48"></div><h3>CISA<sup>®</sup></h3><p>Certified Information Systems Auditor</p><small>ISACA</small></li><li class="cr"><div class="crl"><img src="/assets/logos/iso-27001.png" alt="ISO 27001 logo" width="52" height="48"></div><h3>ISO/IEC 27001</h3><p>Lead Auditor</p><small>CQI-IRCA certified course</small></li><li class="cr"><div class="crl"><span class="exin"><b>EXIN</b>CDCP</span></div><h3>CDCP<sup>®</sup></h3><p>Certified Data Centre Professional</p><small>EXIN · EPI</small></li><li class="cr"><div class="crl"><span class="exin"><b>EXIN</b>CNCDP</span></div><h3>CNCDP<sup>®</sup></h3><p>Certified Network Cabling Design Professional</p><small>EXIN · EPI</small></li><li class="cr"><div class="crl"><img src="/assets/logos/oracle.png" alt="Oracle logo" width="110" height="33"></div><h3>Oracle Cloud Infrastructure 2025</h3><p>Foundations &amp; AI Foundations Associate</p><small>Oracle</small></li><li class="cr"><div class="crl"><img src="/assets/logos/microsoft.png" alt="Microsoft logo" width="44" height="42"></div><h3>Microsoft</h3><p>MCITP · MCSE</p><small>Microsoft</small></li><li class="cr"><div class="crl"><img src="/assets/logos/ec-council.png" alt="EC-Council logo" width="100" height="36"></div><h3>EC-Council</h3><p>Network &amp; Cyber Security</p><small>EC-Council</small></li></ul>
+</div></section>
+<div class="brandbar"><a href="/"><img src="/assets/mirakx-logo.png" alt="Mirak X | mirakx.com" width="640" height="110" loading="lazy"></a></div>
+<footer><div class="wrap fgrid">
+  <div><em class="motto">Technology as an Enabler,<br>Not a Back-Office Function</em></div>
+  <div><h3>Explore</h3><a href="/profile/">Profile</a><a href="/ai/">AI</a><a href="/learn/">Learn</a><a href="/projects/">Projects</a></div>
+  <div><h3>Content</h3><a href="/blog/">Blog</a><a href="/videos/">Videos</a><a href="https://www.youtube.com/@MirakXOfficial" target="_blank" rel="noopener">YouTube</a></div>
+  <div><h3>Contact</h3><a href="mailto:aamir@mirakx.com">aamir@mirakx.com</a><a href="https://linkedin.com/in/aamiryaqoob" target="_blank" rel="noopener">LinkedIn</a><a href="/#contact">Contact form</a></div>
+</div><div class="wrap fbase">
+  <span>© 2026 Muhammad Aamir. All rights reserved. · <a href="/privacy.html">Privacy</a> · <a href="/terms.html">Terms</a></span>
+  <span>Views are my own and do not represent my employer.</span>
+</div></footer>
+<script src="/assets/tilt.js" defer></script>
+</body>
+</html>
