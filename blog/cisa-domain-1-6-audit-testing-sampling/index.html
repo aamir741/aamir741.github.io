@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="en">
+<head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-TSKF7YS9F5"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-TSKF7YS9F5');
+</script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CISA Domain 1.6: Audit Testing and Sampling Methodology | Muhammad Aamir</title>
+<meta name="description" content="CISA Domain 1.6 audit testing and sampling: compliance vs substantive tests, direction of testing, attribute and variable sampling, discovery, PPS and sampling risk.">
+<meta name="author" content="Muhammad Aamir">
+<link rel="canonical" href="https://mirakx.com/blog/cisa-domain-1-6-audit-testing-sampling/">
+<meta property="og:type" content="article"><meta property="og:site_name" content="Muhammad Aamir">
+<meta property="og:title" content="CISA Domain 1.6: Audit Testing and Sampling Methodology | Muhammad Aamir"><meta property="og:description" content="CISA Domain 1.6 audit testing and sampling: compliance vs substantive tests, direction of testing, attribute and variable sampling, discovery, PPS and sampling risk.">
+<meta property="og:url" content="https://mirakx.com/blog/cisa-domain-1-6-audit-testing-sampling/"><meta property="og:image" content="https://mirakx.com/assets/og-image.jpg">
+<meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="CISA Domain 1.6: Audit Testing and Sampling Methodology | Muhammad Aamir">
+<meta name="twitter:description" content="CISA Domain 1.6 audit testing and sampling: compliance vs substantive tests, direction of testing, attribute and variable sampling, discovery, PPS and sampling risk."><meta name="twitter:image" content="https://mirakx.com/assets/og-image.jpg">
+<link rel="icon" type="image/png" href="/assets/favicon-64.png"><link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+<meta name="theme-color" content="#002A74">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BlogPosting", "headline": "CISA Domain 1.6: Audit Testing and Sampling Methodology", "description": "CISA Domain 1.6 audit testing and sampling: compliance vs substantive tests, direction of testing, attribute and variable sampling, discovery, PPS and sampling risk.", "datePublished": "2026-11-11", "dateModified": "2026-11-11", "mainEntityOfPage": "https://mirakx.com/blog/cisa-domain-1-6-audit-testing-sampling/", "image": "https://mirakx.com/assets/og-image.jpg", "author": {"@type": "Person", "name": "Muhammad Aamir", "url": "https://mirakx.com/"}, "publisher": {"@type": "Person", "name": "Muhammad Aamir"}}</script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<nav class="top"><div class="wrap">
+  <a class="logo" href="/"><img src="/assets/aamir-avatar.jpg" alt=""><span>MUHAMMAD <b>AAMIR</b></span></a>
+  <button class="burger" type="button" aria-label="Menu" aria-expanded="false" aria-controls="navlinks"
+    onclick="var o=this.getAttribute('aria-expanded')!=='true';this.setAttribute('aria-expanded',o);document.body.classList.toggle('navopen',o)"><span></span></button>
+  <ul id="navlinks">
+    <li><a href="/profile/">Profile</a></li>
+    <li><a href="/ai/">AI</a></li>
+    <li class="dd"><a href="/learn/">Learn</a><ul>
+      <li><a href="/learn/cisa/">CISA</a></li><li><a href="/learn/icap/">ICAP</a></li><li><a href="/learn/icap/caf3/">CAF-3 DSR Exam Prep</a></li><li><a href="/learn/#study-guide">Free CAF-3 Study Guide</a></li></ul></li>
+    <li class="dd"><a href="/projects/">Projects</a><ul>
+      <li><a href="https://certprepx.com/" target="_blank" rel="noopener">CertPrepX</a></li><li><a href="/learn/icap/caf3/">CAF-3 DSR Exam Prep</a></li></ul></li>
+    <li class="dd"><a href="/blog/">Blog</a><ul>
+      <li><a href="/blog/">Articles</a></li><li><a href="/videos/">Videos</a></li></ul></li>
+    <li><a class="btn primary navcta" href="/#contact">Contact</a></li>
+  </ul>
+</div></nav>
+<header class="pagehead" id="main"><div class="wrap"><span class="eyebrow" style="color:#9CD20C">Blog</span><h1>CISA Domain 1.6: Audit Testing and Sampling Methodology</h1><p>CISA Domain 1.6 audit testing and sampling: compliance vs substantive tests, direction of testing, attribute and variable sampling, discovery, PPS and sampling risk.</p><div class="byline"><img src="/assets/aamir-avatar.jpg" alt="Muhammad Aamir"><span>Muhammad Aamir · 11 November 2026</span></div></div></header>
+<section><div class="wrap"><article class="blog"><!--EMBED:cisa domain 1.6:--><!--/EMBED--><p>An invoice has the correct amount, but nobody approved it. Did the audit test pass or fail? This lesson covers CISA Domain 1, Section 1.6: how an audit test turns an objective into evidence, and how sampling lets you conclude about a whole population.</p>
+<h2>1.6.1 Compliance versus substantive testing</h2>
+<ul>
+<li>A <strong>compliance test</strong> (test of controls) asks whether a required control operated as intended. <em>Did an authorized person approve the invoice before payment?</em></li>
+<li>A <strong>substantive test</strong> examines the transaction, balance or information itself. <em>Is the amount correct?</em></li>
+</ul>
+<p>A correct amount and a missing approval can occur together, so record the substantive result and the control deviation separately.</p>
+<p>Substantive work is either a <strong>test of details</strong> on individual records, or a <strong>substantive analytical procedure</strong> that compares a reliable expectation with the reported result.</p>
+<h3>Direction of testing</h3>
+<p>Choose a starting population that contains the exception you are looking for.</p>
+<table>
+<thead>
+<tr>
+<th>Audit question</th>
+<th>Start with</th>
+<th>Compare with</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Were all receipts recorded?</td>
+<td>Goods receipt records</td>
+<td>Inventory or accounting records</td>
+</tr>
+<tr>
+<td>Are recorded purchases genuine?</td>
+<td>Recorded purchases</td>
+<td>Orders, invoices and receipts</td>
+</tr>
+<tr>
+<td>Were production changes authorized?</td>
+<td>Actual deployments and direct changes</td>
+<td>Approval records</td>
+</tr>
+</tbody>
+</table>
+<h2>1.6.2 Sampling</h2>
+<p>The <strong>population</strong> is the entire defined group, a <strong>sampling unit</strong> is one item, the <strong>sampling frame</strong> is the list you select from, and the <strong>sample</strong> is the subset you examine. Validate coverage before selecting anything: a register of completed reviews cannot show reviews that were never performed.</p>
+<ul>
+<li><strong>Statistical sampling</strong> uses probability-based selection and supports a quantified sampling risk.</li>
+<li><strong>Nonstatistical sampling</strong> uses professional judgment and does not quantify that risk statistically.</li>
+<li><strong>Attribute sampling</strong> measures presence or absence, often a deviation rate.</li>
+<li><strong>Variable sampling</strong> estimates a quantity, such as misstatement.</li>
+</ul>
+<p>Remember <strong>ACVS</strong>: Attribute with Compliance, Variable with Substantive. It is a common association, not a rule.</p>
+<h3>Sampling methods</h3>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Use it when</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Fixed-size attribute</td>
+<td>Estimating a rate with a sample size set before testing</td>
+</tr>
+<tr>
+<td>Stop-or-go</td>
+<td>Few deviations are expected; evaluate in planned stages</td>
+</tr>
+<tr>
+<td>Discovery</td>
+<td>Even one occurrence matters</td>
+</tr>
+<tr>
+<td>Unstratified mean-per-unit</td>
+<td>Estimating one population's total from the sample mean</td>
+</tr>
+<tr>
+<td>Stratified mean-per-unit</td>
+<td>Estimating totals within groups, then adding them</td>
+</tr>
+<tr>
+<td>Difference estimation</td>
+<td>Projecting misstatement from recorded-to-audited differences</td>
+</tr>
+<tr>
+<td>Ratio projection</td>
+<td>Applying the sample's error ratio to the recorded population</td>
+</tr>
+</tbody>
+</table>
+<h3>Selecting items</h3>
+<p>Simple random gives every unit the same chance. Systematic uses a random start and an interval, so check for repeating patterns. Stratified selects within relevant groups. Probability-proportional-to-size gives larger units more weight, so address zero, negative, understated or unrecorded items separately. Targeted selection picks specified items, and supports conclusions only about those items.</p>
+<h2>Sampling risk</h2>
+<p><strong>Sampling risk</strong> is the chance a sample leads to a different conclusion from testing the full population with the same procedure. <strong>Nonsampling risk</strong> comes from other causes, such as a wrong procedure or an incomplete extract.</p>
+<h3>Worked decision</h3>
+<p>A monthly access review has a 5% tolerable deviation rate. The auditor finds 3 deviations in 100 instances, a 3% observed rate, and the statistical method gives an upper deviation limit of 7.6%. Compare the limit with tolerance: the result does not support planned reliance.</p>
+<h2>Keep going</h2>
+<ul>
+<li>Read the free companion book, the <a href="/learn/cisa/">CISA Complete Study Guide</a> by Muhammad Aamir.</li>
+<li>Watch the full <a href="https://www.youtube.com/playlist?list=PLHzAINATBrBs">CISA Complete Course by Mirak X</a>. Next up is Section 1.7, Audit Evidence Collection Techniques.</li>
+<li><a href="https://www.youtube.com/@MirakXOfficial?sub_confirmation=1">Subscribe to Mirak X on YouTube</a>. New lesson every day at 6 PM (PKT).</li>
+<li>Try free CISA practice questions and mock exams at <a href="https://certprepx.com/">https://certprepx.com/</a>.</li>
+</ul>
+<p><em>Free study material. Not affiliated with or endorsed by ISACA. CISA is a registered trademark of ISACA.</em></p></article><div class="authorbox"><img src="/assets/aamir-avatar.jpg" alt="Muhammad Aamir"><div><b>Muhammad Aamir</b><br><span style="color:var(--muted);font-size:15px">Technology risk and digital transformation leader, co-founder of <a href="https://certprepx.com/" target="_blank" rel="noopener">CertPrepX</a>, author and educator. More explainers on <a href="https://www.youtube.com/@MirakXOfficial" target="_blank" rel="noopener">YouTube</a>.</span></div></div></div></section>
+<section class="creds" aria-label="Certifications of Muhammad Aamir"><div class="wrap">
+  <h2 class="vh">Certifications of Muhammad Aamir</h2>
+  <ul class="crgrid"><li class="cr"><div class="crl"><img src="/assets/logos/cisa.png" alt="CISA logo" width="58" height="48"></div><h3>CISA<sup>®</sup></h3><p>Certified Information Systems Auditor</p><small>ISACA</small></li><li class="cr"><div class="crl"><img src="/assets/logos/iso-27001.png" alt="ISO 27001 logo" width="52" height="48"></div><h3>ISO/IEC 27001</h3><p>Lead Auditor</p><small>CQI-IRCA certified course</small></li><li class="cr"><div class="crl"><span class="exin"><b>EXIN</b>CDCP</span></div><h3>CDCP<sup>®</sup></h3><p>Certified Data Centre Professional</p><small>EXIN · EPI</small></li><li class="cr"><div class="crl"><span class="exin"><b>EXIN</b>CNCDP</span></div><h3>CNCDP<sup>®</sup></h3><p>Certified Network Cabling Design Professional</p><small>EXIN · EPI</small></li><li class="cr"><div class="crl"><img src="/assets/logos/oracle.png" alt="Oracle logo" width="110" height="33"></div><h3>Oracle Cloud Infrastructure 2025</h3><p>Foundations &amp; AI Foundations Associate</p><small>Oracle</small></li><li class="cr"><div class="crl"><img src="/assets/logos/microsoft.png" alt="Microsoft logo" width="44" height="42"></div><h3>Microsoft</h3><p>MCITP · MCSE</p><small>Microsoft</small></li><li class="cr"><div class="crl"><img src="/assets/logos/ec-council.png" alt="EC-Council logo" width="100" height="36"></div><h3>EC-Council</h3><p>Network &amp; Cyber Security</p><small>EC-Council</small></li></ul>
+</div></section>
+<div class="brandbar"><a href="/"><img src="/assets/mirakx-logo.png" alt="Mirak X | mirakx.com" width="640" height="110" loading="lazy"></a></div>
+<footer><div class="wrap fgrid">
+  <div><em class="motto">Technology as an Enabler,<br>Not a Back-Office Function</em></div>
+  <div><h3>Explore</h3><a href="/profile/">Profile</a><a href="/ai/">AI</a><a href="/learn/">Learn</a><a href="/projects/">Projects</a></div>
+  <div><h3>Content</h3><a href="/blog/">Blog</a><a href="/videos/">Videos</a><a href="https://www.youtube.com/@MirakXOfficial" target="_blank" rel="noopener">YouTube</a></div>
+  <div><h3>Contact</h3><a href="mailto:aamir@mirakx.com">aamir@mirakx.com</a><a href="https://linkedin.com/in/aamiryaqoob" target="_blank" rel="noopener">LinkedIn</a><a href="/#contact">Contact form</a></div>
+</div><div class="wrap fbase">
+  <span>© 2026 Muhammad Aamir. All rights reserved. · <a href="/privacy.html">Privacy</a> · <a href="/terms.html">Terms</a></span>
+  <span>Views are my own and do not represent my employer.</span>
+</div></footer>
+<script src="/assets/tilt.js" defer></script>
+</body>
+</html>
