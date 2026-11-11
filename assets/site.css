@@ -6,6 +6,39 @@
   a{color:var(--teal);text-decoration:none}
   .wrap{max-width:1140px;margin:0 auto;padding:0 24px}
   svg.i{width:26px;height:26px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+  /* floating 3D book button (bottom right) with tiles opening upward */
+  .fab{position:fixed;right:22px;bottom:22px;z-index:50}
+  .fab summary{list-style:none;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px}
+  .fab summary::-webkit-details-marker{display:none}
+  .fab-book{display:block;perspective:500px;animation:fabfloat 3.2s ease-in-out infinite}
+  .fab-book img{display:block;width:46px;height:60px;border-radius:2px 5px 5px 2px;transform:rotateY(24deg) rotateX(6deg);transition:transform .3s;
+    box-shadow:3px 3px 0 -1px #F4F1EA,5px 5px 0 -1px #C9CED6,14px 18px 22px rgba(0,18,51,.45)}
+  .fab summary:hover .fab-book img,.fab[open] .fab-book img{transform:rotateY(0) scale(1.08)}
+  .fab-t{background:var(--teal);color:#fff;font-weight:700;font-size:11.5px;letter-spacing:.4px;padding:3px 10px;border-radius:20px;box-shadow:0 6px 14px rgba(0,42,116,.3);white-space:nowrap}
+  /* open state: each item floats on its own, books as 3D books, tools as raised app tiles, label on the left */
+  .fab-tiles{position:absolute;right:-4px;bottom:100%;margin-bottom:14px;display:flex;flex-direction:column;align-items:flex-end;gap:16px;perspective:800px}
+  .fab-tiles a{display:flex;align-items:center;gap:14px;color:var(--navy);transform-origin:bottom right;animation:fabtile .4s ease-out both}
+  .fab-tiles a:nth-child(4){animation-delay:0s}.fab-tiles a:nth-child(3){animation-delay:.06s}.fab-tiles a:nth-child(2){animation-delay:.12s}.fab-tiles a:nth-child(1){animation-delay:.18s}
+  .fo-l{background:#fff;border:1px solid #D9EDC2;border-radius:12px;padding:7px 13px;box-shadow:0 10px 24px rgba(0,42,116,.2);text-align:right;white-space:nowrap;transition:.15s}
+  .fo-l b{display:block;font-size:14px;line-height:1.3}.fo-l small{color:var(--muted);font-size:12px}
+  .fab-tiles a:hover .fo-l,.fab-tiles a:focus-visible .fo-l{border-color:var(--teal);background:#F3FAEC}
+  .fo-o{flex:none;width:56px;display:flex;justify-content:center;animation:fabfloat 3s ease-in-out infinite}
+  .fab-tiles a:nth-child(2) .fo-o{animation-delay:-.8s}.fab-tiles a:nth-child(3) .fo-o{animation-delay:-1.6s}.fab-tiles a:nth-child(4) .fo-o{animation-delay:-2.3s}
+  .fo-book img{display:block;width:48px;height:auto;border-radius:2px 5px 5px 2px;transform:perspective(500px) rotateY(24deg) rotateX(6deg);transition:transform .3s;
+    box-shadow:3px 3px 0 -1px #F4F1EA,5px 5px 0 -1px #C9CED6,12px 16px 20px rgba(0,18,51,.45)}
+  .fo-tile{width:52px;height:52px;border-radius:14px;display:flex;align-items:center;justify-content:center;transform:perspective(500px) rotateX(14deg) rotateY(-16deg);transition:transform .3s}
+  .fo-c3{background:linear-gradient(145deg,#1FB070,#128A54 55%,#0B6B40);box-shadow:0 6px 0 #075232,0 16px 22px rgba(0,18,51,.4),inset 0 1px 0 rgba(255,255,255,.4)}
+  .fo-c3 svg{width:28px;height:28px;fill:none;stroke:#fff;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+  .fo-cx{background:linear-gradient(145deg,#fff,#E9EEF5);box-shadow:0 6px 0 #B9C4D4,0 16px 22px rgba(0,18,51,.35),inset 0 1px 0 #fff}
+  .fo-cx img{width:40px;height:40px}
+  .fab-tiles a:hover .fo-book img,.fab-tiles a:hover .fo-tile{transform:perspective(500px) rotateY(0) rotateX(0) scale(1.1)}
+  .fab-home summary{display:none}
+  .fab-home .fab-tiles{position:static;margin:0}
+  @media(max-width:600px){.fab-home .fo-l{display:none}.fab-home .fab-tiles{gap:12px}}
+  @keyframes fabfloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
+  @keyframes fabtile{from{opacity:0;transform:translateY(22px) rotateX(-60deg)}to{opacity:1;transform:none}}
+  @media(prefers-reduced-motion:reduce){.fab-book,.fab-tiles a,.fo-o{animation:none}}
+  @media(max-width:600px){.fab{right:14px;bottom:14px}.fo-l b{font-size:13px}}
   /* nav */
   nav.top{position:sticky;top:0;z-index:20;background:rgba(0,42,116,.82);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid rgba(255,255,255,.08)}
   nav.top .wrap{display:flex;align-items:center;justify-content:space-between;height:68px}
@@ -65,6 +98,19 @@
   .ic{width:50px;height:50px;border-radius:12px;background:rgba(18,138,84,.1);color:var(--teal);display:flex;align-items:center;justify-content:center;margin-bottom:16px}
   .card h3{font-size:18px;font-weight:600;color:var(--navy);margin-bottom:6px}
   .card p{color:var(--muted);font-size:15px}
+  /* CISA page top row: 3D book and CertPrepX (tilt.js tilts the .card) */
+  .card.feature{display:flex;gap:30px;align-items:center;padding:34px;background:linear-gradient(135deg,#fff 0%,#F3FAEC 100%);border-color:#D9EDC2}
+  .feature .role{color:var(--teal);font-weight:600;font-size:13px;letter-spacing:1px;text-transform:uppercase}
+  .feature h3{font-size:22px}
+  .feature p{margin:6px 0 18px}
+  .book3d,.logo3d{flex:none;width:150px;position:relative;transform-style:preserve-3d}
+  .book3d{transform:perspective(900px) translateZ(50px) rotateY(22deg) rotateX(3deg);transition:transform .35s ease}  /* right edge recedes; must stay in front of the tilting card */
+  .book3d img{display:block;width:100%;height:auto;border-radius:2px 6px 6px 2px;
+    box-shadow:5px 5px 0 -1px #F4F1EA,7px 7px 0 -1px #C9CED6,10px 10px 0 -2px #F4F1EA,12px 12px 0 -2px #C9CED6,22px 26px 34px rgba(0,18,51,.35)}
+  .book3d:after{content:"";position:absolute;left:0;top:0;bottom:0;width:12px;border-radius:2px 0 0 2px;background:linear-gradient(90deg,rgba(0,0,0,.35),rgba(255,255,255,.18) 60%,transparent)}
+  .feature:hover .book3d{transform:perspective(900px) translateZ(60px) rotateY(6deg)}
+  .logo3d img{display:block;width:100%;height:auto;transform:translateZ(40px);filter:drop-shadow(0 16px 18px rgba(0,42,116,.25))}
+  @media(max-width:600px){.card.feature{flex-direction:column;text-align:center}}
   /* venture */
   .venture{display:grid;grid-template-columns:auto 1fr auto;gap:34px;align-items:center;background:linear-gradient(135deg,#fff 0%,#F3FAEC 100%);border:1px solid #D9EDC2;border-radius:20px;padding:34px 38px}
   .venture img{width:120px;height:auto}
