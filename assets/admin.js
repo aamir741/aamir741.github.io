@@ -99,7 +99,7 @@
     var tab = (location.hash || "#dashboard").slice(1);
     if ((tab === "mocks" || tab === "helpers") && role !== "owner") tab = "dashboard";
     document.querySelectorAll(".mxa-tabs a").forEach(function (a) { a.classList.toggle("on", a.getAttribute("href") === "#" + tab); });
-    ({ dashboard: dashboard, requests: requests, students: students, marking: marking, mocks: mocks, helpers: helpers }[tab] || dashboard)();
+    ({ dashboard: dashboard, requests: requests, students: students, marking: marking, mocks: mocks, helpers: helpers, book: book }[tab] || dashboard)();
   }
   function reload() { return loadAll().then(route); }
 
@@ -143,6 +143,76 @@
           '" style="width:' + r[1] + '%"></i><b>' + r[1] + "%</b></div>";
       }).join("") : '<p class="muted">No practice attempts yet.</p>') + "</div>" +
       '<div class="card"><h3 style="margin-top:0">Institutes</h3>' + group("institute") + '<h3>Cities</h3>' + group("city") + "</div></div>";
+  }
+
+  // ---------------------------------------------------------------- CISA book: downloads, visits, leads (not tied to the subject picker)
+  var B = null;
+  function book() {
+    if (!B) {
+      app.innerHTML = '<p class="mxa-msg">Loading book data…</p>';
+      Promise.all([all(db.collection("bookLeads").orderBy("lastAt", "desc")), all(db.collection("bookStats"))])
+        .then(function (r) { B = { leads: r[0], stats: r[1] }; book(); }, function (e) { app.innerHTML = '<p class="err">' + esc(e.message) + "</p>"; });
+      return;
+    }
+    var st = {}; B.stats.forEach(function (s) { st[s._id] = s; });
+    var sum = function (f, since) { return B.stats.reduce(function (n, s) { return n + (!since || s._id >= since ? s[f] || 0 : 0); }, 0); };
+    var d30 = new Date(Date.now() - 29 * 864e5).toISOString().slice(0, 10), d7 = new Date(Date.now() - 6 * 864e5).toISOString().slice(0, 10);
+    var k = function (v, l) { return '<div class="kpi"><b>' + v + "</b><span>" + l + "</span></div>"; };
+    var rate = function (a, b) { return b ? Math.round(a / b * 100) + "%" : "—"; };
+    var days = []; for (var i = 29; i >= 0; i--) days.push(new Date(Date.now() - i * 864e5).toISOString().slice(0, 10));
+    var max = Math.max.apply(null, days.map(function (x) { return (st[x] || {}).visit || 0; }).concat([1]));
+    var bars = days.map(function (x) {
+      var s = st[x] || {}, v = s.visit || 0, dl = s.download || 0;
+      return '<div style="height:' + Math.max(1, v / max * 100) + '%;position:relative" data-t="' + x.slice(5) + ": " + v + " visits, " + dl + ' downloads">' +
+        '<i style="position:absolute;left:0;right:0;bottom:0;height:' + (v ? Math.min(100, dl / v * 100) : 0) + '%;background:#9CD20C"></i></div>';
+    }).join("");
+    var count = function (key, val) {
+      var g = {}; B.leads.forEach(function (l) { var x = val ? val(l) : l[key] || "—"; g[x] = (g[x] || 0) + 1; });
+      var rows = Object.keys(g).map(function (x) { return [x, g[x]]; }).sort(function (a, b) { return b[1] - a[1]; }), m = rows.length ? rows[0][1] : 1;
+      return rows.map(function (r) { return '<div class="hbar"><span>' + esc(r[0]) + '</span><i style="width:' + r[1] / m * 100 + '%"></i><b>' + r[1] + "</b></div>"; }).join("") || '<p class="muted">No data yet.</p>';
+    };
+    var shares = sum("shareWhatsApp") + sum("shareLinkedIn") + sum("shareCopy");
+    app.innerHTML = "<h2>CISA Book · mirakx.com/learn/cisa</h2>" +
+      '<div class="kpis">' + k(sum("visit"), "page visits") + k(sum("visit", d30), "visits, last 30 days") + k(sum("formOpen"), "download form opened") +
+      k(sum("download"), "downloads") + k(sum("download", d7), "downloads, last 7 days") + k(B.leads.length, "people (unique emails)") +
+      k(rate(sum("download"), sum("visit")), "visits that download") + k(shares, "shares") + "</div>" +
+      '<div class="card"><h3 style="margin-top:0">Visits per day, last 30 days <span class="muted" style="font-weight:400">(green = downloads)</span></h3><div class="bars">' + bars + "</div></div>" +
+      '<div class="grid2"><div class="card"><h3 style="margin-top:0">How they heard about the book</h3>' + count("source") +
+      "<h3>Will they use CertPrepX?</h3>" + count("certprepx") + "</div>" +
+      '<div class="card"><h3 style="margin-top:0">Live supervised sessions</h3>' + count(null, function (l) { return l.liveSessions ? "Interested" : "Not ticked"; }) +
+      "<h3>Study updates</h3>" + count(null, function (l) { return l.updates ? "Opted in" : "Not ticked"; }) +
+      "<h3>Shares</h3>" + '<div class="hbar"><span>WhatsApp</span><b>' + sum("shareWhatsApp") + '</b></div><div class="hbar"><span>LinkedIn</span><b>' + sum("shareLinkedIn") +
+      '</b></div><div class="hbar"><span>Copied link</span><b>' + sum("shareCopy") + "</b></div></div></div>" +
+      '<h3>People</h3><div class="tools"><input type="search" id="bq" placeholder="Search name, email, phone, source">' +
+      '<select id="bf"><option value="">Everyone</option><option value="live">Interested in live sessions</option><option value="cpx">Will use CertPrepX (Yes / Maybe)</option><option value="upd">Opted in to updates</option></select>' +
+      '<button class="btn" id="bexp">Export CSV</button><span class="muted" id="bcnt"></span><button class="btn" id="bref">Refresh</button></div><div class="card"><table id="btbl"></table></div>';
+    function filtered() {
+      var q = $("#bq").value.toLowerCase().trim(), f = $("#bf").value;
+      return B.leads.filter(function (l) {
+        if (f === "live" && !l.liveSessions) return false;
+        if (f === "cpx" && !/^(Yes|Maybe)$/.test(l.certprepx || "")) return false;
+        if (f === "upd" && !l.updates) return false;
+        return !q || [l.name, l.email, l.phone, l.source, l.sourceOther].join(" ").toLowerCase().indexOf(q) >= 0;
+      });
+    }
+    function draw() {
+      var rows = filtered();
+      $("#bcnt").textContent = rows.length + " people";
+      $("#btbl").innerHTML = "<tr><th>Last download</th><th>Name</th><th>Email / phone</th><th>Heard via</th><th>CertPrepX</th><th>Live sessions</th><th>Updates</th><th>Downloads</th></tr>" +
+        rows.map(function (l) {
+          return "<tr><td>" + fmt(l.lastAt) + "</td><td><b>" + esc(l.name) + "</b></td><td>" + esc(l.email) + "<br>" + esc(l.phone) + "</td><td>" + esc(l.source) +
+            (l.sourceOther ? "<br><span class=muted>" + esc(l.sourceOther) + "</span>" : "") + "</td><td>" + esc(l.certprepx || "—") + "</td><td>" + (l.liveSessions ? "✅" : "") +
+            "</td><td>" + (l.updates ? "✅" : "") + "</td><td>" + (l.downloads || 1) + "</td></tr>";
+        }).join("");
+    }
+    $("#bq").oninput = draw; $("#bf").onchange = draw;
+    $("#bref").onclick = function () { B = null; book(); };
+    $("#bexp").onclick = function () {
+      csv([["First download", "Last download", "Name", "Email", "Phone", "Heard via", "Other source", "CertPrepX", "Live sessions", "Updates", "Downloads", "Campaign", "Referrer"]]
+        .concat(filtered().map(function (l) { return [fmt(l.firstAt), fmt(l.lastAt), l.name, l.email, l.phone, l.source, l.sourceOther, l.certprepx, l.liveSessions ? "Yes" : "", l.updates ? "Yes" : "", l.downloads || 1, l.utm, l.referrer]; })),
+        "cisa-book-leads-" + new Date().toISOString().slice(0, 10) + ".csv");
+    };
+    draw();
   }
 
   // ---------------------------------------------------------------- access

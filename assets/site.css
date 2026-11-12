@@ -295,3 +295,29 @@ article.blog img{max-width:100%;height:auto;display:block;margin:8px auto 28px;b
 .tilt:after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;opacity:0;transition:opacity .2s;background:radial-gradient(circle at var(--gx,50%) var(--gy,50%),rgba(255,255,255,.55),transparent 55%)}
 .tilt:hover:after{opacity:1}
 .tilt .ic{transform:translateZ(30px)}
+/* CISA book download form (book.js) */
+.bkdlg [hidden]{display:none !important}
+.bkdlg{margin:auto;border:0;border-radius:18px;padding:0;width:min(620px,94vw);max-height:92vh;box-shadow:0 30px 80px rgba(0,20,60,.35);color:var(--ink)}
+.bkdlg::backdrop{background:rgba(5,20,50,.55)}
+.bkdlg .bkin{padding:30px 32px 26px;position:relative}
+.bkdlg .bkhead{display:flex;gap:18px;align-items:center;margin-bottom:18px}
+.bkdlg .bkhead img{width:64px;height:auto;border-radius:4px;box-shadow:0 8px 20px rgba(0,42,116,.25)}
+.bkdlg h2{font-size:24px;margin:0 0 4px}
+.bkdlg .bkhead p{margin:0;color:var(--muted);font-size:14.5px}
+.bkdlg .x{position:absolute;top:12px;right:14px;background:none;border:0;font-size:26px;line-height:1;color:var(--muted);cursor:pointer;padding:6px}
+.bkdlg .cform label,.bkdlg .cform legend{color:var(--ink)}
+.bkdlg .cform label small{color:var(--muted)}
+.bkdlg .cform input:not([type=checkbox]):not([type=radio]),.bkdlg .cform select{border-color:var(--line)}
+.bkdlg fieldset{border:0;padding:0;margin:0}
+.bkdlg legend{font-weight:500;font-size:14px;margin-bottom:8px}
+.bkdlg .opts{display:flex;flex-wrap:wrap;gap:8px}
+.bkdlg .opts label{flex-direction:row;align-items:center;gap:7px;border:1.5px solid var(--line);border-radius:999px;padding:7px 14px;cursor:pointer;font-weight:500}
+.bkdlg .opts label:has(input:checked){border-color:var(--teal);background:#EEF8E4}
+.bkdlg .chk{flex-direction:row !important;align-items:flex-start;gap:10px !important;font-weight:400 !important}
+.bkdlg .chk input,.bkdlg .opts input{width:auto;accent-color:var(--teal)}
+.bkdlg .fine{font-size:12.5px;color:var(--muted);margin:2px 0 0}
+.bkdlg .cmsg{color:#B42318}
+.bkdlg .bkdone{text-align:center;padding:10px 0 4px}
+.bkdlg .bkdone .big{font-size:46px;line-height:1}
+.bkdlg .share{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:12px}
+@media (max-width:600px){.bkdlg .bkin{padding:24px 18px 20px}}
