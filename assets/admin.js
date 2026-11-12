@@ -145,8 +145,8 @@
       '<div class="card"><h3 style="margin-top:0">Institutes</h3>' + group("institute") + '<h3>Cities</h3>' + group("city") + "</div></div>";
   }
 
-  // ---------------------------------------------------------------- CISA book: downloads, visits, leads (not tied to the subject picker)
-  var B = null;
+  // ---------------------------------------------------------------- CISA book: visits, books emailed, leads (not tied to the subject picker)
+  var B = null, google = function (l) { return l.method === "Google"; };
   function book() {
     if (!B) {
       app.innerHTML = '<p class="mxa-msg">Loading book data…</p>';
@@ -162,8 +162,8 @@
     var days = []; for (var i = 29; i >= 0; i--) days.push(new Date(Date.now() - i * 864e5).toISOString().slice(0, 10));
     var max = Math.max.apply(null, days.map(function (x) { return (st[x] || {}).visit || 0; }).concat([1]));
     var bars = days.map(function (x) {
-      var s = st[x] || {}, v = s.visit || 0, dl = s.download || 0;
-      return '<div style="height:' + Math.max(1, v / max * 100) + '%;position:relative" data-t="' + x.slice(5) + ": " + v + " visits, " + dl + ' downloads">' +
+      var s = st[x] || {}, v = s.visit || 0, dl = (s.mailed || 0) + (s.download || 0);
+      return '<div style="height:' + Math.max(1, v / max * 100) + '%;position:relative" data-t="' + x.slice(5) + ": " + v + " visits, " + dl + ' books sent">' +
         '<i style="position:absolute;left:0;right:0;bottom:0;height:' + (v ? Math.min(100, dl / v * 100) : 0) + '%;background:#9CD20C"></i></div>';
     }).join("");
     var count = function (key, val) {
@@ -173,11 +173,11 @@
     };
     var shares = sum("shareWhatsApp") + sum("shareLinkedIn") + sum("shareCopy");
     app.innerHTML = "<h2>CISA Book · mirakx.com/learn/cisa</h2>" +
-      '<div class="kpis">' + k(sum("visit"), "page visits") + k(sum("visit", d30), "visits, last 30 days") + k(sum("formOpen"), "download form opened") +
-      k(B.leads.length, "people (unique emails)") + k(B.leads.filter(function (l) { return l.verified; }).length, "confirmed emails") +
-      k(sum("download"), "downloads") + k(sum("download", d7), "downloads, last 7 days") +
-      k(rate(B.leads.filter(function (l) { return l.verified; }).length, B.leads.length), "emails confirmed") + k(shares, "shares") + "</div>" +
-      '<div class="card"><h3 style="margin-top:0">Visits per day, last 30 days <span class="muted" style="font-weight:400">(green = downloads)</span></h3><div class="bars">' + bars + "</div></div>" +
+      '<div class="kpis">' + k(sum("visit"), "page visits") + k(sum("visit", d30), "visits, last 30 days") + k(sum("formOpen"), "form opened") +
+      k(B.leads.length, "people (unique emails)") + k(sum("mailed"), "books emailed") + k(sum("mailed", d7), "books emailed, last 7 days") +
+      k(B.leads.filter(google).length, "signed in with Google") + k(B.leads.filter(function (l) { return l.mailError; }).length, "emails failed") +
+      k(rate(B.leads.length, sum("formOpen")), "form opened → requested") + k(shares, "shares") + "</div>" +
+      '<div class="card"><h3 style="margin-top:0">Visits per day, last 30 days <span class="muted" style="font-weight:400">(green = books emailed)</span></h3><div class="bars">' + bars + "</div></div>" +
       '<div class="grid2"><div class="card"><h3 style="margin-top:0">How they heard about the book</h3>' + count("source") +
       "<h3>Will they use CertPrepX?</h3>" + count("certprepx") + "</div>" +
       '<div class="card"><h3 style="margin-top:0">Live supervised sessions</h3>' + count(null, function (l) { return l.liveSessions ? "Interested" : "Not ticked"; }) +
@@ -185,7 +185,7 @@
       "<h3>Shares</h3>" + '<div class="hbar"><span>WhatsApp</span><b>' + sum("shareWhatsApp") + '</b></div><div class="hbar"><span>LinkedIn</span><b>' + sum("shareLinkedIn") +
       '</b></div><div class="hbar"><span>Copied link</span><b>' + sum("shareCopy") + "</b></div></div></div>" +
       '<h3>People</h3><div class="tools"><input type="search" id="bq" placeholder="Search name, email, phone, source">' +
-      '<select id="bf"><option value="">Everyone</option><option value="live">Interested in live sessions</option><option value="cpx">Will use CertPrepX (Yes / Maybe)</option><option value="upd">Opted in to updates</option><option value="ver">Confirmed email</option><option value="unver">Email not confirmed yet</option></select>' +
+      '<select id="bf"><option value="">Everyone</option><option value="live">Interested in live sessions</option><option value="cpx">Will use CertPrepX (Yes / Maybe)</option><option value="upd">Opted in to updates</option><option value="google">Signed in with Google</option><option value="typed">Typed their email</option><option value="failed">Email failed</option></select>' +
       '<button class="btn" id="bexp">Export CSV</button><span class="muted" id="bcnt"></span><button class="btn" id="bref">Refresh</button></div><div class="card"><table id="btbl"></table></div>';
     function filtered() {
       var q = $("#bq").value.toLowerCase().trim(), f = $("#bf").value;
@@ -193,26 +193,32 @@
         if (f === "live" && !l.liveSessions) return false;
         if (f === "cpx" && !/^(Yes|Maybe)$/.test(l.certprepx || "")) return false;
         if (f === "upd" && !l.updates) return false;
-        if (f === "ver" && !l.verified) return false;
-        if (f === "unver" && l.verified) return false;
+        if (f === "google" && !google(l)) return false;
+        if (f === "typed" && google(l)) return false;
+        if (f === "failed" && !l.mailError) return false;
         return !q || [l.name, l.email, l.phone, l.source, l.sourceOther].join(" ").toLowerCase().indexOf(q) >= 0;
       });
     }
     function draw() {
       var rows = filtered();
       $("#bcnt").textContent = rows.length + " people";
-      $("#btbl").innerHTML = "<tr><th>Last request</th><th>Name</th><th>Email / phone</th><th>Email</th><th>Heard via</th><th>CertPrepX</th><th>Live sessions</th><th>Updates</th><th>Downloads</th></tr>" +
+      $("#btbl").innerHTML = "<tr><th>Last request</th><th>Name</th><th>Email / phone</th><th>Email</th><th>Heard via</th><th>CertPrepX</th><th>Live sessions</th><th>Updates</th></tr>" +
         rows.map(function (l) {
-          return "<tr><td>" + fmt(l.lastAt) + "</td><td><b>" + esc(l.name) + "</b></td><td>" + esc(l.email) + "<br>" + esc(l.phone) + "</td><td>" + esc(l.source) +
+          return "<tr><td>" + fmt(l.lastAt) + "</td><td><b>" + esc(l.name) + "</b></td><td>" + esc(l.email) + "<br>" + esc(l.phone) + "</td><td>" + status(l) + "</td><td>" + esc(l.source) +
             (l.sourceOther ? "<br><span class=muted>" + esc(l.sourceOther) + "</span>" : "") + "</td><td>" + esc(l.certprepx || "—") + "</td><td>" + (l.liveSessions ? "✅" : "") +
-            "</td><td>" + (l.updates ? "✅" : "") + "</td><td>" + (l.downloads || 0) + "</td></tr>";
+            "</td><td>" + (l.updates ? "✅" : "") + "</td></tr>";
         }).join("");
+    }
+    function status(l) {
+      if (l.mailError) return '<span class="err" title="' + esc(l.mailError) + '">❌ not sent</span>';
+      var n = (l.mails || 0) + (l.downloads || 0);
+      return (n ? "📧 sent" + (n > 1 ? " ×" + n : "") : "—") + (google(l) ? "<br>✅ Google" : "");
     }
     $("#bq").oninput = draw; $("#bf").onchange = draw;
     $("#bref").onclick = function () { B = null; book(); };
     $("#bexp").onclick = function () {
-      csv([["First request", "Last request", "Name", "Email", "Email confirmed", "Phone", "Heard via", "Other source", "CertPrepX", "Live sessions", "Updates", "Downloads", "Campaign", "Referrer"]]
-        .concat(filtered().map(function (l) { return [fmt(l.firstAt), fmt(l.lastAt), l.name, l.email, l.verified ? (l.method === "Google" ? "Google" : "Yes") : "No", l.phone, l.source, l.sourceOther, l.certprepx, l.liveSessions ? "Yes" : "", l.updates ? "Yes" : "", l.downloads || 0, l.utm, l.referrer]; })),
+      csv([["First request", "Last request", "Name", "Email", "Signed in with", "Books sent", "Email error", "Phone", "Heard via", "Other source", "CertPrepX", "Live sessions", "Updates", "Campaign", "Referrer"]]
+        .concat(filtered().map(function (l) { return [fmt(l.firstAt), fmt(l.lastAt), l.name, l.email, google(l) ? "Google" : "Typed email", (l.mails || 0) + (l.downloads || 0), l.mailError || "", l.phone, l.source, l.sourceOther, l.certprepx, l.liveSessions ? "Yes" : "", l.updates ? "Yes" : "", l.utm, l.referrer]; })),
         "cisa-book-leads-" + new Date().toISOString().slice(0, 10) + ".csv");
     };
     draw();

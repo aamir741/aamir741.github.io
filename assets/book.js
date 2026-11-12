@@ -1,11 +1,8 @@
-/* Free CISA book (mirakx.com/learn/cisa). The PDF is never public:
-   - typed email  -> bookLead emails a personal link (proves the address), no download on the page
-   - Google       -> address already verified, so the download starts straight away (bookFile?t=token)
-   - ?book=TOKEN  -> the emailed link lands here: remember the token and start the download
-   Returning visitors with a remembered token download directly. Report: /admin/#book. */
+/* Free CISA book (mirakx.com/learn/cisa). The PDF is never on the page or behind a link:
+   bookLead emails it as an attachment (typed address or Google sign-in). Report: /admin/#book. */
 (function () {
   "use strict";
-  var FN = "https://asia-south1-mirakx-35901.cloudfunctions.net/", KEY = "mx_cisa_book_t", PAGE = "https://mirakx.com/learn/cisa/";
+  var FN = "https://asia-south1-mirakx-35901.cloudfunctions.net/", PAGE = "https://mirakx.com/learn/cisa/";
   var FBCONF = { apiKey: "AIzaSyAA-ddrw3baU8EGPIZgSay0gOFqQi1ScOs", authDomain: "mirakx-35901.firebaseapp.com", projectId: "mirakx-35901",
     appId: "1:513880017632:web:42705981297f201b26de85" };
   var SDK = "https://www.gstatic.com/firebasejs/10.14.1/";
@@ -20,32 +17,21 @@
       .then(function (j) { if (j.error) throw new Error(j.error.message || "Something went wrong. Please try again."); return j.result; });
   }
   function track(type) { call("bookEvent", { type: type }).catch(function () { }); }
-  function saved() { try { return localStorage.getItem(KEY); } catch (e) { return null; } }
-  function save(t) { try { localStorage.setItem(KEY, t); } catch (e) { } }
-  function fetchBook(t) { window.location.href = FN + "bookFile?t=" + encodeURIComponent(t); }   // attachment: the page stays put
   function show(id) {
-    ["bkform", "bkdone", "bksent"].forEach(function (x) { document.getElementById(x).hidden = x !== id; });
+    ["bkform", "bksent"].forEach(function (x) { document.getElementById(x).hidden = x !== id; });
     document.getElementById("bkintro").hidden = id !== "bkform";
     if (!dlg.open) dlg.showModal();
   }
 
   try { if (!sessionStorage.getItem("mx_cisa_visit")) { sessionStorage.setItem("mx_cisa_visit", "1"); track("visit"); } } catch (e) { track("visit"); }
 
-  // Arrived from the emailed link: remember it and download.
-  var q = new URLSearchParams(location.search), tok = q.get("book");
-  if (tok && /^[a-f0-9]{32}$/.test(tok)) {
-    save(tok);
-    history.replaceState(null, "", location.pathname + "#book");
-    show("bkdone");
-    fetchBook(tok);
-  }
+  var q = new URLSearchParams(location.search);
+  try { localStorage.removeItem("mx_cisa_book_t"); } catch (e) { }   // left over from the old download links
 
   src.onchange = function () { other.hidden = src.value !== "Other"; };
   document.querySelectorAll("a[data-book]").forEach(function (a) {
     a.addEventListener("click", function (e) {
       e.preventDefault();
-      var t = saved();
-      if (t) { show("bkdone"); fetchBook(t); return; }
       track("formOpen");
       show("bkform");
     });
@@ -84,15 +70,15 @@
     if (!src.value) { msg.textContent = "Please tell us how you heard about the book."; return; }
     var prep = form.querySelector("input[name=certprepx]:checked");
     var utm = ["utm_source", "utm_medium", "utm_campaign"].map(function (k) { return q.get(k); }).filter(Boolean).join(" / ");
-    msg.textContent = ""; btn.disabled = true; btn.textContent = idToken ? "Preparing your download…" : "Sending…";
+    msg.textContent = ""; btn.disabled = true; btn.textContent = "Sending the book…";
     call("bookLead", {
       idToken: idToken, name: f.name.value, email: f.email.value, phone: f.phone.value, source: src.value, sourceOther: f.sourceOther.value,
       certprepx: prep ? prep.value : "", liveSessions: f.liveSessions.checked, updates: f.updates.checked,
       website: f.website.value, utm: utm, referrer: document.referrer
     }).then(function (r) {
       btn.disabled = false; btn.textContent = "Send me the book";
-      if (r.token) { save(r.token); show("bkdone"); fetchBook(r.token); return; }
-      document.querySelector("#bksent [data-email]").textContent = f.email.value.trim();
+      document.querySelector("#bksent [data-email]").textContent = r.email || f.email.value.trim();
+      document.getElementById("bkagain").hidden = !r.again;
       show("bksent");
     }, function (err) {
       msg.textContent = /fetch|network/i.test(err.message) ? "We couldn't reach the server. Please check your connection and try again." : err.message;
