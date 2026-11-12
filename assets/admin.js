@@ -174,8 +174,9 @@
     var shares = sum("shareWhatsApp") + sum("shareLinkedIn") + sum("shareCopy");
     app.innerHTML = "<h2>CISA Book · mirakx.com/learn/cisa</h2>" +
       '<div class="kpis">' + k(sum("visit"), "page visits") + k(sum("visit", d30), "visits, last 30 days") + k(sum("formOpen"), "download form opened") +
-      k(sum("download"), "downloads") + k(sum("download", d7), "downloads, last 7 days") + k(B.leads.length, "people (unique emails)") +
-      k(rate(sum("download"), sum("visit")), "visits that download") + k(shares, "shares") + "</div>" +
+      k(B.leads.length, "people (unique emails)") + k(B.leads.filter(function (l) { return l.verified; }).length, "confirmed emails") +
+      k(sum("download"), "downloads") + k(sum("download", d7), "downloads, last 7 days") +
+      k(rate(B.leads.filter(function (l) { return l.verified; }).length, B.leads.length), "emails confirmed") + k(shares, "shares") + "</div>" +
       '<div class="card"><h3 style="margin-top:0">Visits per day, last 30 days <span class="muted" style="font-weight:400">(green = downloads)</span></h3><div class="bars">' + bars + "</div></div>" +
       '<div class="grid2"><div class="card"><h3 style="margin-top:0">How they heard about the book</h3>' + count("source") +
       "<h3>Will they use CertPrepX?</h3>" + count("certprepx") + "</div>" +
@@ -184,7 +185,7 @@
       "<h3>Shares</h3>" + '<div class="hbar"><span>WhatsApp</span><b>' + sum("shareWhatsApp") + '</b></div><div class="hbar"><span>LinkedIn</span><b>' + sum("shareLinkedIn") +
       '</b></div><div class="hbar"><span>Copied link</span><b>' + sum("shareCopy") + "</b></div></div></div>" +
       '<h3>People</h3><div class="tools"><input type="search" id="bq" placeholder="Search name, email, phone, source">' +
-      '<select id="bf"><option value="">Everyone</option><option value="live">Interested in live sessions</option><option value="cpx">Will use CertPrepX (Yes / Maybe)</option><option value="upd">Opted in to updates</option></select>' +
+      '<select id="bf"><option value="">Everyone</option><option value="live">Interested in live sessions</option><option value="cpx">Will use CertPrepX (Yes / Maybe)</option><option value="upd">Opted in to updates</option><option value="ver">Confirmed email</option><option value="unver">Email not confirmed yet</option></select>' +
       '<button class="btn" id="bexp">Export CSV</button><span class="muted" id="bcnt"></span><button class="btn" id="bref">Refresh</button></div><div class="card"><table id="btbl"></table></div>';
     function filtered() {
       var q = $("#bq").value.toLowerCase().trim(), f = $("#bf").value;
@@ -192,24 +193,26 @@
         if (f === "live" && !l.liveSessions) return false;
         if (f === "cpx" && !/^(Yes|Maybe)$/.test(l.certprepx || "")) return false;
         if (f === "upd" && !l.updates) return false;
+        if (f === "ver" && !l.verified) return false;
+        if (f === "unver" && l.verified) return false;
         return !q || [l.name, l.email, l.phone, l.source, l.sourceOther].join(" ").toLowerCase().indexOf(q) >= 0;
       });
     }
     function draw() {
       var rows = filtered();
       $("#bcnt").textContent = rows.length + " people";
-      $("#btbl").innerHTML = "<tr><th>Last download</th><th>Name</th><th>Email / phone</th><th>Heard via</th><th>CertPrepX</th><th>Live sessions</th><th>Updates</th><th>Downloads</th></tr>" +
+      $("#btbl").innerHTML = "<tr><th>Last request</th><th>Name</th><th>Email / phone</th><th>Email</th><th>Heard via</th><th>CertPrepX</th><th>Live sessions</th><th>Updates</th><th>Downloads</th></tr>" +
         rows.map(function (l) {
           return "<tr><td>" + fmt(l.lastAt) + "</td><td><b>" + esc(l.name) + "</b></td><td>" + esc(l.email) + "<br>" + esc(l.phone) + "</td><td>" + esc(l.source) +
             (l.sourceOther ? "<br><span class=muted>" + esc(l.sourceOther) + "</span>" : "") + "</td><td>" + esc(l.certprepx || "—") + "</td><td>" + (l.liveSessions ? "✅" : "") +
-            "</td><td>" + (l.updates ? "✅" : "") + "</td><td>" + (l.downloads || 1) + "</td></tr>";
+            "</td><td>" + (l.updates ? "✅" : "") + "</td><td>" + (l.downloads || 0) + "</td></tr>";
         }).join("");
     }
     $("#bq").oninput = draw; $("#bf").onchange = draw;
     $("#bref").onclick = function () { B = null; book(); };
     $("#bexp").onclick = function () {
-      csv([["First download", "Last download", "Name", "Email", "Phone", "Heard via", "Other source", "CertPrepX", "Live sessions", "Updates", "Downloads", "Campaign", "Referrer"]]
-        .concat(filtered().map(function (l) { return [fmt(l.firstAt), fmt(l.lastAt), l.name, l.email, l.phone, l.source, l.sourceOther, l.certprepx, l.liveSessions ? "Yes" : "", l.updates ? "Yes" : "", l.downloads || 1, l.utm, l.referrer]; })),
+      csv([["First request", "Last request", "Name", "Email", "Email confirmed", "Phone", "Heard via", "Other source", "CertPrepX", "Live sessions", "Updates", "Downloads", "Campaign", "Referrer"]]
+        .concat(filtered().map(function (l) { return [fmt(l.firstAt), fmt(l.lastAt), l.name, l.email, l.verified ? (l.method === "Google" ? "Google" : "Yes") : "No", l.phone, l.source, l.sourceOther, l.certprepx, l.liveSessions ? "Yes" : "", l.updates ? "Yes" : "", l.downloads || 0, l.utm, l.referrer]; })),
         "cisa-book-leads-" + new Date().toISOString().slice(0, 10) + ".csv");
     };
     draw();

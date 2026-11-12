@@ -321,3 +321,9 @@ article.blog img{max-width:100%;height:auto;display:block;margin:8px auto 28px;b
 .bkdlg .bkdone .big{font-size:46px;line-height:1}
 .bkdlg .share{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:12px}
 @media (max-width:600px){.bkdlg .bkin{padding:24px 18px 20px}}
+.bkdlg .gbtn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;justify-self:stretch !important;background:#fff;border:1.5px solid var(--line) !important;border-radius:10px;padding:11px;font-weight:600;font-size:15px;color:var(--ink)}
+.bkdlg .gbtn:hover{border-color:#B8C4D6 !important;background:#F8FAFC}
+.bkdlg .or{display:flex;align-items:center;gap:12px;color:var(--muted);font-size:13px;margin:0}
+.bkdlg .or:before,.bkdlg .or:after{content:"";flex:1;height:1px;background:var(--line)}
+.bkdlg .verified{margin:0;background:#EEF8E4;color:#256B1E;border-radius:10px;padding:9px 12px;font-size:14px}
+.bkdlg .linkbtn{background:none;border:0;padding:0;color:var(--teal);font:inherit;text-decoration:underline;cursor:pointer}
