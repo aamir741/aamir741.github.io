@@ -73,7 +73,7 @@
   // ---------------------------------------------------------------- data
   function all(q) { return q.get().then(function (s) { return s.docs.map(function (d) { var x = d.data(); x._id = d.id; return x; }); }); }
   function loadAll() {
-    app.innerHTML = '<p class="ad-msg">Loading data…</p>';
+    app.innerHTML = '<p class="mxa-msg">Loading data…</p>';
     return Promise.all([
       all(db.collection("enrollments").where("subject", "==", subject)),
       all(db.collection("users")),
@@ -98,7 +98,7 @@
     if (!D) return;
     var tab = (location.hash || "#dashboard").slice(1);
     if ((tab === "mocks" || tab === "helpers") && role !== "owner") tab = "dashboard";
-    document.querySelectorAll(".ad-tabs a").forEach(function (a) { a.classList.toggle("on", a.getAttribute("href") === "#" + tab); });
+    document.querySelectorAll(".mxa-tabs a").forEach(function (a) { a.classList.toggle("on", a.getAttribute("href") === "#" + tab); });
     ({ dashboard: dashboard, requests: requests, students: students, marking: marking, mocks: mocks, helpers: helpers }[tab] || dashboard)();
   }
   function reload() { return loadAll().then(route); }
@@ -178,7 +178,7 @@
         return '<tr><td>' + fmt(s.en.requestedAt) + "</td><td><b>" + esc(s.name) + "</b><br>" + esc(s.email) + "<br>" + esc(s.phone) +
           "</td><td>" + esc(s.institute) + "<br>" + esc(s.city) + "</td><td>" + esc(s.icapRegNo || "—") + "</td><td>" + (s.en.mcqsUsed || (s.en.seenM || []).length || 0) +
           " MCQs<br>" + (s.en.mockPapers || 0) + " mocks</td><td>" + esc(s.en.note) + '</td><td style="white-space:nowrap">' + accessButtons(s) + "</td></tr>";
-      }).join("") + "</table></div>" : '<p class="ad-msg">No requests waiting. 🎉</p>');
+      }).join("") + "</table></div>" : '<p class="mxa-msg">No requests waiting. 🎉</p>');
     wireAccess(app);
   }
 
@@ -262,7 +262,7 @@
         var u = D.users[x.email] || {};
         return '<tr class="click" data-k="' + x.kind + '" data-id="' + esc(x.id) + '"><td>' + fmt(x.t) + "</td><td>" + esc(u.name || x.email) + "</td><td>" + esc(x.what) +
           "</td><td>" + x.marks + "/" + x.max + "</td><td>" + (x.reviewed ? '<span class="ok">✔ ' + esc(x.reviewed.by) + "</span>" : '<span class="muted">not yet</span>') + "</td></tr>";
-      }).join("") + "</table></div>" : '<p class="ad-msg">No AI-marked papers yet.</p>');
+      }).join("") + "</table></div>" : '<p class="mxa-msg">No AI-marked papers yet.</p>');
     app.querySelectorAll("tr.click").forEach(function (tr) { tr.onclick = function () { review(tr.dataset.k, tr.dataset.id); }; });
   }
 
