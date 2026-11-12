@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Admin | mirakx.com</title>
+<link rel="icon" type="image/png" href="/assets/favicon-64.png">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/admin.css">
+</head>
+<body>
+<header class="ad-top">
+  <a class="ad-logo" href="/">MUHAMMAD <b>AAMIR</b> <span>Admin</span></a>
+  <select id="subject" aria-label="Subject"></select>
+  <span id="who"></span>
+</header>
+<nav class="ad-tabs" id="tabs" hidden>
+  <a href="#dashboard">Dashboard</a><a href="#requests">Access requests <span id="reqn"></span></a><a href="#students">Students</a>
+  <a href="#marking">AI marking</a><a href="#mocks" data-owner>Assigned mocks</a><a href="#helpers" data-owner>Helpers</a>
+</nav>
+<main id="app"><p class="ad-msg">Loading…</p></main>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-functions-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-storage-compat.js"></script>
+<script src="/assets/admin.js"></script>
+</body>
+</html>

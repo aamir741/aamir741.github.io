@@ -40,44 +40,98 @@
   }
 
   // ---------------------------------------------------------------- student details
-  var SKEY = "caf3:student", ENDPOINT = "", GCLIENT = "";
+  var SKEY = "caf3:student", ENDPOINT = "", GCLIENT = "", FBCONF = null, SUBJECT = "";
   var me = load(SKEY, null);
   function ready() { return !!(me && me.google); }   // registered with Google (older form-only registrations must sign in again)
 
+  // ---------------------------------------------------------------- Firebase (sign-in, backend functions, uploads)
+  var SDK = "https://www.gstatic.com/firebasejs/10.14.1/";
+  var fbBoot = null, user = null;
+
+  function script(src) {
+    return new Promise(function (ok, fail) { var s = document.createElement("script"); s.src = src; s.onload = ok; s.onerror = fail; document.head.appendChild(s); });
+  }
+  // Loads the SDK once and resolves after Firebase has restored any earlier sign-in.
+  function fb() {
+    if (!fbBoot) fbBoot = script(SDK + "firebase-app-compat.js")
+      .then(function () { return Promise.all(["auth", "functions", "storage"].map(function (m) { return script(SDK + "firebase-" + m + "-compat.js"); })); })
+      .then(function () {
+        window.firebase.initializeApp(FBCONF);
+        return new Promise(function (ok) {
+          var first = true;
+          window.firebase.auth().onAuthStateChanged(function (u) { user = u; if (first) { first = false; ok(); } });
+        });
+      });
+    return fbBoot;
+  }
+  function who() { return user ? { email: user.email.toLowerCase(), name: user.displayName || "", sub: user.uid } : null; }
+  function tokenValid() { return !!user; }
+
+  // Fire-and-forget records (registration details, finished attempts).
   function send(payload) {
-    if (!me || !ENDPOINT) return;
-    payload.student = me;
-    payload.page = location.pathname;
-    if (me.google && tokenValid()) payload.idToken = idToken;
-    try {
-      fetch(ENDPOINT, { method: "POST", mode: "no-cors", keepalive: true,
-        headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify(payload) });
-    } catch (e) { }
+    if (!me || !FBCONF) return;
+    fb().then(function () {
+      if (!user) return;
+      var fn = payload.type === "register" ? "saveProfile" : "recordAttempt";
+      payload.subject = SUBJECT;
+      payload.student = me;
+      payload.page = location.pathname;
+      window.firebase.app().functions("asia-south1").httpsCallable(fn)(payload).catch(function () { });
+    });
   }
 
-  // POST that needs the reply (Google-verified requests); a text/plain body keeps it a simple CORS request.
+  // Answer-sheet photos/PDFs go to Storage first; the grading function reads them from there.
+  function upload(code, files) {
+    var u = who(), stamp = Date.now(), root = window.firebase.storage().ref("uploads/" + u.email + "/" + code + "-" + stamp);
+    return Promise.all(files.map(function (f, i) {
+      var ref = root.child("page-" + (i + 1) + (f.type === "application/pdf" ? ".pdf" : ".jpg"));
+      return ref.putString(f.data, "base64", { contentType: f.type }).then(function () { return ref.fullPath; });
+    }));
+  }
+
+  var CALLS = { status: "status", mcq: "mcq", mock: "mock", request: "request", me: "me", grade: "grade" };
+  // Call a backend function (signed-in); errors carry .code ("auth", "limit", "daily", "blocked", "locked") like the old server.
   function call(payload) {
-    payload.student = me;
-    payload.page = location.pathname;
-    return fetch(ENDPOINT, { method: "POST", body: JSON.stringify(payload) })
-      .then(function (r) { return r.json(); }, function () { throw new Error("Could not reach the server. Please check your connection and try again."); })
-      .then(function (d) {
-        if (d.access) ACCESS = d.access;
-        if (d.status !== "ok") { var e = new Error(d.error || "Something went wrong. Please try again."); e.code = d.code; throw e; }
-        return d;
+    var fn = CALLS[payload.action], data = {};
+    Object.keys(payload).forEach(function (k) { if (k !== "action") data[k] = payload[k]; });
+    data.subject = SUBJECT;
+    data.student = me;
+    data.page = location.pathname;
+    var pre = Promise.resolve();
+    if (fn === "grade") pre = upload(payload.paper.code, payload.files).then(function (paths) { data.code = payload.paper.code; data.files = paths; delete data.paper; });
+    return pre.then(function () { return window.firebase.app().functions("asia-south1").httpsCallable(fn, { timeout: 300000 })(data); })
+      .then(function (r) { var d = r.data; if (d.access) ACCESS = d.access; return d; }, function (e) {
+        var det = e.details || {}, err = new Error((e.message && e.message !== "internal" && e.message !== "INTERNAL") ? e.message : "Something went wrong. Please try again.");
+        if (det.access) ACCESS = det.access;
+        err.code = det.code || (e.code === "functions/unauthenticated" ? "auth" : "");
+        throw err;
       });
   }
 
-  // Signed-in request: shows the Google button in box when the sign-in has expired, and signs in again once if the server asks.
+  // Signed-in request: shows the Google button in box when needed. After "status", asks once for the ICAP registration number.
   function api(box, payload, why) {
-    function go() {
-      return needGoogle(box, why || "Please sign in with Google again to continue.").then(function () { payload.idToken = idToken; return call(payload); });
-    }
-    return go().catch(function (e) {
-      if (e.code !== "auth") throw e;
-      idToken = null;
-      idExp = 0;
-      return go();
+    return needGoogle(box, why || "Please sign in with Google to continue.").then(function () { return call(payload); })
+      .then(function (d) { return d.needsIcapReg ? askIcap(box).then(function () { return d; }) : d; });
+  }
+
+  function askIcap(box) {
+    return new Promise(function (ok) {
+      box.innerHTML = '<form class="qz-card qz-reg" novalidate><h3>One more detail: your ICAP registration number</h3>' +
+        '<p class="qz-note">We now record ICAP registration numbers for CAF students. You only need to add it once.</p>' +
+        '<label class="qz-field"><span>ICAP registration number</span><input name="icap" maxlength="30" required value="' + esc((me && me.icapRegNo) || "") + '"></label>' +
+        '<p class="qz-err" role="alert"></p><button type="submit" class="btn primary">Save and continue →</button></form>';
+      var form = box.querySelector("form");
+      form.onsubmit = function (e) {
+        e.preventDefault();
+        var v = form.elements.icap.value.trim();
+        if (!/^[A-Za-z0-9\-\/ ]{3,30}$/.test(v)) { form.querySelector(".qz-err").textContent = "Please enter your ICAP registration number as shown on your ICAP documents."; return; }
+        form.querySelector("button").disabled = true;
+        window.firebase.app().functions("asia-south1").httpsCallable("saveProfile")({ student: { icapRegNo: v } }).then(function () {
+          if (me) { me.icapRegNo = v; save(SKEY, me); }
+          box.innerHTML = "";
+          ok();
+        }, function (er) { form.querySelector(".qz-err").textContent = er.message; form.querySelector("button").disabled = false; });
+      };
     });
   }
 
@@ -92,59 +146,47 @@
     on(root, ".qz-reload", retry);
   }
 
-  // ---------------------------------------------------------------- Google sign-in
-  var idToken = null, idExp = 0, gsiReady = null, onCredential = null;
-
-  function jwtPayload(t) {
-    var b = t.split(".")[1].replace(/-/g, "+").replace(/_/g, "/");
-    return JSON.parse(decodeURIComponent(escape(atob(b + "===".slice((b.length + 3) % 4)))));
-  }
-  function setToken(t) {
-    var p = jwtPayload(t);
-    idToken = t;
-    idExp = p.exp * 1000;
-    try { sessionStorage.setItem("caf3:idt", t); } catch (e) { }
-    return p;
-  }
-  function tokenValid() { return !!idToken && idExp - Date.now() > 120000; }
-  try { var saved = sessionStorage.getItem("caf3:idt"); if (saved) setToken(saved); } catch (e) { }
-
-  function gsi() {
-    if (!gsiReady) gsiReady = new Promise(function (ok, fail) {
-      var s = document.createElement("script");
-      s.src = "https://accounts.google.com/gsi/client";
-      s.onload = function () {
-        window.google.accounts.id.initialize({ client_id: GCLIENT, auto_select: true, cancel_on_tap_outside: false,
-          callback: function (r) { var p = setToken(r.credential); if (onCredential) onCredential(p); } });
-        ok();
-      };
-      s.onerror = fail;
-      document.head.appendChild(s);
-    });
-    return gsiReady;
+  // ---------------------------------------------------------------- Google sign-in (Firebase)
+  // Draws a "Continue with Google" button into el; cb({email, name, sub}) runs after a successful sign-in.
+  function googleButton(el, cb) {
+    if (!FBCONF || !el) return;
+    el.innerHTML = '<button type="button" class="btn primary g-signin"><svg viewBox="0 0 48 48" width="18" height="18" style="background:#fff;border-radius:50%;padding:2px">' +
+      '<path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9 3.5l6.7-6.7C35.6 2.4 30.2 0 24 0 14.6 0 6.6 5.4 2.7 13.3l7.8 6C12.4 13.7 17.7 9.5 24 9.5z"/>' +
+      '<path fill="#4285F4" d="M46.1 24.5c0-1.6-.1-3.1-.4-4.5H24v9h12.4c-.5 2.9-2.2 5.3-4.6 6.9l7.4 5.7c4.3-4 6.9-9.9 6.9-17.1z"/>' +
+      '<path fill="#FBBC05" d="M10.5 28.7c-.5-1.4-.8-3-.8-4.7s.3-3.2.8-4.7l-7.8-6C1 16.6 0 20.2 0 24s1 7.4 2.7 10.7l7.8-6z"/>' +
+      '<path fill="#34A853" d="M24 48c6.5 0 11.9-2.1 15.9-5.8l-7.4-5.7c-2.1 1.4-4.8 2.3-8.5 2.3-6.3 0-11.6-4.2-13.5-9.9l-7.8 6C6.6 42.6 14.6 48 24 48z"/></svg>' +
+      " Continue with Google</button>";
+    el.querySelector("button").onclick = function () {
+      var b = this;
+      b.disabled = true;
+      fb().then(function () {
+        var p = new window.firebase.auth.GoogleAuthProvider();
+        p.setCustomParameters({ prompt: "select_account" });
+        return window.firebase.auth().signInWithPopup(p);
+      }).then(function (r) { user = r.user; cb(who()); }, function (e) {
+        b.disabled = false;
+        if (e && e.code === "auth/popup-closed-by-user") return;
+        el.insertAdjacentHTML("beforeend", '<p class="qz-err">Google sign-in did not complete. Please allow pop-ups for mirakx.com and try again.</p>');
+      });
+    };
   }
 
-  // Draws Google's "Continue with Google" button into el; cb(payload) runs after a successful sign-in.
-  // auto: also offer Google's one-tap prompt, which signs a returning student straight back in.
-  function googleButton(el, cb, auto) {
-    if (!GCLIENT || !el) return;
-    gsi().then(function () {
-      onCredential = cb;
-      window.google.accounts.id.renderButton(el, { theme: "filled_blue", size: "large", shape: "pill", text: "continue_with", width: 280 });
-      if (auto) try { window.google.accounts.id.prompt(); } catch (e) { }
-    }, function () { el.textContent = "Google sign-in could not load. Please check your connection."; });
-  }
-
-  // Resolves once there is a fresh Google token, showing a sign-in prompt in box if needed.
+  // Resolves once the student is signed in, showing a sign-in prompt in box if needed.
   function needGoogle(box, why) {
-    if (tokenValid()) return Promise.resolve();
-    return new Promise(function (ok) {
-      box.innerHTML = '<div class="g-need"><p>' + why + '</p><div class="g-btn"></div></div>';
-      googleButton(box.querySelector(".g-btn"), function (p) {
+    return fb().then(function () {
+      if (user) {
+        var p = who();
         if (me && (me.email !== p.email || !me.google)) { me.google = true; me.email = p.email; me.id = "G" + p.sub; save(SKEY, me); }
-        box.innerHTML = "";
-        ok();
-      }, true);
+        return;
+      }
+      return new Promise(function (ok) {
+        box.innerHTML = '<div class="g-need"><p>' + why + '</p><div class="g-btn"></div></div>';
+        googleButton(box.querySelector(".g-btn"), function (p) {
+          if (me && (me.email !== p.email || !me.google)) { me.google = true; me.email = p.email; me.id = "G" + p.sub; save(SKEY, me); }
+          box.innerHTML = "";
+          ok();
+        });
+      });
     });
   }
 
@@ -160,7 +202,7 @@
     if (a.access === "approved") return '<p class="ax-bar full">✔ <b>Full access</b></p>';
     return '<div class="ax-bar"><span>' + (a.access === "requested" ? "Full access requested (under review)" : "Starter access") + " · <b>" + a.mcqLeft + "</b> of " +
       a.freeMcqs + " MCQs and <b>" + a.mocksLeft + "</b> of " + a.freeMocks + " mock paper left</span>" +
-      (a.access === "free" ? '<button type="button" class="qz-link ax-open">Unlock everything, free →</button>' : "") + '<div class="ax-req"></div></div>';
+      (a.access === "free" ? '<button type="button" class="ax-open ax-cta"><span>🔓 Request FREE full access</span><small>All 1,020 MCQs · more mock papers · AI marking · readiness score</small></button>' : "") + '<div class="ax-req"></div></div>';
   }
 
   // Everything is free; the request only keeps the platform for genuine CAF-3 students and protects the questions.
@@ -223,7 +265,8 @@
       field("email", "Email address", "email", 'autocomplete="email" maxlength="120" readonly') +
       field("phone", "Mobile number", "tel", 'autocomplete="tel" placeholder="03001234567" maxlength="20"') +
       field("city", "City", "text", 'autocomplete="address-level2" placeholder="e.g. Lahore" maxlength="60"') +
-      field("institute", "Institute / college", "text", 'placeholder="e.g. your CA tuition institute" maxlength="120"') + "</div>" +
+      field("institute", "Institute / college", "text", 'placeholder="e.g. your CA tuition institute" maxlength="120"') +
+      field("icapRegNo", "ICAP registration number", "text", 'maxlength="30"') + "</div>" +
       '<label class="qz-check"><input type="checkbox" name="consent"' + (again ? " checked" : "") + '><span>I agree that my details and practice results are stored as described in the <a href="/learn/icap/caf3/privacy/" target="_blank">CAF-3 DSR Exam Prep privacy notice</a>.</span></label>' +
       '<p class="qz-err" role="alert"></p><button type="submit" class="btn primary">' + (again ? "Save details" : "Continue →") + "</button></div>" +
       (cancel ? ' <button type="button" class="qz-link qz-cancel">Cancel</button>' : "") + "</form>";
@@ -239,12 +282,11 @@
       root.querySelector(".qz-after").hidden = false;
       form.elements.phone.focus();
     }
-    if (tokenValid()) useGoogle(jwtPayload(idToken));
-    else googleButton(root.querySelector(".g-btn"), useGoogle, again);
+    fb().then(function () { if (user) useGoogle(who()); else googleButton(root.querySelector(".g-btn"), useGoogle); });
     form.onsubmit = function (e) {
       e.preventDefault();
       var d = {}, err = "";
-      ["name", "email", "phone", "city", "institute"].forEach(function (k) { d[k] = form.elements[k].value.trim(); });
+      ["name", "email", "phone", "city", "institute", "icapRegNo"].forEach(function (k) { d[k] = form.elements[k].value.trim(); });
       d.google = true;
       d.phone = d.phone.replace(/[\s-]/g, "");
       if (!signed) err = "Please sign in with Google first.";
@@ -253,14 +295,14 @@
       else if (!/^(03\d{9}|\+923\d{9}|\+\d{10,15})$/.test(d.phone)) err = "Please enter a valid mobile number, e.g. 03001234567.";
       else if (d.city.length < 2) err = "Please enter your city.";
       else if (d.institute.length < 2) err = "Please enter your institute or college.";
+      else if (!/^[A-Za-z0-9\-\/ ]{3,30}$/.test(d.icapRegNo)) err = "Please enter your ICAP registration number as shown on your ICAP documents.";
       else if (!form.elements.consent.checked) err = "Please tick the box to agree to the privacy notice.";
       if (err) { root.querySelector(".qz-err").textContent = err; return; }
       d.id = "G" + signed.sub;
-      var first = !again;
       me = d;
       save(SKEY, me);
       ACCESS = null;   // re-read, which also saves the new details on the server
-      if (first) send({ type: "register", device: navigator.userAgent });
+      send({ type: "register", device: navigator.userAgent });   // saves the details (incl. ICAP number) on the server
       track("caf3_register", { page: location.pathname });
       done();
     };
@@ -680,30 +722,6 @@
       };
     }
 
-    // Photos are shrunk to at most 1800px and re-saved as JPEG; PDFs are sent as they are.
-    function encode(f) {
-      return new Promise(function (ok, fail) {
-        if (f.type === "application/pdf") {
-          if (f.size > 15e6) return fail(new Error(f.name + " is larger than 15 MB."));
-          var rd = new FileReader();
-          rd.onload = function () { ok({ name: f.name, type: f.type, data: String(rd.result).split(",")[1] }); };
-          rd.onerror = function () { fail(new Error("Could not read " + f.name + ".")); };
-          return rd.readAsDataURL(f);
-        }
-        var img = new Image(), url = URL.createObjectURL(f);
-        img.onload = function () {
-          var k = Math.min(1, 1800 / Math.max(img.width, img.height)), c = document.createElement("canvas");
-          c.width = Math.round(img.width * k);
-          c.height = Math.round(img.height * k);
-          c.getContext("2d").drawImage(img, 0, 0, c.width, c.height);
-          URL.revokeObjectURL(url);
-          ok({ name: f.name, type: "image/jpeg", data: c.toDataURL("image/jpeg", 0.8).split(",")[1] });
-        };
-        img.onerror = function () { fail(new Error("Could not read " + f.name + ". Please upload JPG or PNG photos, or a PDF.")); };
-        img.src = url;
-      });
-    }
-
     function showGrade(box, paper, d) {
       var q1 = paper.secA || 0, q1max = paper.mcq.length, grand = q1 + d.total, max = q1max + d.max, pct = Math.round(grand / max * 100);
       var secbPct = d.max ? Math.round(d.total / d.max * 100) : 0, chap = {};
@@ -948,6 +966,124 @@
     return { chapters: chapters, areas: areas, readiness: readiness, mcqTotal: mcqTotal, papers: papers };
   }
 
+  // Photos are shrunk to at most 1800px and re-saved as JPEG; PDFs are sent as they are.
+  function encode(f) {
+    return new Promise(function (ok, fail) {
+      if (f.type === "application/pdf") {
+        if (f.size > 15e6) return fail(new Error(f.name + " is larger than 15 MB."));
+        var rd = new FileReader();
+        rd.onload = function () { ok({ name: f.name, type: f.type, data: String(rd.result).split(",")[1] }); };
+        rd.onerror = function () { fail(new Error("Could not read " + f.name + ".")); };
+        return rd.readAsDataURL(f);
+      }
+      var img = new Image(), url = URL.createObjectURL(f);
+      img.onload = function () {
+        var k = Math.min(1, 1800 / Math.max(img.width, img.height)), c = document.createElement("canvas");
+        c.width = Math.round(img.width * k);
+        c.height = Math.round(img.height * k);
+        c.getContext("2d").drawImage(img, 0, 0, c.width, c.height);
+        URL.revokeObjectURL(url);
+        ok({ name: f.name, type: "image/jpeg", data: c.toDataURL("image/jpeg", 0.8).split(",")[1] });
+      };
+      img.onerror = function () { fail(new Error("Could not read " + f.name + ". Please upload JPG or PNG photos, or a PDF.")); };
+      img.src = url;
+    });
+  }
+
+
+  // ---------------------------------------------------------------- mocks assigned by the teacher (progress page)
+  function fnCall(name, data) {
+    return window.firebase.app().functions("asia-south1").httpsCallable(name, { timeout: 300000 })(data)
+      .then(function (r) { return r.data; }, function (e) { throw new Error(e.message && e.message !== "internal" ? e.message : "Something went wrong. Please try again."); });
+  }
+
+  function assigned(root, back) {
+    var box = document.createElement("div");
+    box.className = "qz-card";
+    box.innerHTML = '<h3 style="margin-top:0">My assigned mocks</h3><p class="mk-spin">Checking for mocks from your teacher…</p>';
+    root.insertBefore(box, root.firstChild);
+    fnCall("myAssignments", { subject: SUBJECT }).then(function (d) {
+      if (!d.assignments.length) { box.remove(); return; }
+      box.innerHTML = '<h3 style="margin-top:0">My assigned mocks</h3>' + d.assignments.map(function (a) {
+        var late = Date.now() > a.deadline;
+        return '<div class="mk-paper"><span><b>' + esc(a.title) + "</b> · " + (a.type === "mcq" ? a.mcqs + " MCQs" : "15 MCQs + Questions 2–7") +
+          " · due " + new Date(a.deadline).toLocaleString() + "</span>" +
+          (a.result ? "<b>" + a.result.total + "/" + a.result.max + " (" + a.result.pct + "%)</b>"
+            : late ? '<b class="qz-err">Deadline passed</b>' : '<button type="button" class="btn primary" data-asg="' + esc(a.id) + '">Start →</button>') + "</div>";
+      }).join("");
+      box.querySelectorAll("[data-asg]").forEach(function (b) { b.onclick = function () { attempt(root, b.dataset.asg, back); }; });
+    }, function (e) { box.innerHTML = '<h3 style="margin-top:0">My assigned mocks</h3><p class="qz-err">' + esc(e.message) + "</p>"; });
+  }
+
+  function attempt(root, id, back) {
+    waitBox(root, "Loading your mock…");
+    fnCall("startAssignment", { id: id }).then(function (d) {
+      var p = d.paper, files = [];
+      root.innerHTML = '<div class="qz-card"><span class="pill ok">ASSIGNED MOCK</span><h3>' + esc(p.title) + '</h3><p class="qz-note">Due ' + new Date(p.deadline).toLocaleString() +
+        ". Answer every MCQ" + (p.secb.length ? ", write Questions 2 to 7 on paper, then upload clear photos or a PDF of your answer sheets" : "") +
+        ". You get your result as soon as you submit.</p></div>" +
+        (p.mcq.length ? '<div class="qz-card"><h3 style="margin-top:0">Question 1: MCQs</h3>' + p.mcq.map(function (q, i) {
+          return '<fieldset class="as-q"><legend><b>' + (i + 1) + ".</b> " + esc(q.q) + "</legend>" + q.options.map(function (o, k) {
+            return '<label class="as-opt"><input type="radio" name="' + esc(q.id) + '" value="' + k + '"> ' + LETTERS[k] + ". " + esc(o) + "</label>";
+          }).join("") + "</fieldset>";
+        }).join("") + "</div>" : "") +
+        (p.secb.length ? '<div class="qz-card"><h3 style="margin-top:0">Questions 2 to 7 (write on paper)</h3>' + p.secb.map(function (q, i) {
+          return '<div class="as-secb"><h4>Question ' + (i + 2) + " · " + esc(q.topic || "") + " (" + q.marks + " marks)</h4>" +
+            (q.scenario ? "<p>" + esc(q.scenario) + "</p>" : "") + (q.tables || []).map(function (t) {
+              return '<table class="pg-table"><caption>' + esc(t.caption || "") + "</caption><tr>" + (t.headers || []).map(function (h) { return "<th>" + esc(h) + "</th>"; }).join("") + "</tr>" +
+                (t.rows || []).map(function (r) { return "<tr>" + r.map(function (c) { return "<td>" + esc(c) + "</td>"; }).join("") + "</tr>"; }).join("") + "</table>";
+            }).join("") + q.parts.map(function (pt) { return "<p><b>(" + esc(pt.label) + ")</b> " + esc(pt.text) + " <i>[" + pt.marks + "]</i></p>"; }).join("") + "</div>";
+        }).join("") + '<label class="mk-drop"><input type="file" accept="image/*,application/pdf" multiple><span>📷 Add answer-sheet photos or a PDF</span></label><div class="mk-files"></div></div>' : "") +
+        '<div class="qz-card"><p class="qz-err" role="alert"></p><button type="button" class="btn primary as-submit">Submit for marking →</button>' +
+        ' <button type="button" class="qz-link as-back">Back</button><div class="as-wait"></div></div>';
+      var err = root.querySelector(".qz-err"), input = root.querySelector("input[type=file]");
+      function list() {
+        root.querySelector(".mk-files").innerHTML = files.map(function (f, i) {
+          return '<span class="mk-file">' + (i + 1) + ". " + esc(f.name.slice(0, 28)) + ' <button type="button" data-rm="' + i + '" aria-label="Remove">✕</button></span>';
+        }).join("");
+        root.querySelectorAll("[data-rm]").forEach(function (b) { b.onclick = function () { files.splice(+b.dataset.rm, 1); list(); }; });
+      }
+      if (input) input.onchange = function () { files = files.concat([].slice.call(input.files)); input.value = ""; list(); };
+      on(root, ".as-back", back);
+      on(root, ".as-submit", function () {
+        var answers = {}, missing = 0;
+        p.mcq.forEach(function (q) { var c = root.querySelector('input[name="' + q.id + '"]:checked'); if (c) answers[q.id] = +c.value; else missing++; });
+        err.textContent = "";
+        if (missing && !window.confirm(missing + " MCQ(s) are unanswered. Submit anyway?")) return;
+        if (p.secb.length && !files.length) { err.textContent = "Please add photos or a PDF of your Questions 2 to 7."; return; }
+        if (files.length > 15) { err.textContent = "Please upload at most 15 pages."; return; }
+        this.disabled = true;
+        var wait = root.querySelector(".as-wait");
+        wait.innerHTML = '<p class="mk-spin">' + (p.secb.length ? "Uploading and marking your script… this usually takes 1–2 minutes. Please keep this page open." : "Marking…") + "</p>";
+        Promise.all(files.map(encode)).then(function (enc) { return enc.length ? upload("assign-" + id, enc) : []; })
+          .then(function (paths) { return fnCall("submitAssignment", { id: id, answers: answers, files: paths }); })
+          .then(function (r) { result(root, p, r, back); track("caf3_assigned_submit", { pct: r.pct }); },
+            function (e) { wait.innerHTML = ""; err.textContent = e.message; root.querySelector(".as-submit").disabled = false; });
+      });
+    }, function (e) { failed(root, e, back); });
+  }
+
+  function result(root, p, r, back) {
+    var byId = {};
+    p.mcq.forEach(function (q) { byId[q.id] = q; });
+    root.innerHTML = '<div class="qz-card qz-result ' + (r.pct >= 60 ? "good" : r.pct >= 40 ? "ok" : "low") + '"><div class="qz-ring" style="--p:' + r.pct + '"><b>' + r.pct +
+      "%</b><small>" + r.total + " / " + r.max + "</small></div><h3>" + esc(p.title) + ": submitted</h3>" +
+      '<p class="qz-meta">Question 1: ' + r.mcqReview.filter(function (x) { return x.ok; }).length + " / " + r.mcqReview.length +
+      (r.secb ? " · Questions 2–7: " + r.secb.total + " / " + r.secb.max + " (AI-marked)" : "") + "</p></div>" +
+      (r.secb ? '<div class="qz-card"><h3 style="margin-top:0">Questions 2–7 feedback</h3>' + (r.secb.overall ? '<p class="mk-overall">' + esc(r.secb.overall) + "</p>" : "") +
+        r.secb.perQ.map(function (q) {
+          return "<details class=mk-q><summary><b>Question " + q.number + "</b> · " + esc(q.topic || "") + "<span>" + q.marks + " / " + q.max + "</span></summary>" +
+            q.parts.map(function (pt) { return "<p><b>(" + esc(pt.label) + ") " + pt.awarded + "/" + pt.max + "</b> " + esc(pt.feedback) + "</p>"; }).join("") + "</details>";
+        }).join("") + "</div>" : "") +
+      '<div class="qz-card"><h3 style="margin-top:0">Question 1 review</h3>' + r.mcqReview.map(function (x, i) {
+        var q = byId[x.id] || { q: "", options: [] };
+        return '<div class="as-rev ' + (x.ok ? "ok" : "bad") + '"><p><b>' + (i + 1) + ".</b> " + esc(q.q) + "</p><p>" + (x.ok ? "✔ " : "✘ ") +
+          (x.chosen == null ? "Not answered" : "Your answer: " + LETTERS[x.chosen]) + (x.ok ? "" : " · Correct: " + LETTERS[x.answer] + ". " + esc(q.options[x.answer])) + "</p>" +
+          (x.explain ? '<p class="qz-note">' + esc(x.explain) + "</p>" : "") + "</div>";
+      }).join("") + '</div><button type="button" class="btn outline as-back">Back to my progress</button>';
+    on(root, ".as-back", back);
+  }
+
   function progress(root) {
     var CH = JSON.parse(document.getElementById("chapters").textContent);
     var info = {};
@@ -994,7 +1130,7 @@
     function start() {
       if (!ENDPOINT || !GCLIENT) return;
       if (!ready()) return register(root, start);
-      api(waitBox(root, "Loading your progress…"), { action: "me" }, "Sign in with Google to see your progress.").then(function (d) { render(d.attempts); },
+      api(waitBox(root, "Loading your progress…"), { action: "me" }, "Sign in with Google to see your progress.").then(function (d) { render(d.attempts); assigned(root, start); },
         function (e) {
           if (e.code !== "locked") return failed(root, e, start);
           root.innerHTML = lockCard("Your exam readiness score is part of full access", "With full access, this page turns all your practice and " +
@@ -1009,8 +1145,9 @@
   // ---------------------------------------------------------------- start
   var q = document.getElementById("quiz"), m = document.getElementById("mock"), pg = document.getElementById("progress");
   var host = q || m || pg;
-  ENDPOINT = host ? host.dataset.endpoint || "" : "";
-  GCLIENT = host ? host.dataset.gclient || "" : "";
+  try { FBCONF = host && host.dataset.firebase ? JSON.parse(host.dataset.firebase) : null; } catch (e) { FBCONF = null; }
+  SUBJECT = host ? host.dataset.subject || "" : "";
+  ENDPOINT = GCLIENT = FBCONF ? "firebase" : "";   // older checks only test that a backend is configured
   if (q) practice(q);
   if (m) mock(m);
   if (pg) progress(pg);

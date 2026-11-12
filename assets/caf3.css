@@ -198,3 +198,22 @@ a.c3-ch:hover{transform:translateY(-3px);box-shadow:0 16px 34px rgba(0,42,116,.1
   .qz-stats{grid-template-columns:repeat(2,1fr)}.qz-q{font-size:17px}
   .qz-nav .qz-submit{margin-left:0}
 }
+
+/* assigned mocks */
+.as-q{border:1px solid #E3E9F1;border-radius:12px;padding:12px 14px;margin:10px 0}.as-q legend{padding:0 6px}
+.as-opt{display:block;padding:6px 4px;cursor:pointer}.as-opt input{margin-right:6px}
+.as-secb{border-top:1px solid #E3E9F1;padding-top:10px;margin-top:10px}.as-secb h4{color:#002A74;margin-bottom:6px}
+.as-rev{border-left:4px solid #128A54;padding:6px 12px;margin:10px 0}.as-rev.bad{border-left-color:#C62828}
+
+/* big shining "Request full access" button for students on the free allowance */
+.ax-cta{position:relative;overflow:hidden;display:flex;flex-direction:column;align-items:center;gap:4px;width:100%;margin-top:10px;padding:16px 22px;
+  border:0;border-radius:14px;cursor:pointer;color:#fff;font:700 19px Poppins,Segoe UI,sans-serif;letter-spacing:.2px;
+  background:linear-gradient(135deg,#128A54 0%,#1FB070 45%,#9CD20C 100%);box-shadow:0 10px 26px rgba(18,138,84,.35),inset 0 1px 0 rgba(255,255,255,.35);
+  animation:axPulse 2.6s ease-in-out infinite}
+.ax-cta small{font:500 13px Inter,Segoe UI,sans-serif;opacity:.95}
+.ax-cta:hover{transform:translateY(-1px);box-shadow:0 14px 32px rgba(18,138,84,.45)}
+.ax-cta::after{content:"";position:absolute;top:0;left:-60%;width:40%;height:100%;transform:skewX(-20deg);
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.55),transparent);animation:axShine 2.6s ease-in-out infinite}
+@keyframes axShine{0%{left:-60%}55%,100%{left:130%}}
+@keyframes axPulse{0%,100%{box-shadow:0 10px 26px rgba(18,138,84,.35)}50%{box-shadow:0 10px 34px rgba(156,210,12,.6)}}
+@media(prefers-reduced-motion:reduce){.ax-cta,.ax-cta::after{animation:none}}
