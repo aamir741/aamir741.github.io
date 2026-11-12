@@ -19,6 +19,7 @@
   var auth = firebase.auth(), db = firebase.firestore(), fns = firebase.app().functions("asia-south1");
   var app = document.getElementById("app"), me = null, role = null, subject = Object.keys(SUBJECTS)[0];
   var D = null;   // loaded data for the current subject
+  var BOOK = "cisa-book";   // picker entry for the free CISA book report: its own dashboard, no CAF tabs
 
   // ---------------------------------------------------------------- helpers
   function esc(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
@@ -52,23 +53,27 @@
   }
 
   auth.onAuthStateChanged(function (u) {
-    if (!u) return signInScreen();
+    if (!u) { role = null; D = null; return signInScreen(); }
     me = u.email.toLowerCase();
     $("#who").innerHTML = esc(me) + ' <button class="btn" id="out">Sign out</button>';
     $("#out").onclick = function () { auth.signOut(); };
     db.collection("admins").limit(1).get().then(function () {   // rules let only owner/helpers read this
       role = OWNERS.indexOf(me) >= 0 ? "owner" : "helper";
       document.querySelectorAll("[data-owner]").forEach(function (a) { a.hidden = role !== "owner"; });
-      document.getElementById("tabs").hidden = false;
-      return loadAll();
-    }).then(route, function (e) {
+      route();
+    }, function (e) {
       signInScreen(e.code === "permission-denied" ? me + " does not have admin access." : e.message);
     });
   });
 
   var sel = document.getElementById("subject");
-  sel.innerHTML = Object.keys(SUBJECTS).map(function (k) { return '<option value="' + k + '">' + esc(SUBJECTS[k].name) + "</option>"; }).join("");
-  sel.onchange = function () { subject = sel.value; loadAll().then(route); };
+  sel.innerHTML = Object.keys(SUBJECTS).map(function (k) { return '<option value="' + k + '">' + esc(SUBJECTS[k].name) + "</option>"; }).join("") +
+    '<option value="' + BOOK + '">CISA Book (free study guide)</option>';
+  sel.onchange = function () {
+    subject = sel.value; D = null;
+    history.replaceState(null, "", "#" + (subject === BOOK ? "book" : "dashboard"));
+    route();
+  };
 
   // ---------------------------------------------------------------- data
   function all(q) { return q.get().then(function (s) { return s.docs.map(function (d) { var x = d.data(); x._id = d.id; return x; }); }); }
@@ -95,11 +100,16 @@
   // ---------------------------------------------------------------- router
   window.onhashchange = route;
   function route() {
-    if (!D) return;
+    if (!role) return;   // not signed in yet
     var tab = (location.hash || "#dashboard").slice(1);
+    if (tab === "book") subject = BOOK;
+    sel.value = subject;
+    document.getElementById("tabs").hidden = subject === BOOK;
+    if (subject === BOOK) return book();
+    if (!D) return loadAll().then(route, function (e) { app.innerHTML = '<p class="err">' + esc(e.message) + "</p>"; });
     if ((tab === "mocks" || tab === "helpers") && role !== "owner") tab = "dashboard";
     document.querySelectorAll(".mxa-tabs a").forEach(function (a) { a.classList.toggle("on", a.getAttribute("href") === "#" + tab); });
-    ({ dashboard: dashboard, requests: requests, students: students, marking: marking, mocks: mocks, helpers: helpers, book: book }[tab] || dashboard)();
+    ({ dashboard: dashboard, requests: requests, students: students, marking: marking, mocks: mocks, helpers: helpers }[tab] || dashboard)();
   }
   function reload() { return loadAll().then(route); }
 
@@ -145,7 +155,7 @@
       '<div class="card"><h3 style="margin-top:0">Institutes</h3>' + group("institute") + '<h3>Cities</h3>' + group("city") + "</div></div>";
   }
 
-  // ---------------------------------------------------------------- CISA book: visits, books emailed, leads (not tied to the subject picker)
+  // ---------------------------------------------------------------- CISA book: visits, books emailed, leads (picker entry BOOK)
   var B = null, google = function (l) { return l.method === "Google"; };
   function book() {
     if (!B) {
