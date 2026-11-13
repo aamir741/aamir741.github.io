@@ -1,23 +1,37 @@
 [
  {
+  "id": "8ECY0bTOSak",
+  "title": "CISA Domain 1.8: Audit Data Analytics, CAATs, ITF, Continuous Auditing & AI | Full Lesson",
+  "date": "2026-11-13",
+  "description": "",
+  "thumb": "https://i.ytimg.com/vi/8ECY0bTOSak/hqdefault.jpg"
+ },
+ {
   "id": "M21irMRTWn4",
   "title": "Microsoft 365 Down Worldwide: What Really Happened | MirakX",
   "date": "2026-11-13",
-  "description": "Microsoft 365 went down worldwide on Thursday, and the outage spread to 74 countries within an hour. Outlook, Teams, Copilot, OneDrive and SharePoint all went down. Microsoft says it was not a cyberattack — a core server process became overwhelmed, servers failed health checks and dropped capacity. ",
+  "description": "",
   "thumb": "https://i.ytimg.com/vi/M21irMRTWn4/hqdefault.jpg"
+ },
+ {
+  "id": "rba-hWTctik",
+  "title": "CISA Domain 1.7: Audit Evidence Collection, Reperformance, Chain of Custody | Full Lesson",
+  "date": "2026-11-12",
+  "description": "",
+  "thumb": "https://i.ytimg.com/vi/rba-hWTctik/hqdefault.jpg"
  },
  {
   "id": "Cb5Ya3jR_g8",
   "title": "CISA Domain 1.6: Audit Testing & Sampling, Compliance vs Substantive, Discovery, PPS | Full Lesson",
   "date": "2026-11-11",
-  "description": "🧪 CISA Domain 1, Section 1.6 in full: how an audit test turns an objective into evidence, and how sampling lets you conclude about a whole population.\n\n🔍 Compliance vs substantive testing, and direction of testing\n🎲 Population, frame, statistical and nonstatistical sampling\n🔢 Attribute vs variable s",
+  "description": "",
   "thumb": "https://i.ytimg.com/vi/Cb5Ya3jR_g8/hqdefault.jpg"
  },
  {
   "id": "zcWZFX_YBZY",
   "title": "CISA Domain 1.5: Audit Project Management, Audit Phases, Work Papers & Fraud | Full Lesson",
   "date": "2026-11-10",
-  "description": "📋 CISA Domain 1, Section 1.5 in full: how an IS audit engagement is planned, run, documented and kept under control.\n\n📘 Free companion book: CISA Complete Study Guide (First Edition 2026) by Muhammad Aamir: https://mirakx.com/learn/cisa/\n\n🎯 Objective vs scope vs criteria vs audit program\n🔄 The 8 aud",
+  "description": "",
   "thumb": "https://i.ytimg.com/vi/zcWZFX_YBZY/hqdefault.jpg"
  },
  {
