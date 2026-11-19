@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en">
+<head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-TSKF7YS9F5"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-TSKF7YS9F5');
+</script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hot vs Warm vs Cold Site: CISA Domain 4 Explained Simply</title>
+<meta name="description" content="The difference between hot, warm and cold recovery sites for the CISA exam, how RTO decides the choice, a practice question and the classic exam trap.">
+<meta name="author" content="Muhammad Aamir">
+<link rel="canonical" href="https://mirakx.com/blog/cisa-hot-warm-cold-site/">
+<meta property="og:type" content="article"><meta property="og:site_name" content="Muhammad Aamir">
+<meta property="og:title" content="Hot vs Warm vs Cold Site: CISA Domain 4 Explained Simply"><meta property="og:description" content="The difference between hot, warm and cold recovery sites for the CISA exam, how RTO decides the choice, a practice question and the classic exam trap.">
+<meta property="og:url" content="https://mirakx.com/blog/cisa-hot-warm-cold-site/"><meta property="og:image" content="https://mirakx.com/assets/og-image.jpg">
+<meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="Hot vs Warm vs Cold Site: CISA Domain 4 Explained Simply">
+<meta name="twitter:description" content="The difference between hot, warm and cold recovery sites for the CISA exam, how RTO decides the choice, a practice question and the classic exam trap."><meta name="twitter:image" content="https://mirakx.com/assets/og-image.jpg">
+<link rel="icon" type="image/png" href="/assets/favicon-64.png"><link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+<meta name="theme-color" content="#002A74">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BlogPosting", "headline": "Hot vs Warm vs Cold Site: CISA Domain 4 Explained Simply", "description": "The difference between hot, warm and cold recovery sites for the CISA exam, how RTO decides the choice, a practice question and the classic exam trap.", "datePublished": "2026-10-17", "dateModified": "2026-10-17", "mainEntityOfPage": "https://mirakx.com/blog/cisa-hot-warm-cold-site/", "image": "https://mirakx.com/assets/og-image.jpg", "author": {"@type": "Person", "name": "Muhammad Aamir", "url": "https://mirakx.com/"}, "publisher": {"@type": "Person", "name": "Muhammad Aamir"}}</script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<nav class="top"><div class="wrap">
+  <a class="logo" href="/"><img src="/assets/aamir-avatar.jpg" alt=""><span>MUHAMMAD <b>AAMIR</b></span></a>
+  <button class="burger" type="button" aria-label="Menu" aria-expanded="false" aria-controls="navlinks"
+    onclick="var o=this.getAttribute('aria-expanded')!=='true';this.setAttribute('aria-expanded',o);document.body.classList.toggle('navopen',o)"><span></span></button>
+  <ul id="navlinks">
+    <li><a href="/profile/">Profile</a></li>
+    <li><a href="/ai/">AI</a></li>
+    <li class="dd"><a href="/learn/">Learn</a><ul>
+      <li><a href="/learn/cisa/">CISA</a></li><li><a href="/learn/icap/">ICAP</a></li><li><a href="/learn/icap/caf3/">CAF-3 DSR Exam Prep</a></li><li><a href="/learn/#study-guide">Free CAF-3 Study Guide</a></li></ul></li>
+    <li class="dd"><a href="/projects/">Projects</a><ul>
+      <li><a href="https://certprepx.com/" target="_blank" rel="noopener">CertPrepX</a></li><li><a href="/learn/icap/caf3/">CAF-3 DSR Exam Prep</a></li></ul></li>
+    <li class="dd"><a href="/blog/">Blog</a><ul>
+      <li><a href="/blog/">Articles</a></li><li><a href="/videos/">Videos</a></li></ul></li>
+    <li><a class="btn primary navcta" href="/#contact">Contact</a></li>
+  </ul>
+</div></nav>
+<header class="pagehead" id="main"><div class="wrap"><span class="eyebrow" style="color:#9CD20C">Blog</span><h1>Hot vs Warm vs Cold Site: CISA Domain 4 Explained Simply</h1><p>The difference between hot, warm and cold recovery sites for the CISA exam, how RTO decides the choice, a practice question and the classic exam trap.</p><div class="byline"><img src="/assets/aamir-avatar.jpg" alt="Muhammad Aamir"><span>Muhammad Aamir · 17 October 2026</span></div></div></header>
+<section><div class="wrap"><article class="blog"><!--EMBED:hot vs warm vs cold site--><div class="embed"><iframe src="https://www.youtube-nocookie.com/embed/OTj-DFKzy2g" title="Hot vs Warm vs Cold Site | CISA Exam Prep (Domain 4) Explained Simply" loading="lazy" allow="accelerometer; encrypted-media; picture-in-picture" allowfullscreen></iframe></div><!--/EMBED--><p>Recovery sites appear again and again in CISA preparation, under <strong>Domain 4: Information Systems Operations and Business Resilience</strong>. The concept is simple once you see it as a trade-off between <strong>speed</strong> and <strong>cost</strong>.</p>
+<h2>The three main types of recovery site</h2>
+<table>
+<thead>
+<tr>
+<th>Site</th>
+<th>What is in place</th>
+<th>Typical recovery</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Hot site</strong></td>
+<td>Fully configured: hardware, software, network and data ready to run</td>
+<td>Within hours, or even minutes</td>
+</tr>
+<tr>
+<td><strong>Warm site</strong></td>
+<td>Partially configured: network connections and some equipment, <strong>but not the main computer</strong></td>
+<td>Days</td>
+</tr>
+<tr>
+<td><strong>Cold site</strong></td>
+<td>Only the basic environment: power, cooling, space and flooring. No computer equipment</td>
+<td>Weeks</td>
+</tr>
+</tbody>
+</table>
+<p>Two more you may meet: a <strong>mobile site</strong> (a specially designed trailer that can be moved to where it is needed) and a <strong>reciprocal agreement</strong> (two organisations agree to use each other's facilities in a disaster).</p>
+<h2>Faster recovery means higher cost</h2>
+<p>A hot site is the fastest and the most expensive, because you are paying for a second, ready-to-run environment. A cold site is the cheapest and the slowest. The <strong>recovery time objective (RTO)</strong>, the maximum acceptable downtime agreed by the business, decides which one is appropriate:</p>
+<ul>
+<li>RTO of a few hours → <strong>hot site</strong></li>
+<li>RTO of a few days → <strong>warm site</strong> may be acceptable</li>
+<li>RTO of weeks → a <strong>cold site</strong> may be enough</li>
+</ul>
+<h2>Practice question</h2>
+<p><em>A bank's payment system must be running again within a few hours of a disaster. Which recovery option BEST meets this requirement?</em></p>
+<ul>
+<li>A. Cold site with an equipment delivery contract</li>
+<li>B. Warm site with network connections in place</li>
+<li>C. Hot site with fully configured systems</li>
+<li>D. Reciprocal agreement with a partner bank</li>
+</ul>
+<p><strong>Answer: C.</strong> Only a hot site is ready to operate within hours.</p>
+<p><strong>Why not the others?</strong></p>
+<ul>
+<li><strong>A, cold site:</strong> a delivery contract helps, however equipment still has to arrive, be installed and configured, which takes days or weeks.</li>
+<li><strong>B, warm site:</strong> network connectivity is valuable, however the main computer is missing, so recovery cannot happen within hours.</li>
+<li><strong>D, reciprocal agreement:</strong> it is cheap, however capacity is not guaranteed when you need it and such agreements are hard to test and enforce.</li>
+</ul>
+<h2>The exam trap</h2>
+<blockquote>
+<p>Many candidates assume a warm site already has the main computer. It does <strong>not</strong>. A warm site has network connections and selected peripheral equipment; only a <strong>hot site</strong> is ready to run.</p>
+</blockquote>
+<p>Keep the qualifier in mind as well: when a question asks for the <strong>BEST</strong> option, more than one answer may work eventually. Pick the one that meets the stated requirement, here, recovery within hours.</p>
+<p><em>Want more questions like this? Try 100 free CISA practice questions at <a href="https://certprepx.com/">CertPrepX</a>.</em></p></article><div class="authorbox"><img src="/assets/aamir-avatar.jpg" alt="Muhammad Aamir"><div><b>Muhammad Aamir</b><br><span style="color:var(--muted);font-size:15px">Technology risk and digital transformation leader, co-founder of <a href="https://certprepx.com/" target="_blank" rel="noopener">CertPrepX</a>, author and educator. More explainers on <a href="https://www.youtube.com/@MirakXOfficial" target="_blank" rel="noopener">YouTube</a>.</span></div></div></div></section>
+<section class="creds" aria-label="Certifications of Muhammad Aamir"><div class="wrap">
+  <h2 class="vh">Certifications of Muhammad Aamir</h2>
+  <ul class="crgrid"><li class="cr"><div class="crl"><img src="/assets/logos/cisa.png" alt="CISA logo" width="58" height="48"></div><h3>CISA<sup>®</sup></h3><p>Certified Information Systems Auditor</p><small>ISACA</small></li><li class="cr"><div class="crl"><img src="/assets/logos/iso-27001.png" alt="ISO 27001 logo" width="52" height="48"></div><h3>ISO/IEC 27001</h3><p>Lead Auditor</p><small>CQI-IRCA certified course</small></li><li class="cr"><div class="crl"><span class="exin"><b>EXIN</b>CDCP</span></div><h3>CDCP<sup>®</sup></h3><p>Certified Data Centre Professional</p><small>EXIN · EPI</small></li><li class="cr"><div class="crl"><span class="exin"><b>EXIN</b>CNCDP</span></div><h3>CNCDP<sup>®</sup></h3><p>Certified Network Cabling Design Professional</p><small>EXIN · EPI</small></li><li class="cr"><div class="crl"><img src="/assets/logos/oracle.png" alt="Oracle logo" width="110" height="33"></div><h3>Oracle Cloud Infrastructure 2025</h3><p>Foundations &amp; AI Foundations Associate</p><small>Oracle</small></li><li class="cr"><div class="crl"><img src="/assets/logos/microsoft.png" alt="Microsoft logo" width="44" height="42"></div><h3>Microsoft</h3><p>MCITP · MCSE</p><small>Microsoft</small></li><li class="cr"><div class="crl"><img src="/assets/logos/ec-council.png" alt="EC-Council logo" width="100" height="36"></div><h3>EC-Council</h3><p>Network &amp; Cyber Security</p><small>EC-Council</small></li></ul>
+</div></section>
+<div class="brandbar"><a href="/"><img src="/assets/mirakx-logo.png" alt="Mirak X | mirakx.com" width="640" height="110" loading="lazy"></a></div>
+<footer><div class="wrap fgrid">
+  <div><em class="motto">Technology as an Enabler,<br>Not a Back-Office Function</em></div>
+  <div><h3>Explore</h3><a href="/profile/">Profile</a><a href="/ai/">AI</a><a href="/learn/">Learn</a><a href="/projects/">Projects</a></div>
+  <div><h3>Content</h3><a href="/blog/">Blog</a><a href="/videos/">Videos</a><a href="https://www.youtube.com/@MirakXOfficial" target="_blank" rel="noopener">YouTube</a></div>
+  <div><h3>Contact</h3><a href="mailto:aamir@mirakx.com">aamir@mirakx.com</a><a href="https://linkedin.com/in/aamiryaqoob" target="_blank" rel="noopener">LinkedIn</a><a href="/#contact">Contact form</a></div>
+</div><div class="wrap fbase">
+  <span>© 2026 Muhammad Aamir. All rights reserved. · <a href="/privacy.html">Privacy</a> · <a href="/terms.html">Terms</a></span>
+  <span>Views are my own and do not represent my employer.</span>
+</div></footer>
+<details class="fab"><summary aria-label="Free books and exam prep"><span class="fab-book"><img src="/assets/cisa-guide-cover.jpg" alt="" width="46" height="60"></span><span class="fab-t">Free books</span></summary>
+  <div class="fab-tiles">
+    <a href="/learn/cisa/#book"><span class="fo-l"><b>CISA Study Guide</b><small>Free PDF · 352 pages</small></span><span class="fo-o fo-book"><img src="/assets/cisa-guide-cover.jpg" alt="" width="52" height="68" loading="lazy"></span></a>
+    <a href="https://www.youtube.com/watch?v=vuCL3uT5bnU&amp;list=PLHzAINATBrBs" target="_blank" rel="noopener"><span class="fo-l"><b>CISA Video Course ↗</b><small>Free full lessons on YouTube</small></span><span class="fo-o"><span class="fo-tile fo-yt"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 7.5v9l7.5-4.5z"/></svg></span></span></a>
+    <a href="/learn/#study-guide"><span class="fo-l"><b>CAF-3 DSR Study Guide</b><small>Free PDF · 457 pages</small></span><span class="fo-o fo-book"><img src="/assets/caf3-dsr-cover.jpg" alt="" width="52" height="68" loading="lazy"></span></a>
+    <a href="/learn/icap/caf3/"><span class="fo-l"><b>CAF-3 DSR Exam Prep</b><small>MCQs, mocks, AI marking</small></span><span class="fo-o"><span class="fo-tile fo-c3"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4V3h6v1M8.5 10.5l1.5 1.5 3-3M8.5 16h7"/></svg></span></span></a>
+    <a href="https://certprepx.com/" target="_blank" rel="noopener"><span class="fo-l"><b>CertPrepX ↗</b><small>CISA practice &amp; mock exams</small></span><span class="fo-o"><span class="fo-tile fo-cx"><img src="/assets/certprepx.png" alt="" width="44" height="44" loading="lazy"></span></span></a>
+  </div></details>
+<script>document.addEventListener("click",function(e){var f=document.querySelector(".fab:not(.fab-home)");if(f&&f.open&&!f.contains(e.target))f.open=false})</script>
+<script src="/assets/tilt.js" defer></script>
+</body>
+</html>
