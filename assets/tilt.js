@@ -1,3 +1,14 @@
+/* Click-to-play YouTube: swap the thumbnail button (.ytf) for the real player only when clicked. */
+document.addEventListener("click", function (e) {
+  var b = e.target.closest && e.target.closest(".ytf");
+  if (!b) return;
+  var f = document.createElement("iframe"), src = b.getAttribute("data-src");
+  f.src = src + (src.indexOf("?") < 0 ? "?" : "&") + "autoplay=1";
+  f.title = b.getAttribute("aria-label").replace(/^Play video: /, "");
+  f.allow = "accelerometer; autoplay; encrypted-media; picture-in-picture";
+  f.allowFullscreen = true;
+  b.replaceWith(f);
+});
 /* Cards tilt in 3D toward the cursor with a light glare. Mouse/trackpad only; off for visitors who prefer reduced motion. */
 (function () {
   if (matchMedia("(prefers-reduced-motion: reduce)").matches || !matchMedia("(hover: hover)").matches) return;

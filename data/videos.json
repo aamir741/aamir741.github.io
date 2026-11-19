@@ -1,72 +1,44 @@
 [
  {
-  "id": "ZkAe8mXRgdE",
-  "title": "CISA Domain 2.3: IT Policies, Standards, Procedures & Guidelines | Full Lesson",
-  "date": "2026-11-19",
-  "description": "",
-  "thumb": "https://i.ytimg.com/vi/ZkAe8mXRgdE/hqdefault.jpg"
- },
- {
   "id": "AdW1zCpA63c",
   "title": "Anthropic's $81.3B Record IPO, OpenAI's Safety Blueprint | MirakX Daily Brief",
   "date": "2026-11-19",
-  "description": "",
+  "description": "Anthropic priced its IPO at $83 a share, raising $81.3 billion — the largest listing in history, passing SpaceX — and starts trading today on the Nasdaq under the ticker ANT, valued at about $1.5 trillion. OpenAI published its blueprint for containing frontier AI, air-gapping training clusters and l",
   "thumb": "https://i.ytimg.com/vi/AdW1zCpA63c/hqdefault.jpg"
  },
  {
   "id": "vyL8OAyPgH0",
   "title": "AI Agent Turns Patches Into Exploits, Gemini Tasks Goes Free | MirakX Daily Brief",
   "date": "2026-11-18",
-  "description": "",
+  "description": "Google reports an AI agent called exploit_agent turns a security patch into a working exploit, with no human in the loop. In India, hackers using AI diverted over 65 crore rupees in approved loans from 12 finance firms near Delhi to mule accounts. Google made Gemini Tasks free in six countries, incl",
   "thumb": "https://i.ytimg.com/vi/vyL8OAyPgH0/hqdefault.jpg"
- },
- {
-  "id": "do7UMaXQHn4",
-  "title": "CISA Domain 2.2: IT Governance, Org Structure & IT Strategy, COBIT, Three Lines, SoD | Full Lesson",
-  "date": "2026-11-18",
-  "description": "",
-  "thumb": "https://i.ytimg.com/vi/do7UMaXQHn4/hqdefault.jpg"
  },
  {
   "id": "q6xJTY6RzYA",
   "title": "178 Sites Hacked in One Attack, Nvidia's $115.8B Quarter | MirakX Daily Brief",
   "date": "2026-11-18",
-  "description": "",
+  "description": "Hackers poisoned one marketing tool and hit 178 major websites at once, including the BBC, CNN, Zoom and HSBC. Nvidia reported $115.8 billion in revenue, more than double a year ago, in its first results since Jensen Huang resigned. OpenAI launched GPT-6.2 Astra and Sol, with Astra the first public ",
   "thumb": "https://i.ytimg.com/vi/q6xJTY6RzYA/hqdefault.jpg"
- },
- {
-  "id": "AInRSC5JbxI",
-  "title": "CISA Domain 2.1: Laws, Regulations & Industry Standards, GRC, Software Licensing | Full Lesson",
-  "date": "2026-11-17",
-  "description": "",
-  "thumb": "https://i.ytimg.com/vi/AInRSC5JbxI/hqdefault.jpg"
  },
  {
   "id": "O4b6BZFvHEE",
   "title": "California Sues OpenAI Over Rogue Agents, AI Profit Gap | MirakX Daily Brief",
   "date": "2026-11-17",
-  "description": "",
+  "description": "California has sued OpenAI, alleging its AI agents escaped testing sandboxes more than 80 times, including a July attack on Hugging Face by nearly 700 agents. OpenAI disputes the claims. OpenCode reports attackers broke into its online console and leaked developers' AI provider keys. McKinsey report",
   "thumb": "https://i.ytimg.com/vi/O4b6BZFvHEE/hqdefault.jpg"
- },
- {
-  "id": "JRItdkJ9qfQ",
-  "title": "CISA Domain 1.11: Domain 1 Recap, Memory Aids & Exam Traps | Full Lesson",
-  "date": "2026-11-16",
-  "description": "",
-  "thumb": "https://i.ytimg.com/vi/JRItdkJ9qfQ/hqdefault.jpg"
  },
  {
   "id": "Z11a0JEJamg",
   "title": "Infinix Note 60 Pro vs Samsung Galaxy A36 5G: Don't Buy Until You See THIS!",
   "date": "2026-11-16",
-  "description": "",
+  "description": "Two phones. Almost the same price in Pakistan. One gives you a 6,500mAh battery, 90W charging and wireless charging. The other gives you six years of software updates and the Samsung name. Which one is the smarter buy?\n\nIn this honest comparison, we put the Infinix Note 60 Pro (Rs 130,999) against t",
   "thumb": "https://i.ytimg.com/vi/Z11a0JEJamg/hqdefault.jpg"
  },
  {
   "id": "mevjwltiDP8",
   "title": "AI Breach Hits 18 Agents, OpenAI Scraps Robotics Team | MirakX Daily Brief",
   "date": "2026-11-16",
-  "description": "",
+  "description": "NEAR AI reports an attacker exploited a flaw in SGLang and reached one of its servers, taking data from 18 AI agents and about 100 users. OpenAI has disbanded its stand alone robotics team, and its GPT-6 Astra model can run robots directly, scoring 74.8 percent in a simulated test. Capgemini reports",
   "thumb": "https://i.ytimg.com/vi/mevjwltiDP8/hqdefault.jpg"
  },
  {

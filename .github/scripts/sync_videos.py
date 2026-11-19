@@ -65,8 +65,9 @@ def replace_block(text, name, content):
 
 
 def embed(video):
-    return (f'<div class="embed"><iframe src="https://www.youtube-nocookie.com/embed/{video["id"]}" title="{esc(video["title"])}" '
-            f'loading="lazy" allow="accelerometer; encrypted-media; picture-in-picture" allowfullscreen></iframe></div>')
+    # click-to-play thumbnail, same as build_site.yt_embed; tilt.js loads the player on click
+    return (f'<div class="embed"><button class="ytf" type="button" data-src="https://www.youtube-nocookie.com/embed/{video["id"]}" '
+            f'aria-label="Play video: {esc(video["title"])}" style="background-image:url(https://i.ytimg.com/vi/{video["id"]}/hqdefault.jpg)"></button></div>')
 
 
 def main():
