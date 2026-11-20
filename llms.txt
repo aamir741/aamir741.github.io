@@ -1,0 +1,17 @@
+# mirakx.com
+
+> Free exam-preparation resources by Muhammad Aamir (CISA): a free CISA study guide book, a free CISA video course,
+> and free ICAP CAF-3 DSR exam prep with a free study guide, MCQs, mock exams and AI marking.
+
+## Free books
+- [CISA Complete Study Guide (First Edition 2026)](https://mirakx.com/learn/cisa/#book): free 352-page PDF covering all five CISA domains, with 100 exam-style practice questions. Emailed free on request.
+- [CAF-3 Data, Systems & Risks Study Guide](https://mirakx.com/learn/icap/caf3/#study-guide): free 457-page PDF covering all 17 chapters of the ICAP CAF-3 DSR syllabus. Free download.
+
+## Free courses and exam prep
+- [Free CISA video course](https://mirakx.com/learn/cisa/): one lesson for every section of the CISA syllabus, with practice questions and lesson notes. Also on YouTube: https://www.youtube.com/playlist?list=PLHzAINATBrBs
+- [CAF-3 DSR Exam Prep](https://mirakx.com/learn/icap/caf3/): free ICAP CAF-3 DSR practice: 1,000+ chapter-wise MCQs, ICAP-style mock exams, AI marking of handwritten answers and a readiness score.
+- [CertPrepX](https://certprepx.com/): CISA, AAIA and ISO 27001 Lead Auditor practice questions and timed mock exams (co-founded by Muhammad Aamir).
+
+## About
+- [Muhammad Aamir](https://mirakx.com/profile/): CISA-certified, 18+ years of experience in IT audit, risk and technology.
+- Not affiliated with ISACA or ICAP.
