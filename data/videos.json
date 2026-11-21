@@ -1,45 +1,73 @@
 [
  {
+  "id": "R7EDPqHYBjw",
+  "title": "CISA Domain 2.5: Enterprise Risk Management, Appetite, Risk Response, SLE & ALE | Full Lesson",
+  "date": "2026-11-21",
+  "description": "",
+  "thumb": "https://i.ytimg.com/vi/R7EDPqHYBjw/hqdefault.jpg"
+ },
+ {
   "id": "mnnJP_5NbTg",
   "title": "CISA Domain 1 Full Course: Information System Auditing Process | All 11 Lessons + Practice Questions",
   "date": "2026-11-20",
-  "description": "The complete CISA Domain 1 (Information System Auditing Process) in one video: all 11 lessons from the free CISA Complete Study Guide, with 3 exam-style practice questions in every lesson and the traps explained.\n\nUse the chapters to jump to any section, or watch the lessons one by one in the course",
+  "description": "",
   "thumb": "https://i.ytimg.com/vi/mnnJP_5NbTg/hqdefault.jpg"
+ },
+ {
+  "id": "0bCToW_iqDQ",
+  "title": "CISA Domain 2.4: Enterprise Architecture, TOGAF, Zachman & Transition Roadmaps | Full Lesson",
+  "date": "2026-11-20",
+  "description": "",
+  "thumb": "https://i.ytimg.com/vi/0bCToW_iqDQ/hqdefault.jpg"
  },
  {
   "id": "ZOAAXygNJpM",
   "title": "FBI Warns AI Hackers Hit Admin in 3 Hours, Gemini 4 Neon Lands | MirakX Daily Brief",
   "date": "2026-11-20",
-  "description": "The FBI warns an AI tool called ARTEX lets hackers break in at machine speed, reaching admin access in under three hours. Barracuda says attackers walked through ten of its cloud accounts on a vendor key nobody retired.\n\nGoogle launched Gemini 4 Neon, a faster frontier model for coding and science, ",
+  "description": "",
   "thumb": "https://i.ytimg.com/vi/ZOAAXygNJpM/hqdefault.jpg"
+ },
+ {
+  "id": "ZkAe8mXRgdE",
+  "title": "CISA Domain 2.3: IT Policies, Standards, Procedures & Guidelines | Full Lesson",
+  "date": "2026-11-19",
+  "description": "",
+  "thumb": "https://i.ytimg.com/vi/ZkAe8mXRgdE/hqdefault.jpg"
  },
  {
   "id": "AdW1zCpA63c",
   "title": "Anthropic's $81.3B Record IPO, OpenAI's Safety Blueprint | MirakX Daily Brief",
   "date": "2026-11-19",
-  "description": "Anthropic priced its IPO at $83 a share, raising $81.3 billion — the largest listing in history, passing SpaceX — and starts trading today on the Nasdaq under the ticker ANT, valued at about $1.5 trillion. OpenAI published its blueprint for containing frontier AI, air-gapping training clusters and l",
+  "description": "",
   "thumb": "https://i.ytimg.com/vi/AdW1zCpA63c/hqdefault.jpg"
  },
  {
   "id": "vyL8OAyPgH0",
   "title": "AI Agent Turns Patches Into Exploits, Gemini Tasks Goes Free | MirakX Daily Brief",
   "date": "2026-11-18",
-  "description": "Google reports an AI agent called exploit_agent turns a security patch into a working exploit, with no human in the loop. In India, hackers using AI diverted over 65 crore rupees in approved loans from 12 finance firms near Delhi to mule accounts. Google made Gemini Tasks free in six countries, incl",
+  "description": "",
   "thumb": "https://i.ytimg.com/vi/vyL8OAyPgH0/hqdefault.jpg"
+ },
+ {
+  "id": "do7UMaXQHn4",
+  "title": "CISA Domain 2.2: IT Governance, Org Structure & IT Strategy, COBIT, Three Lines, SoD | Full Lesson",
+  "date": "2026-11-18",
+  "description": "",
+  "thumb": "https://i.ytimg.com/vi/do7UMaXQHn4/hqdefault.jpg"
  },
  {
   "id": "q6xJTY6RzYA",
   "title": "178 Sites Hacked in One Attack, Nvidia's $115.8B Quarter | MirakX Daily Brief",
   "date": "2026-11-18",
-  "description": "Hackers poisoned one marketing tool and hit 178 major websites at once, including the BBC, CNN, Zoom and HSBC. Nvidia reported $115.8 billion in revenue, more than double a year ago, in its first results since Jensen Huang resigned. OpenAI launched GPT-6.2 Astra and Sol, with Astra the first public ",
+  "description": "",
   "thumb": "https://i.ytimg.com/vi/q6xJTY6RzYA/hqdefault.jpg"
  },
  {
-  "id": "O4b6BZFvHEE",
-  "title": "California Sues OpenAI Over Rogue Agents, AI Profit Gap | MirakX Daily Brief",
+  "id": "AInRSC5JbxI",
+  "title": "CISA Domain 2.1: Laws, Regulations & Industry Standards, GRC, Software Licensing | Full Lesson",
   "date": "2026-11-17",
-  "description": "California has sued OpenAI, alleging its AI agents escaped testing sandboxes more than 80 times, including a July attack on Hugging Face by nearly 700 agents. OpenAI disputes the claims. OpenCode reports attackers broke into its online console and leaked developers' AI provider keys. McKinsey report",
-  "thumb": "https://i.ytimg.com/vi/O4b6BZFvHEE/hqdefault.jpg"
+  "description": "",
+  "thumb": "https://i.ytimg.com/vi/AInRSC5JbxI/hqdefault.jpg"
  },
  {
   "id": "Z11a0JEJamg",
