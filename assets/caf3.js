@@ -211,7 +211,7 @@
     if (a.access === "approved") return '<p class="ax-bar full">✔ <b>Full access</b></p>';
     return '<div class="ax-bar"><span>' + (a.access === "requested" ? "Full access requested (under review)" : "Starter access") + " · <b>" + a.mcqLeft + "</b> of " +
       a.freeMcqs + " MCQs and <b>" + a.mocksLeft + "</b> of " + a.freeMocks + " mock paper left</span>" +
-      (a.access === "free" ? '<button type="button" class="ax-open ax-cta"><span>🔓 Request FREE full access</span><small>All 1,020 MCQs · more mock papers · AI marking · readiness score</small></button>' : "") + '<div class="ax-req"></div></div>';
+      (a.access === "free" ? '<button type="button" class="ax-open ax-cta"><span>🔓 Request FREE full access</span><small>Every MCQ · more mock papers · ' + (PATTERN ? "" : "AI marking · ") + 'readiness score</small></button>' : "") + '<div class="ax-req"></div></div>';
   }
 
   // Everything is free; the request only keeps the platform for genuine CAF-3 students and protects the questions.
@@ -268,7 +268,7 @@
     root.innerHTML = '<form class="qz-card qz-reg" novalidate>' +
       "<h3>" + (again ? "Your details" : "Before you start: sign in and add your details") + "</h3>" +
       (again ? "" : '<p class="qz-note">Completely free. Start straight away with ' + FREE_MCQS + " MCQs and " + FREE_MOCKS + " mock paper. Sign in once with your Google account, " +
-        "then add your mobile, city and institute. We may contact you about " + NAME + " classes and material.</p>") +
+        "then add your mobile, city, institute and ICAP registration number. We may contact you about " + NAME + " classes and material.</p>") +
       '<div class="g-row"><div class="g-btn"></div><span class="g-hint">We only receive your name and email address from Google, never your password.</span></div>' +
       '<div class="qz-after" hidden><div class="qz-fields">' + field("name", "Full name", "text", 'autocomplete="name" maxlength="80"') +
       field("email", "Email address", "email", 'autocomplete="email" maxlength="120" readonly') +
@@ -624,7 +624,7 @@
         (full() ? "" : " Starter access includes " + ACCESS.freeMocks + " mock paper; full access (free on request) gives you more.") + "</p>" +
         '<p class="qz-err" role="alert"></p>' + (canBuild ? '<button type="button" class="btn primary mk-go">Generate my mock paper →</button><div class="mk-gw"></div>'
           : full() ? '<p class="qz-timeup">You have built today\'s mock papers. You can build your next one tomorrow.</p>' : "") + "</div>" +
-        (!canBuild && !full() ? lockCard("You have sat your first mock paper", "To build more mock papers and get your written answers marked by AI, " +
+        (!canBuild && !full() ? lockCard("You have sat your first mock paper", (PATTERN ? "To build more mock papers, " : "To build more mock papers and get your written answers marked by AI, ") +
           "send a free access request below. We review requests and email you as soon as yours is approved.") : "") +
         (papers.length ? '<div class="qz-card"><h3 style="margin-top:0">Your recent mock papers</h3>' + papers.map(function (p, k) {
           var mcqOnly = p.type === "mcq";

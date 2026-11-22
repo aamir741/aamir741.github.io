@@ -32,6 +32,13 @@
   try { localStorage.removeItem("mx_cisa_book_t"); } catch (e) { }   // left over from the old download links
 
   src.onchange = function () { other.hidden = src.value !== "Other"; };
+  // the exam-prep question follows the chosen paper; papers without exam prep yet become a demand question
+  var use = document.getElementById("bkuse");
+  if (use && form.elements.paper) form.elements.paper.onchange = function () {
+    var p = form.elements.paper.value;
+    use.textContent = use.dataset.live.split(",").indexOf(p) >= 0 ? "Will you use the free " + p + " exam prep (MCQs, mock exams)?"
+      : "Would you use a free " + p + " exam prep (MCQs, mock exams) if we add it?";
+  };
   document.querySelectorAll("a[data-book]").forEach(function (a) {
     a.addEventListener("click", function (e) {
       e.preventDefault();
