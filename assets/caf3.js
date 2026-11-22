@@ -276,7 +276,7 @@
       field("city", "City", "text", 'autocomplete="address-level2" placeholder="e.g. Lahore" maxlength="60"') +
       field("institute", "Institute / college", "text", 'placeholder="e.g. your CA tuition institute" maxlength="120"') +
       field("icapRegNo", "ICAP registration number", "text", 'maxlength="30"') + "</div>" +
-      '<label class="qz-check"><input type="checkbox" name="consent"' + (again ? " checked" : "") + '><span>I agree that my details and practice results are stored as described in the <a href="' + BASE + 'privacy/" target="_blank">CAF-3 DSR Exam Prep privacy notice</a>.</span></label>' +
+      '<label class="qz-check"><input type="checkbox" name="consent"' + (again ? " checked" : "") + '><span>I agree that my details and practice results are stored as described in the <a href="' + BASE + 'privacy/" target="_blank">' + NAME + ' Exam Prep privacy notice</a>.</span></label>' +
       '<p class="qz-err" role="alert"></p><button type="submit" class="btn primary">' + (again ? "Save details" : "Continue →") + "</button></div>" +
       (cancel ? ' <button type="button" class="qz-link qz-cancel">Cancel</button>' : "") + "</form>";
     var form = root.querySelector("form"), signed = null;
