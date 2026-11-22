@@ -275,7 +275,10 @@
       field("phone", "Mobile number", "tel", 'autocomplete="tel" placeholder="03001234567" maxlength="20"') +
       field("city", "City", "text", 'autocomplete="address-level2" placeholder="e.g. Lahore" maxlength="60"') +
       field("institute", "Institute / college", "text", 'placeholder="e.g. your CA tuition institute" maxlength="120"') +
-      field("icapRegNo", "ICAP registration number", "text", 'maxlength="30"') + "</div>" +
+      field("icapRegNo", "ICAP registration number", "text", 'maxlength="30"') +
+      '<label class="qz-field"><span>How did you hear about us?</span><select name="source"><option value="">Choose one</option>' +
+      ["YouTube", "LinkedIn", "Facebook", "Instagram", "TikTok", "Google search", "Friend or colleague", "My institute / teacher", "WhatsApp group", "Other"]
+        .map(function (o) { return "<option" + (me && me.source === o ? " selected" : "") + ">" + o + "</option>"; }).join("") + "</select></label></div>" +
       '<label class="qz-check"><input type="checkbox" name="consent"' + (again ? " checked" : "") + '><span>I agree that my details and practice results are stored as described in the <a href="' + BASE + 'privacy/" target="_blank">' + NAME + ' Exam Prep privacy notice</a>.</span></label>' +
       '<p class="qz-err" role="alert"></p><button type="submit" class="btn primary">' + (again ? "Save details" : "Continue →") + "</button></div>" +
       (cancel ? ' <button type="button" class="qz-link qz-cancel">Cancel</button>' : "") + "</form>";
@@ -297,6 +300,7 @@
       var d = {}, err = "";
       ["name", "email", "phone", "city", "institute", "icapRegNo"].forEach(function (k) { d[k] = form.elements[k].value.trim(); });
       d.google = true;
+      d.source = form.elements.source.value;
       d.phone = d.phone.replace(/[\s-]/g, "");
       if (!signed) err = "Please sign in with Google first.";
       else if (d.name.length < 3) err = "Please enter your full name.";

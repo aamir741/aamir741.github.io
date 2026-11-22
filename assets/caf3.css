@@ -50,8 +50,8 @@ a.c3-ch:hover{transform:translateY(-3px);box-shadow:0 16px 34px rgba(0,42,116,.1
 .qz-note{color:var(--muted);font-size:14.5px;margin-bottom:18px}
 .qz-fields{display:grid;grid-template-columns:1fr 1fr;gap:14px}
 .qz-field{display:flex;flex-direction:column;gap:5px;font-size:14px;font-weight:600;color:var(--navy)}
-.qz-field input{font:500 15px Inter,sans-serif;border:1.5px solid var(--line);border-radius:10px;padding:11px 12px;color:var(--ink)}
-.qz-field input:focus{outline:none;border-color:var(--teal)}
+.qz-field input,.qz-field select{font:500 15px Inter,sans-serif;border:1.5px solid var(--line);border-radius:10px;padding:11px 12px;color:var(--ink)}
+.qz-field input:focus,.qz-field select:focus{outline:none;border-color:var(--teal)}
 .qz-reg .qz-check{align-items:flex-start}.qz-reg .qz-check input{margin-top:4px;flex:none}
 .qz-reg .btn{border:0;cursor:pointer;font-family:Inter,sans-serif}
 .qz-err{color:#C62828;font-weight:600;font-size:14.5px;min-height:20px;margin-bottom:10px}

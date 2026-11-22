@@ -24,6 +24,7 @@
   var app = document.getElementById("app"), me = null, role = null, subject = Object.keys(SUBJECTS)[0];
   var D = null;   // loaded data for the current subject
   var BOOK = "cisa-book";   // picker entry for the free CISA book report: its own dashboard, no CAF tabs
+  var IBOOKS = { "caf3-book": { book: "caf3", name: "CAF-3 Book (free study guide)", page: "mirakx.com/learn/icap/caf3" } };   // ICAP study guides
 
   // ---------------------------------------------------------------- helpers
   function esc(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
@@ -72,10 +73,11 @@
 
   var sel = document.getElementById("subject");
   sel.innerHTML = Object.keys(SUBJECTS).map(function (k) { return '<option value="' + k + '">' + esc(SUBJECTS[k].name) + "</option>"; }).join("") +
-    '<option value="' + BOOK + '">CISA Book (free study guide)</option>';
+    '<option value="' + BOOK + '">CISA Book (free study guide)</option>' +
+    Object.keys(IBOOKS).map(function (k) { return '<option value="' + k + '">' + IBOOKS[k].name + "</option>"; }).join("");
   sel.onchange = function () {
     subject = sel.value; D = null;
-    history.replaceState(null, "", "#" + (subject === BOOK ? "book" : "dashboard"));
+    history.replaceState(null, "", "#" + (subject === BOOK ? "book" : IBOOKS[subject] ? subject : "dashboard"));
     route();
   };
 
@@ -90,11 +92,13 @@
       all(db.collection("gradings").where("subject", "==", subject)),
       all(db.collection("assignments").where("subject", "==", subject)),
       all(db.collection("submissions").where("subject", "==", subject)),
-      role === "owner" ? all(db.collection("admins")) : Promise.resolve([])
+      role === "owner" ? all(db.collection("admins")) : Promise.resolve([]),
+      all(db.collection("bookLeads").where("subject", "==", subject))
     ]).then(function (r) {
       var users = {};
       r[1].forEach(function (u) { users[u._id] = u; });
-      D = { en: r[0], users: users, attempts: r[2], gradings: r[3], assignments: r[4], submissions: r[5], admins: r[6] };
+      D = { en: r[0], users: users, attempts: r[2], gradings: r[3], assignments: r[4], submissions: r[5], admins: r[6], book: {} };
+      r[7].forEach(function (l) { D.book[l.email] = l; });
       D.students = D.en.map(function (e) { var u = users[e.email] || {}; return Object.assign({}, u, { email: e.email, en: e }); });
       var n = D.en.filter(function (e) { return e.access === "requested"; }).length;
       $("#reqn").textContent = n || "";
@@ -107,9 +111,11 @@
     if (!role) return;   // not signed in yet
     var tab = (location.hash || "#dashboard").slice(1);
     if (tab === "book") subject = BOOK;
+    if (IBOOKS[tab]) subject = tab;
     sel.value = subject;
-    document.getElementById("tabs").hidden = subject === BOOK;
+    document.getElementById("tabs").hidden = subject === BOOK || !!IBOOKS[subject];
     if (subject === BOOK) return book();
+    if (IBOOKS[subject]) return icapBook(IBOOKS[subject]);
     if (!D) return loadAll().then(route, function (e) { app.innerHTML = '<p class="err">' + esc(e.message) + "</p>"; });
     if ((tab === "mocks" || tab === "helpers") && role !== "owner") tab = "dashboard";
     document.querySelectorAll(".mxa-tabs a").forEach(function (a) { a.classList.toggle("on", a.getAttribute("href") === "#" + tab); });
@@ -161,13 +167,14 @@
 
   // ---------------------------------------------------------------- CISA book: visits, books emailed, leads (picker entry BOOK)
   var B = null, google = function (l) { return l.method === "Google"; };
+  function loadBooks() {
+    app.innerHTML = '<p class="mxa-msg">Loading book data…</p>';
+    Promise.all([all(db.collection("bookLeads").orderBy("lastAt", "desc")), all(db.collection("bookStats"))])
+      .then(function (r) { B = { all: r[0], leads: r[0].filter(function (l) { return (l.book || "cisa") === "cisa"; }), stats: r[1] }; route(); },
+        function (e) { app.innerHTML = '<p class="err">' + esc(e.message) + "</p>"; });
+  }
   function book() {
-    if (!B) {
-      app.innerHTML = '<p class="mxa-msg">Loading book data…</p>';
-      Promise.all([all(db.collection("bookLeads").orderBy("lastAt", "desc")), all(db.collection("bookStats"))])
-        .then(function (r) { B = { leads: r[0], stats: r[1] }; book(); }, function (e) { app.innerHTML = '<p class="err">' + esc(e.message) + "</p>"; });
-      return;
-    }
+    if (!B) return loadBooks();
     var st = {}; B.stats.forEach(function (s) { st[s._id] = s; });
     var sum = function (f, since) { return B.stats.reduce(function (n, s) { return n + (!since || s._id >= since ? s[f] || 0 : 0); }, 0); };
     var d30 = new Date(Date.now() - 29 * 864e5).toISOString().slice(0, 10), d7 = new Date(Date.now() - 6 * 864e5).toISOString().slice(0, 10);
@@ -238,6 +245,53 @@
     draw();
   }
 
+  // ---------------------------------------------------------------- ICAP study guide: request = enrollment in the subject's exam prep
+  function icapBook(cfg) {
+    if (!B) return loadBooks();
+    var leads = B.all.filter(function (l) { return l.book === cfg.book; }), sk = function (f) { return cfg.book + "_" + f; };
+    var sum = function (f) { return B.stats.reduce(function (n, x) { return n + (x[sk(f)] || 0); }, 0); };
+    var k = function (v, l) { return '<div class="kpi"><b>' + v + "</b><span>" + l + "</span></div>"; };
+    var count = function (key) {
+      var g = {}; leads.forEach(function (l) { var x = l[key] || "—"; g[x] = (g[x] || 0) + 1; });
+      var rows = Object.keys(g).map(function (x) { return [x, g[x]]; }).sort(function (a, b) { return b[1] - a[1]; }), m = rows.length ? rows[0][1] : 1;
+      return rows.map(function (r) { return '<div class="hbar"><span>' + esc(r[0]) + '</span><i style="width:' + r[1] / m * 100 + '%"></i><b>' + r[1] + "</b></div>"; }).join("") || '<p class="muted">No data yet.</p>';
+    };
+    var shares = sum("shareWhatsApp") + sum("shareLinkedIn") + sum("shareCopy");
+    app.innerHTML = "<h2>" + esc(cfg.name.replace(" (free study guide)", "")) + " · " + cfg.page + "</h2>" +
+      '<div class="kpis">' + k(sum("visit"), "page visits") + k(sum("formOpen"), "form opened") + k(leads.length, "students (unique)") +
+      k(sum("mailed"), "links emailed") + k(leads.filter(function (l) { return l.mailError; }).length, "emails failed") +
+      k(leads.length && sum("formOpen") ? Math.round(leads.length / sum("formOpen") * 100) + "%" : "—", "form opened → requested") + k(shares, "shares") + "</div>" +
+      '<div class="grid2"><div class="card"><h3 style="margin-top:0">Preparing for</h3>' + count("paper") + "<h3>Next attempt</h3>" + count("attempt") +
+      "<h3>How they heard about us</h3>" + count("source") + "</div>" +
+      '<div class="card"><h3 style="margin-top:0">Will use the exam prep</h3>' + count("useExamPrep") + "<h3>Would recommend us</h3>" + count("recommend") +
+      "<h3>City</h3>" + count("city") + "</div></div>" +
+      '<h3>Students</h3><div class="tools"><input type="search" id="bq" placeholder="Search name, email, phone, institute, city, ICAP no.">' +
+      '<button class="btn" id="bexp">Export CSV</button><span class="muted" id="bcnt"></span><button class="btn" id="bref">Refresh</button></div><div class="card"><table id="btbl"></table></div>';
+    var cols = [["First request", function (l) { return fmt(l.firstAt); }], ["Last request", function (l) { return fmt(l.lastAt); }], ["Name", "name"], ["Email", "email"],
+      ["Mobile", "phone"], ["City", "city"], ["Institute", "institute"], ["ICAP reg. no.", "icapRegNo"], ["Paper", "paper"], ["Attempt", "attempt"],
+      ["Exam prep", "useExamPrep"], ["Recommend", "recommend"], ["Heard via", function (l) { return (l.source || "") + (l.sourceOther ? ": " + l.sourceOther : ""); }],
+      ["Updates", function (l) { return l.updates ? "Yes" : ""; }], ["Emailed", function (l) { return l.mailError ? "FAILED: " + l.mailError : (l.mails || 0) + ""; }],
+      ["Campaign", "utm"], ["Referrer", "referrer"]];
+    var val = function (l, c) { return typeof c[1] === "function" ? c[1](l) : l[c[1]] || ""; };
+    function filtered() {
+      var q = $("#bq").value.toLowerCase().trim();
+      return leads.filter(function (l) { return !q || [l.name, l.email, l.phone, l.institute, l.city, l.icapRegNo].join(" ").toLowerCase().indexOf(q) >= 0; });
+    }
+    function draw() {
+      var rows = filtered(), show = cols.slice(1, 14).concat([cols[14]]);
+      $("#bcnt").textContent = rows.length + " students";
+      $("#btbl").innerHTML = "<tr>" + show.map(function (c) { return "<th>" + c[0] + "</th>"; }).join("") + "</tr>" +
+        rows.map(function (l) { return "<tr>" + show.map(function (c) { return "<td>" + esc(val(l, c) || "—") + "</td>"; }).join("") + "</tr>"; }).join("");
+    }
+    $("#bq").oninput = draw;
+    $("#bref").onclick = function () { B = null; icapBook(cfg); };
+    $("#bexp").onclick = function () {
+      csv([cols.map(function (c) { return c[0]; })].concat(filtered().map(function (l) { return cols.map(function (c) { return val(l, c); }); })),
+        cfg.book + "-book-leads-" + new Date().toISOString().slice(0, 10) + ".csv");
+    };
+    draw();
+  }
+
   // ---------------------------------------------------------------- access
   function setAccess(email, access, btn) {
     if (btn) btn.disabled = true;
@@ -292,18 +346,19 @@
     function draw() {
       var rows = filtered();
       $("#cnt").textContent = rows.length + " students";
-      $("#tbl").innerHTML = "<tr><th>Student</th><th>Phone</th><th>ICAP reg. no.</th><th>Institute</th><th>City</th><th>Access</th><th>Last practice</th></tr>" +
+      $("#tbl").innerHTML = "<tr><th>Student</th><th>Phone</th><th>ICAP reg. no.</th><th>Institute</th><th>City</th><th>Heard via</th><th>Book</th><th>Access</th><th>Last practice</th></tr>" +
         rows.map(function (s) {
           return '<tr class="click" data-e="' + esc(s.email) + '"><td><b>' + esc(s.name) + "</b><br><span class=muted>" + esc(s.email) + "</span></td><td>" + esc(s.phone) +
-            "</td><td>" + esc(s.icapRegNo || "—") + "</td><td>" + esc(s.institute) + "</td><td>" + esc(s.city) + "</td><td>" + pill(s.en.access) + "</td><td>" + fmt(last[s.email]) + "</td></tr>";
+            "</td><td>" + esc(s.icapRegNo || "—") + "</td><td>" + esc(s.institute) + "</td><td>" + esc(s.city) + "</td><td>" + esc(s.source || (D.book[s.email] || {}).source || "—") + "</td><td>" + (D.book[s.email] ? "✅" : "") +
+            "</td><td>" + pill(s.en.access) + "</td><td>" + fmt(last[s.email]) + "</td></tr>";
         }).join("");
       document.querySelectorAll("#tbl tr.click").forEach(function (tr) { tr.onclick = function () { profile(tr.dataset.e); }; });
     }
     $("#q").oninput = draw;
     $("#fa").onchange = draw;
     $("#exp").onclick = function () {
-      csv([["Name", "Email", "Phone", "ICAP reg. no.", "Institute", "City", "Access", "MCQs used", "Mock papers", "Last practice"]].concat(filtered().map(function (s) {
-        return [s.name, s.email, s.phone, s.icapRegNo, s.institute, s.city, s.en.access, s.en.mcqsUsed || (s.en.seenM || []).length, s.en.mockPapers, last[s.email] ? last[s.email].toISOString() : ""];
+      csv([["Name", "Email", "Phone", "ICAP reg. no.", "Institute", "City", "Heard via", "Study guide", "Access", "MCQs used", "Mock papers", "Last practice"]].concat(filtered().map(function (s) {
+        return [s.name, s.email, s.phone, s.icapRegNo, s.institute, s.city, s.source || (D.book[s.email] || {}).source || "", D.book[s.email] ? "Yes" : "", s.en.access, s.en.mcqsUsed || (s.en.seenM || []).length, s.en.mockPapers, last[s.email] ? last[s.email].toISOString() : ""];
       })), "students-" + subject + ".csv");
     };
     draw();

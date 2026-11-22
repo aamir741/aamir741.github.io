@@ -333,6 +333,11 @@ footer span a{text-decoration:underline}
 .ytf::after{content:"";position:absolute;left:50%;top:50%;width:68px;height:48px;transform:translate(-50%,-50%);border-radius:12px;background:#FF0033;transition:.15s}
 .ytf::before{content:"";position:absolute;left:50%;top:50%;z-index:1;transform:translate(-35%,-50%);border-style:solid;border-width:11px 0 11px 19px;border-color:transparent transparent transparent #fff}
 .ytf:hover::after{background:#CC0029}.ytf:focus-visible{outline:3px solid var(--teal2);outline-offset:-3px}
-nav.top .dd ul li.mh{border-top:1px solid var(--line);margin-top:4px;padding-top:4px}nav.top .dd ul li.mh a{font-weight:700}
-nav.top .dd ul li.m1 a{padding-left:24px;font-weight:600}nav.top .dd ul li.m2 a{padding-left:40px;font-size:14px}
-nav.top .dd ul{min-width:300px}
+/* Learn menu: ICAP is a section label, PRC/CAF are levels, papers hang off a guide line under their level */
+nav.top .dd ul a{white-space:nowrap}
+nav.top .dd ul li.mh{border-top:1px solid var(--line);margin-top:6px;padding-top:6px}
+nav.top .dd ul li.mh a{font-size:11.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);padding-top:6px;padding-bottom:4px}
+nav.top .dd ul li.m1 a{font-weight:700;padding-left:12px}
+nav.top .dd ul li.m2{margin-left:22px;border-left:2px solid var(--line)}
+nav.top .dd ul li.m2 a{font-size:14px;padding:7px 12px}
+@media (max-width:900px){nav.top .dd ul li.mh{border-top-color:rgba(255,255,255,.15)}nav.top .dd ul li.mh a{color:#9CD20C}nav.top .dd ul li.m1 a{color:#fff}nav.top .dd ul li.m2{border-left-color:rgba(255,255,255,.2)}}

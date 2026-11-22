@@ -5,7 +5,7 @@
 
 ## Free books
 - [CISA Complete Study Guide (First Edition 2026)](https://mirakx.com/learn/cisa/#book): free 352-page PDF covering all five CISA domains, with 100 exam-style practice questions. Emailed free on request.
-- [CAF-3 Data, Systems & Risks Study Guide](https://mirakx.com/learn/icap/caf3/#study-guide): free 457-page PDF covering all 17 chapters of the ICAP CAF-3 DSR syllabus. Free download.
+- [CAF-3 Data, Systems & Risks Study Guide](https://mirakx.com/learn/icap/caf3/#study-guide): free 457-page PDF covering all 17 chapters of the ICAP CAF-3 DSR syllabus. Free on request (emailed download link).
 
 ## Free courses and exam prep
 - [Free CISA video course](https://mirakx.com/learn/cisa/): one lesson for every section of the CISA syllabus, with practice questions and lesson notes. Also on YouTube: https://www.youtube.com/playlist?list=PLHzAINATBrBs
