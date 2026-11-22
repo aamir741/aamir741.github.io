@@ -220,3 +220,11 @@ a.c3-ch:hover{transform:translateY(-3px);box-shadow:0 16px 34px rgba(0,42,116,.1
 
 .ax-vid{display:inline-block;margin-left:12px;font-weight:700;color:#C4302B;text-decoration:none;white-space:nowrap}
 .ax-vid:hover{text-decoration:underline}
+/* structured (financial statement) question: one answer line per row, label left, amount right */
+.fs-lines{display:flex;flex-direction:column;gap:8px;margin:14px 0 6px;max-width:760px}
+.fs-line{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:8px 12px;border:1px solid var(--line);border-radius:10px;background:#fff}
+.fs-line span{flex:1;font-size:15px;color:var(--ink)}
+.fs-line small{color:var(--muted)}
+.fs-line input{width:190px;flex:none;text-align:right;font:600 16px/1.2 inherit;padding:9px 11px;border:1px solid #c9d3e2;border-radius:8px;font-variant-numeric:tabular-nums}
+.fs-line input:focus{outline:2px solid #9CD20C;border-color:#0F7A4A}
+@media (max-width:600px){.fs-line{flex-direction:column;align-items:stretch}.fs-line input{width:100%}}
