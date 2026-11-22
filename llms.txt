@@ -9,6 +9,7 @@
 
 ## Free courses and exam prep
 - [Free CISA video course](https://mirakx.com/learn/cisa/): one lesson for every section of the CISA syllabus, with practice questions and lesson notes. Also on YouTube: https://www.youtube.com/playlist?list=PLHzAINATBrBs
+- [PRC-1 Fundamentals of Accounting Exam Prep](https://mirakx.com/learn/icap/prc1/): free ICAP PRC-1 practice: chapter-wise MCQs with worked answers and mock exams in the PRC pattern, marked instantly.
 - [CAF-3 DSR Exam Prep](https://mirakx.com/learn/icap/caf3/): free ICAP CAF-3 DSR practice: 1,000+ chapter-wise MCQs, ICAP-style mock exams, AI marking of handwritten answers and a readiness score.
 - [CertPrepX](https://certprepx.com/): CISA, AAIA and ISO 27001 Lead Auditor practice questions and timed mock exams (co-founded by Muhammad Aamir).
 

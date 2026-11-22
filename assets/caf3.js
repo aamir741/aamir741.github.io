@@ -7,7 +7,9 @@
    approved. Details and every finished attempt are posted there too. Best scores and recent mock papers are kept in this browser. */
 (function () {
   "use strict";
-  var LETTERS = "ABCD", SEC_PER_Q = 90;
+  var LETTERS = "ABCDEF", SEC_PER_Q = 90;
+  // Per-subject settings from the page's data-cfg (JSON); the defaults are CAF-3 DSR.
+  var BASE = "/learn/icap/caf3/", NAME = "CAF-3 DSR", KP = "caf3:", NCH = 17, PATTERN = null, SBL = "Q2–7";
 
   // ---------------------------------------------------------------- helpers
   function esc(s) { return String(s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
@@ -21,19 +23,26 @@
   function pageUrl() { return location.href.split("#")[0]; }
 
   // Prepare a bank question for display: options shuffled so the answer position tells nothing.
+  // "Select all that apply" questions have a list of answers; the student must pick exactly those (all or nothing).
   function prep(q) {
-    var order = shuffle([0, 1, 2, 3]);
-    return { id: q.id, q: q.q, explain: q.explain, opts: order.map(function (i) { return q.options[i]; }), answer: order.indexOf(q.answer), chosen: null };
+    var order = shuffle(q.options.map(function (o, i) { return i; })), multi = Array.isArray(q.answer);
+    return { id: q.id, q: q.q, explain: q.explain, opts: order.map(function (i) { return q.options[i]; }), multi: multi,
+      answer: multi ? q.answer.map(function (a) { return order.indexOf(a); }).sort() : order.indexOf(q.answer), chosen: multi ? [] : null };
   }
+  function isRight(x) {
+    return x.multi ? x.chosen.length === x.answer.length && x.answer.every(function (a) { return x.chosen.indexOf(a) >= 0; }) : x.chosen === x.answer;
+  }
+  function has(x) { return x.multi ? x.chosen.length > 0 : x.chosen != null; }
+  function optText(x, v) { return [].concat(v).map(function (i) { return LETTERS[i] + ". " + x.opts[i]; }).join("; "); }
 
   // Score per chapter from a set of answered MCQs (ids look like "c5-012"): {5: [correct, answered]}.
   function chapterStats(qs) {
     var out = {};
     qs.forEach(function (x) {
-      var ch = +(/^c(\d+)-/.exec(x.id) || [])[1];
+      var ch = +(/^[cp](\d+)-/.exec(x.id) || [])[1];
       if (!ch) return;
       out[ch] = out[ch] || [0, 0];
-      out[ch][0] += x.chosen === x.answer ? 1 : 0;
+      out[ch][0] += isRight(x) ? 1 : 0;
       out[ch][1] += 1;
     });
     return out;
@@ -208,9 +217,9 @@
   // Everything is free; the request only keeps the platform for genuine CAF-3 students and protects the questions.
   function lockCard(title, why) {
     return '<div class="qz-card ax-lock"><span class="pill ok">FREE FULL ACCESS</span><h3>' + title + "</h3><p>" + why + "</p>" +
-      "<p><b>Full access includes:</b></p><ul class=\"ax-list\"><li>Every MCQ in all 17 chapters</li><li>More mock papers in the ICAP pattern</li>" +
-      "<li>AI marking of your handwritten Questions 2 to 7</li><li>Your exam readiness score and the chapters to work on next</li></ul>" +
-      '<p class="qz-note">There is no charge. Requests only help us keep the platform for genuine CAF-3 students and protect the questions from being copied.</p>' +
+      "<p><b>Full access includes:</b></p><ul class=\"ax-list\"><li>Every MCQ in all " + NCH + " chapters</li><li>More mock papers in the ICAP pattern</li>" +
+      (PATTERN ? "" : "<li>AI marking of your handwritten Questions 2 to 7</li>") + "<li>Your exam readiness score and the chapters to work on next</li></ul>" +
+      '<p class="qz-note">There is no charge. Requests only help us keep the platform for genuine ' + NAME.split(" ")[0] + ' students and protect the questions from being copied.</p>' +
       '<div class="ax-req"></div></div>';
   }
 
@@ -234,7 +243,7 @@
       document.querySelectorAll(".ax-open").forEach(function (o) { o.remove(); });
       return;
     }
-    box.innerHTML = (box.closest(".ax-lock") ? "" : '<p class="qz-note" style="margin:6px 0">Full access is free. Requests only help us keep the platform for genuine CAF-3 students.</p>') +
+    box.innerHTML = (box.closest(".ax-lock") ? "" : '<p class="qz-note" style="margin:6px 0">Full access is free. Requests only help us keep the platform for genuine ' + NAME.split(" ")[0] + ' students.</p>') +
       '<label class="qz-field"><span>Anything we should know? (optional, e.g. your class or teacher)</span>' +
       '<input type="text" maxlength="300" class="ax-note"></label><p class="qz-err" role="alert"></p>' +
       '<button type="button" class="btn primary ax-send">Request full access →</button><div class="ax-g"></div>';
@@ -259,7 +268,7 @@
     root.innerHTML = '<form class="qz-card qz-reg" novalidate>' +
       "<h3>" + (again ? "Your details" : "Before you start: sign in and add your details") + "</h3>" +
       (again ? "" : '<p class="qz-note">Completely free. Start straight away with ' + FREE_MCQS + " MCQs and " + FREE_MOCKS + " mock paper. Sign in once with your Google account, " +
-        "then add your mobile, city and institute. We may contact you about CAF-3 DSR classes and material.</p>") +
+        "then add your mobile, city and institute. We may contact you about " + NAME + " classes and material.</p>") +
       '<div class="g-row"><div class="g-btn"></div><span class="g-hint">We only receive your name and email address from Google, never your password.</span></div>' +
       '<div class="qz-after" hidden><div class="qz-fields">' + field("name", "Full name", "text", 'autocomplete="name" maxlength="80"') +
       field("email", "Email address", "email", 'autocomplete="email" maxlength="120" readonly') +
@@ -267,7 +276,7 @@
       field("city", "City", "text", 'autocomplete="address-level2" placeholder="e.g. Lahore" maxlength="60"') +
       field("institute", "Institute / college", "text", 'placeholder="e.g. your CA tuition institute" maxlength="120"') +
       field("icapRegNo", "ICAP registration number", "text", 'maxlength="30"') + "</div>" +
-      '<label class="qz-check"><input type="checkbox" name="consent"' + (again ? " checked" : "") + '><span>I agree that my details and practice results are stored as described in the <a href="/learn/icap/caf3/privacy/" target="_blank">CAF-3 DSR Exam Prep privacy notice</a>.</span></label>' +
+      '<label class="qz-check"><input type="checkbox" name="consent"' + (again ? " checked" : "") + '><span>I agree that my details and practice results are stored as described in the <a href="' + BASE + 'privacy/" target="_blank">CAF-3 DSR Exam Prep privacy notice</a>.</span></label>' +
       '<p class="qz-err" role="alert"></p><button type="submit" class="btn primary">' + (again ? "Save details" : "Continue →") + "</button></div>" +
       (cancel ? ' <button type="button" class="qz-link qz-cancel">Cancel</button>' : "") + "</form>";
     var form = root.querySelector("form"), signed = null;
@@ -310,7 +319,7 @@
 
   function whoBar() {
     return '<p class="qz-me">Practising as <b>' + esc(me.name) + "</b> · " + esc(me.city) + ' · <span class="g-tag">Google</span>' +
-      ' <button type="button" class="qz-link qz-edit">Change details</button> · <a href="/learn/icap/caf3/progress/">My progress</a></p>' + accessBar();
+      ' <button type="button" class="qz-link qz-edit">Change details</button> · <a href="' + BASE + 'progress/">My progress</a></p>' + accessBar();
   }
 
   // ---------------------------------------------------------------- quiz runner
@@ -326,26 +335,28 @@
     }
 
     function show() {
-      var q = st.qs[st.i], n = st.qs.length, done = q.chosen != null;
-      var answered = st.qs.filter(function (x) { return x.chosen != null; });
-      var correct = answered.filter(function (x) { return x.chosen === x.answer; }).length;
+      var q = st.qs[st.i], n = st.qs.length, done = isDone(q);
+      var answered = st.qs.filter(isDone);
+      var correct = answered.filter(isRight).length;
       var html = '<div class="qz-card"><div class="qz-top"><span>' + (opts.label ? opts.label + " · " : "") + "Question <b>" + (st.i + 1) + "</b> of " + n + "</span>" +
         (learn ? '<span class="qz-score">Score ' + correct + "/" + answered.length + "</span>"
           : '<span class="qz-timer">⏱ ' + clock(opts.seconds - (Date.now() - st.started) / 1000) + "</span>") +
         '</div><div class="qz-bar"><i style="width:' + ((learn ? st.i + (done ? 1 : 0) : answered.length) / n * 100) + '%"></i></div>' +
-        '<p class="qz-q">' + esc(q.q) + '</p><div class="qz-opts">' +
+        '<p class="qz-q">' + esc(q.q) + '</p>' + (q.multi ? '<p class="qz-note">Select all that apply, then ' + (learn ? "check your answer." : "move on.") + "</p>" : "") +
+        '<div class="qz-opts">' +
         q.opts.map(function (o, k) {
-          var cls = "qz-opt";
-          if (learn && done) cls += k === q.answer ? " right" : (k === q.chosen ? " wrong" : " dim");
-          else if (k === q.chosen) cls += " sel";
+          var cls = "qz-opt", isAns = q.multi ? q.answer.indexOf(k) >= 0 : k === q.answer, picked = q.multi ? q.chosen.indexOf(k) >= 0 : k === q.chosen;
+          if (learn && done) cls += isAns ? " right" : (picked ? " wrong" : " dim");
+          else if (picked) cls += " sel";
           return '<button type="button" class="' + cls + '" data-k="' + k + '"' + (learn && done ? " disabled" : "") + "><b>" + LETTERS[k] + "</b><span>" + esc(o) + "</span></button>";
         }).join("") + "</div>";
       if (learn && done) {
-        html += '<div class="qz-explain ' + (q.chosen === q.answer ? "ok" : "no") + '"><b>' + (q.chosen === q.answer ? "✔ Correct." : "✘ Not quite. The answer is " + LETTERS[q.answer] + ".") + "</b> " + esc(q.explain) + "</div>";
+        html += '<div class="qz-explain ' + (isRight(q) ? "ok" : "no") + '"><b>' + (isRight(q) ? "✔ Correct." : "✘ Not quite. The answer is " + [].concat(q.answer).map(function (i) { return LETTERS[i]; }).join(", ") + ".") + "</b> " + esc(q.explain) + "</div>";
       }
       html += '<div class="qz-nav">';
       if (learn) {
-        html += done ? '<button type="button" class="btn primary qz-next">' + (st.i === n - 1 ? "See results →" : "Next question →") + "</button>" : "";
+        html += done ? '<button type="button" class="btn primary qz-next">' + (st.i === n - 1 ? "See results →" : "Next question →") + "</button>"
+          : q.multi ? '<button type="button" class="btn primary qz-check-ans"' + (q.chosen.length ? "" : " disabled") + ">Check answer</button>" : "";
         html += '<button type="button" class="qz-link qz-quit">End practice</button>';
       } else {
         html += '<button type="button" class="btn outline qz-prev"' + (st.i ? "" : " disabled") + ">← Previous</button>" +
@@ -355,7 +366,7 @@
       html += "</div>";
       if (!learn) {
         html += '<div class="qz-palette" aria-label="Jump to question">' + st.qs.map(function (x, k) {
-          return '<button type="button" data-go="' + k + '" class="' + (x.chosen != null ? "ans" : "") + (k === st.i ? " cur" : "") + '">' + (k + 1) + "</button>";
+          return '<button type="button" data-go="' + k + '" class="' + (has(x) ? "ans" : "") + (k === st.i ? " cur" : "") + '">' + (k + 1) + "</button>";
         }).join("") + "</div>";
       }
       root.innerHTML = html + "</div>";
@@ -364,6 +375,7 @@
       on(root, ".qz-next", function () { if (st.i < n - 1) { st.i++; show(); } else finish(false); });
       on(root, ".qz-prev", function () { st.i--; show(); });
       on(root, ".qz-quit", function () { finish(false); });
+      on(root, ".qz-check-ans", function () { st.qs[st.i].checked = true; show(); });
       on(root, ".qz-submit", function () {
         var left = n - answered.length;
         if (!left || confirm(left + " question(s) unanswered. Submit anyway?")) finish(false);
@@ -371,18 +383,21 @@
       root.querySelectorAll("[data-go]").forEach(function (b) { b.onclick = function () { st.i = +b.dataset.go; show(); }; });
     }
 
+    function isDone(x) { return x.multi && learn ? !!x.checked : has(x); }
     function choose(k) {
-      if (learn && st.qs[st.i].chosen != null) return;
-      st.qs[st.i].chosen = k;
+      var x = st.qs[st.i];
+      if (learn && isDone(x)) return;
+      if (x.multi) { var at = x.chosen.indexOf(k); if (at >= 0) x.chosen.splice(at, 1); else x.chosen.push(k); x.chosen.sort(); }
+      else x.chosen = k;
       show();
     }
 
     function onKey(e) {
       if (st.over || /INPUT|TEXTAREA/.test(e.target.tagName) || !root.querySelector(".qz-opts")) return;
-      var k = "abcd".indexOf(e.key.toLowerCase());
-      if (k < 0) k = "1234".indexOf(e.key);
+      var k = "abcdef".slice(0, st.qs[st.i].opts.length).indexOf(e.key.toLowerCase());
+      if (k < 0) k = "123456".slice(0, st.qs[st.i].opts.length).indexOf(e.key);
       if (k >= 0) choose(k);
-      else if (e.key === "Enter") { var b = root.querySelector(".qz-next"); if (b) b.click(); }
+      else if (e.key === "Enter") { var b = root.querySelector(".qz-next") || root.querySelector(".qz-check-ans"); if (b && !b.disabled) b.click(); }
     }
     document.addEventListener("keydown", onKey);
 
@@ -391,10 +406,10 @@
       st.over = true;
       clearInterval(timer);
       document.removeEventListener("keydown", onKey);
-      var done = learn ? st.qs.filter(function (x) { return x.chosen != null; }) : st.qs;
-      var right = done.filter(function (x) { return x.chosen === x.answer; }).length;
+      var done = learn ? st.qs.filter(isDone) : st.qs;
+      var right = done.filter(isRight).length;
       opts.onFinish({ qs: done, right: right, pct: done.length ? Math.round(right / done.length * 100) : 0, secs: (Date.now() - st.started) / 1000,
-        wrong: done.filter(function (x) { return x.chosen !== x.answer; }), timeUp: timeUp });
+        wrong: done.filter(function (x) { return !isRight(x); }), timeUp: timeUp });
     }
 
     show();
@@ -411,14 +426,14 @@
   }
 
   function review(qs) {
-    var wrong = qs.filter(function (x) { return x.chosen !== x.answer; }).length;
+    var wrong = qs.filter(function (x) { return !isRight(x); }).length;
     return '<div class="qz-card qz-review"><div class="qz-rhead"><h3>Review your answers</h3>' +
       (wrong && wrong < qs.length ? '<label class="qz-check"><input type="checkbox" class="qz-wrongonly"> Wrong answers only</label>' : "") + "</div>" +
       qs.map(function (x, k) {
-        var ok = x.chosen === x.answer;
+        var ok = isRight(x), show = function (v) { return esc(x.multi ? optText(x, v) : x.opts[v]); };
         return '<div class="qz-ritem ' + (ok ? "ok" : "no") + '"><p><b>' + (k + 1) + ".</b> " + esc(x.q) + "</p>" +
-          (ok ? '<p class="a ok">✔ ' + esc(x.opts[x.answer]) + "</p>"
-            : '<p class="a no">✘ Your answer: ' + (x.chosen == null ? "<i>not answered</i>" : esc(x.opts[x.chosen])) + '</p><p class="a ok">✔ Correct: ' + esc(x.opts[x.answer]) + "</p>") +
+          (ok ? '<p class="a ok">✔ ' + show(x.answer) + "</p>"
+            : '<p class="a no">✘ Your answer: ' + (!has(x) ? "<i>not answered</i>" : show(x.chosen)) + '</p><p class="a ok">✔ Correct: ' + show(x.answer) + "</p>") +
           '<p class="why">' + esc(x.explain) + "</p></div>";
       }).join("") + "</div>";
   }
@@ -443,13 +458,13 @@
 
   // ---------------------------------------------------------------- chapter practice
   function practice(root) {
-    var CH = +root.dataset.ch, TITLE = root.dataset.title || "", total = +root.dataset.total || 60, KEY = "caf3:ch" + CH;
+    var CH = +root.dataset.ch, TITLE = root.dataset.title || "", total = +root.dataset.total || 60, KEY = KP + "ch" + CH;
     var got = {};   // questions received this visit, by id, so wrong answers can be retried without asking the server
 
     // Free students who have used their allowance see the full-access card instead of the settings.
     function locked() {
       root.innerHTML = '<div class="qz-card qz-setup">' + whoBar() + "</div>" +
-        lockCard("You have practised your first " + ACCESS.freeMcqs + " MCQs", "Thank you for practising with CAF-3 DSR Exam Prep. " +
+        lockCard("You have practised your first " + ACCESS.freeMcqs + " MCQs", "Thank you for practising with " + NAME + " Exam Prep. " +
           "To keep practising every chapter, send a free access request below. We review requests and email you as soon as yours is approved.");
       on(root, ".qz-edit", function () { register(root, function () { setup(); }, function () { setup(); }); });
       var dup = root.querySelector(".qz-setup .ax-open");   // the card below already has the request form
@@ -533,9 +548,9 @@
         (r.wrong.length ? '<button type="button" class="btn primary qz-retry">Retry my ' + r.wrong.length + " wrong answer" + (r.wrong.length > 1 ? "s" : "") + "</button>" : "") +
         '<button type="button" class="btn outline qz-again">New set of questions</button>' +
         '<button type="button" class="btn outline qz-settings">Change settings</button></div>' +
-        shareLinks("I scored " + r.right + "/" + r.qs.length + " (" + r.pct + "%) on CAF-3 DSR Chapter " + CH + " MCQ practice. Try it free: " + pageUrl(),
-          "My CAF-3 DSR Chapter " + CH + " practice result",
-          "CAF-3 DSR Chapter " + CH + ": " + TITLE + "\nScore: " + r.right + "/" + r.qs.length + " (" + r.pct + "%)\nTime: " + clock(r.secs) +
+        shareLinks("I scored " + r.right + "/" + r.qs.length + " (" + r.pct + "%) on " + NAME + " Chapter " + CH + " MCQ practice. Try it free: " + pageUrl(),
+          "My " + NAME + " Chapter " + CH + " practice result",
+          NAME + " Chapter " + CH + ": " + TITLE + "\nScore: " + r.right + "/" + r.qs.length + " (" + r.pct + "%)\nTime: " + clock(r.secs) +
           "\n\nQuestions to revise:\n" + (r.wrong.map(function (x) { return "- " + x.q; }).join("\n") || "None, all correct!") + "\n\n" + pageUrl()) +
         "</div>" + review(r.qs);
       on(root, ".qz-retry", function () { start(cfg, shuffle(r.wrong.map(function (x) { return prep(got[x.id]); }))); });
@@ -557,7 +572,7 @@
   var MCQ_COUNT = 15, SECB_MARKS = 85, MCQ_ONLY_MAX = 100;
 
   function mock(root) {
-    var CHS = JSON.parse(document.getElementById("chapters").textContent), PAPERS = "caf3:mock:papers";
+    var CHS = JSON.parse(document.getElementById("chapters").textContent), PAPERS = KP + "mock:papers";
     builder();
 
     function chapterLabel(chs) {
@@ -589,12 +604,15 @@
         }).join("") + "</div>" +
         "<h3>2. Choose the type of mock</h3>" +
         '<div class="qz-modes"><label class="qz-mode"><input type="radio" name="mtype" value="full" checked><span><b>Full mock exam</b>' +
-        "The real ICAP paper pattern: 7 questions, 100 marks.</span></label>" +
+        (PATTERN ? "The PRC exam pattern: " + PATTERN.mcqs + " MCQs and " + PATTERN.fs + " structured question, 100 marks."
+          : "The real ICAP paper pattern: 7 questions, 100 marks.") + "</span></label>" +
         '<label class="qz-mode"><input type="radio" name="mtype" value="mcq"><span><b>MCQ-only mock</b>' +
         "Just MCQs, timed. You choose how many.</span></label></div>" +
-        '<ul class="mk-pattern mk-full"><li><b>Question 1</b> · ' + MCQ_COUNT + " MCQs, 1 mark each, taken online and timed (" + Math.round(MCQ_COUNT * SEC_PER_Q / 60) + " minutes)</li>" +
+        '<ul class="mk-pattern mk-full">' + (PATTERN ? "<li><b>Part 1</b> · " + PATTERN.mcqs + " MCQs, " + PATTERN.mcqMarks + " marks each, answered online</li>" +
+          "<li><b>Part 2</b> · a structured financial-statement question (" + PATTERN.fsMarks + " marks): you enter the figures online</li>" +
+          "<li>" + PATTERN.minutes + " minutes in total, marked as soon as you submit</li></ul>" : '<li><b>Question 1</b> · ' + MCQ_COUNT + " MCQs, 1 mark each, taken online and timed (" + Math.round(MCQ_COUNT * SEC_PER_Q / 60) + " minutes)</li>" +
         "<li><b>Questions 2 to 7</b> · descriptive and scenario questions (" + SECB_MARKS + " marks), downloaded as a PDF paper with a separate " +
-        "model-answer PDF, then marked by AI or by you</li></ul>" +
+        "model-answer PDF, then marked by AI or by you</li></ul>") +
         '<div class="mk-mcqonly" hidden><p class="qz-note" style="margin:12px 0 8px">How many MCQs? (1.5 minutes each)</p><div class="qz-chips">' +
         [15, 20, 30, 50].map(function (n) { return '<button type="button" class="qz-chip" data-n="' + n + '">' + n + "</button>"; }).join("") +
         '<label class="qz-custom">Custom <input type="number" min="5" max="' + MCQ_ONLY_MAX + '" value="20" aria-label="Number of MCQs"></label></div></div>' +
@@ -608,11 +626,12 @@
           var mcqOnly = p.type === "mcq";
           if (p.secA == null) return '<div class="mk-paper"><span><b>' + esc(p.code) + "</b> · " + new Date(p.date).toLocaleDateString() + " · " +
             esc(chapterLabel(p.chapters)) + " · not started</span><span><button type=\"button\" class=\"qz-link\" data-resume=\"" + k + "\">Start " +
-            (mcqOnly ? "the MCQs" : "Question 1") + " →</button></span></div>";
+            (mcqOnly ? "the MCQs" : p.type === "prc" ? "the exam" : "Question 1") + " →</button></span></div>";
           return '<div class="mk-paper"><span><b>' + esc(p.code) + "</b> · " + new Date(p.date).toLocaleDateString() + " · " + esc(chapterLabel(p.chapters)) +
             (mcqOnly ? " · MCQ-only: " + p.secA + "/" + p.mcq.length
+              : p.type === "prc" ? " · MCQs " + p.secA + "/" + p.mcq.length + (p.secB != null ? " · Structured " + p.secB : "")
               : " · Q1 " + p.secA + "/" + p.mcq.length + (p.secB != null ? " · Q2–7 " + p.secB : "")) + "</span>" +
-            (mcqOnly ? "" : '<span><button type="button" class="qz-link" data-pdf="q" data-k="' + k + '">Paper PDF</button><button type="button" class="qz-link" data-pdf="a" data-k="' + k + '">Answers PDF</button>' +
+            (mcqOnly || p.type === "prc" ? "" : '<span><button type="button" class="qz-link" data-pdf="q" data-k="' + k + '">Paper PDF</button><button type="button" class="qz-link" data-pdf="a" data-k="' + k + '">Answers PDF</button>' +
               (ENDPOINT && GCLIENT && !p.ai ? '<button type="button" class="qz-link" data-grade="' + k + '">Upload answers for AI marking</button>' : "") + "</span>") + "</div>";
         }).join("") + "</div>" : "");
       var boxes = root.querySelectorAll(".mk-chapters input");
@@ -746,10 +765,11 @@
         }).join("") +
         '<p class="qz-note">AI marking is an estimate. Check any mark you disagree with against the model-answer PDF. ' +
         (d.gradesLeft > 0 ? "You can have " + d.gradesLeft + " more paper" + (d.gradesLeft > 1 ? "s" : "") + " marked today." : "That was your last AI marking for today.") +
-        ' <a href="/learn/icap/caf3/progress/">See your readiness score →</a></p></div>';
+        ' <a href="' + BASE + 'progress/">See your readiness score →</a></p></div>';
     }
 
     function sectionA(paper) {
+      if (paper.type === "prc") return prcExam(paper);
       var mcqOnly = paper.type === "mcq", n = paper.mcq.length, secs = n * SEC_PER_Q;
       root.innerHTML = '<div class="qz-card mk-intro"><span class="pill ok">' + esc(paper.code) + "</span><h3>" +
         (mcqOnly ? "MCQ-only mock" : "Question 1: Multiple-choice questions") + "</h3>" +
@@ -804,6 +824,74 @@
       root.scrollIntoView({ behavior: "smooth", block: "start" });
     }
 
+    // ------------------------------------------------------------ PRC pattern: MCQs, then the structured question, one clock
+    function prcExam(paper) {
+      var n = paper.mcq.length, P = PATTERN;
+      root.innerHTML = '<div class="qz-card mk-intro"><span class="pill ok">' + esc(paper.code) + "</span><h3>" + esc(NAME) + " mock exam</h3>" +
+        "<p><b>Part 1:</b> " + n + " MCQs (" + P.mcqMarks + " marks each). <b>Part 2:</b> a structured question (" + P.fsMarks + " marks). " +
+        "You have <b>" + P.minutes + " minutes</b> for the whole paper, and it submits itself when time runs out. When you finish the MCQs, press " +
+        "<b>Submit</b> to move on to Part 2. Pass mark: 50%.</p>" +
+        '<button type="button" class="btn primary mk-start">Start the exam →</button></div>';
+      on(root, ".mk-start", function () {
+        var t0 = Date.now();
+        runQuiz(root, paper.mcq.map(prep), { mode: "test", seconds: P.minutes * 60, label: "Part 1",
+          onFinish: function (r) { prcPart2(paper, r, t0); } });
+      });
+    }
+
+    function prcPart2(paper, r, t0) {
+      var q = (paper.fs || [])[0];
+      if (!q || r.timeUp) return prcResult(paper, r, q ? fsScore(q, {}) : null, q, t0, r.timeUp);
+      var end = t0 + PATTERN.minutes * 60000, over = false, timer;
+      root.innerHTML = '<div class="qz-card"><div class="qz-top"><span>Part 2 · Structured question</span><span class="qz-timer"></span></div>' + fsForm(q) +
+        '<p class="qz-err" role="alert"></p><div class="qz-nav"><button type="button" class="btn primary fs-submit">Submit my paper</button></div></div>';
+      function tick() {
+        var left = (end - Date.now()) / 1000, el = root.querySelector(".qz-timer");
+        if (el) { el.textContent = "⏱ " + clock(left); el.classList.toggle("low", left < 60); }
+        if (left <= 0) done(true);
+      }
+      function done(timeUp) {
+        if (over) return;
+        over = true;
+        clearInterval(timer);
+        prcResult(paper, r, fsScore(q, fsValues(root, q)), q, t0, timeUp);
+      }
+      timer = setInterval(tick, 500);
+      tick();
+      on(root, ".fs-submit", function () {
+        var empty = q.lines.length - Object.keys(fsValues(root, q)).length;
+        if (!empty || confirm(empty + " line(s) are empty. Submit anyway?")) done(false);
+      });
+      root.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+
+    function prcResult(paper, r, f, q, t0, timeUp) {
+      var per = PATTERN.mcqMarks, mm = r.right * per, mmax = r.qs.length * per;
+      var tot = mm + (f ? f.marks : 0), max = mmax + (f ? f.max : 0), pct = max ? Math.round(tot / max * 100) : 0, secs = (Date.now() - t0) / 1000;
+      paper.secA = r.right;
+      paper.secB = f ? f.marks + "/" + f.max : null;
+      keep(paper);
+      var detail = { mcq: chapterStats(r.qs) };
+      if (f) { detail.secb = {}; detail.secb[q.ch || 10] = [f.marks, f.max]; }
+      send({ type: "attempt", kind: "PRC mock " + paper.code, chapters: paper.chapters.join(","), mode: "Mock",
+        questions: max, correct: tot, pct: pct, seconds: Math.round(secs), detail: detail });
+      track("prc_mock_done", { paper: paper.code, score_pct: pct });
+      var b = band(pct);
+      root.innerHTML = '<div class="qz-card qz-result ' + b[0] + '">' +
+        (timeUp ? '<p class="qz-timeup">Time is up. Your paper was submitted automatically.</p>' : "") +
+        '<span class="pill ok">' + esc(paper.code) + '</span><h3>Mock exam result: ' + (pct >= 50 ? "Pass" : "Below the pass mark") + "</h3>" +
+        '<div class="qz-ring" style="--p:' + pct + '"><b>' + pct + "%</b><small>" + tot + " / " + max + "</small></div><h3>" + b[1] + "</h3>" +
+        '<div class="mk-scores"><div><b>' + mm + " / " + mmax + "</b><small>Part 1 · MCQs (" + r.right + "/" + r.qs.length + " correct)</small></div>" +
+        (f ? "<div><b>" + f.marks + " / " + f.max + "</b><small>Part 2 · structured question</small></div>" : "") +
+        '<div class="tot"><b>' + tot + " / " + max + "</b><small>Total · pass mark 50%</small></div></div>" +
+        '<p class="qz-meta">Time ' + clock(secs) + " · " + esc(chapterLabel(paper.chapters)) + ' · <a href="' + BASE + 'progress/">See your readiness score</a></p>' +
+        '<div class="qz-actions"><button type="button" class="btn primary mk-new">Build another mock</button></div></div>' +
+        (f ? fsReview(f, q) : "") + review(r.qs);
+      on(root, ".mk-new", builder);
+      wireReview(root);
+      root.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+
     function mcqResult(paper, r) {
       track("caf3_mock_mcq_only", { paper: paper.code, questions: r.qs.length, score_pct: r.pct });
       send({ type: "attempt", kind: "MCQ-only mock " + paper.code, chapters: paper.chapters.join(","), mode: "Mock",
@@ -813,7 +901,7 @@
         (r.timeUp ? '<p class="qz-timeup">Time is up. Your mock was submitted automatically.</p>' : "") +
         '<span class="pill ok">' + esc(paper.code) + "</span><h3>MCQ-only mock result</h3>" + scoreRing(r) +
         "<h3>" + b[1] + "</h3>" +
-        '<p class="qz-meta">Time ' + clock(r.secs) + " · " + esc(chapterLabel(paper.chapters)) + ' · <a href="/learn/icap/caf3/progress/">See your readiness score</a></p>' +
+        '<p class="qz-meta">Time ' + clock(r.secs) + " · " + esc(chapterLabel(paper.chapters)) + ' · <a href="' + BASE + 'progress/">See your readiness score</a></p>' +
         '<div class="qz-actions"><button type="button" class="btn primary mk-new">Build another mock</button></div></div>' + review(r.qs);
       on(root, ".mk-new", builder);
       wireReview(root);
@@ -927,6 +1015,46 @@
     }
   }
 
+  // ---------------------------------------------------------------- structured questions (PRC)
+  function table(t) {
+    return '<table class="pg-table"><caption>' + esc(t.caption || "") + "</caption><tr>" + (t.headers || []).map(function (h) { return "<th>" + esc(h) + "</th>"; }).join("") + "</tr>" +
+      (t.rows || []).map(function (r) { return "<tr>" + r.map(function (c) { return "<td>" + esc(c) + "</td>"; }).join("") + "</tr>"; }).join("") + "</table>";
+  }
+  function fsForm(q) {
+    return '<div class="fs-q" data-fs="' + esc(q.id) + '"><h3 style="margin-top:0">' + esc(q.title || "Structured question") + " (" + q.marks + " marks)</h3>" +
+      "<p>" + esc(q.scenario) + "</p>" + (q.tables || []).map(table).join("") +
+      '<p class="qz-note">Enter each amount in rupees, without "Rs." Use a minus sign or brackets for a loss or negative figure.</p><div class="fs-lines">' +
+      q.lines.map(function (l, i) {
+        return '<label class="fs-line"><span>' + esc(l.label) + ' <small>(' + l.marks + ")</small></span><input type=\"text\" inputmode=\"numeric\" data-i=\"" + i + '" autocomplete="off"></label>';
+      }).join("") + "</div></div>";
+  }
+  function fsValues(root, q) {
+    var out = {};
+    root.querySelectorAll('[data-fs="' + q.id + '"] input').forEach(function (inp) { if (inp.value.trim()) out[inp.dataset.i] = inp.value.trim(); });
+    return out;
+  }
+  function fsNum(v) {
+    var t = String(v == null ? "" : v).replace(/[,\s]|Rs\.?/gi, ""), m = /^\((\d+(?:\.\d+)?)\)$/.exec(t);
+    return t === "" ? null : m ? -Number(m[1]) : isFinite(Number(t)) ? Number(t) : null;
+  }
+  function fsScore(q, entries) {
+    var marks = 0, max = 0;
+    var lines = q.lines.map(function (l, i) {
+      var got = fsNum((entries || {})[i]), ok = got !== null && Math.abs(got - l.answer) <= 0.5;
+      if (ok) marks += l.marks;
+      max += l.marks;
+      return { label: l.label, entered: got, answer: l.answer, marks: ok ? l.marks : 0, max: l.marks, ok: ok };
+    });
+    return { id: q.id, marks: marks, max: max, lines: lines };
+  }
+  function fsReview(r, q) {
+    var n = function (v) { return v == null ? "–" : Number(v).toLocaleString("en-PK"); };
+    return '<div class="qz-card"><h3 style="margin-top:0">Structured question: ' + r.marks + " / " + r.max + " marks</h3>" +
+      '<table class="pg-table"><tr><th>Line</th><th>Your answer</th><th>Correct</th><th>Marks</th></tr>' + r.lines.map(function (l) {
+        return '<tr class="' + (l.ok ? "ok" : "no") + '"><td>' + esc(l.label) + "</td><td>" + (l.ok ? "✔ " : "✘ ") + n(l.entered) + "</td><td>" + n(l.answer) + "</td><td>" + l.marks + "/" + l.max + "</td></tr>";
+      }).join("") + "</table>" + (q && q.explain ? '<details class="mk-q"><summary>Worked solution</summary><p style="white-space:pre-line">' + esc(q.explain) + "</p></details>" : "") + "</div>";
+  }
+
   // ---------------------------------------------------------------- my progress & readiness
   // Syllabus areas and their exam weightage (ICAP CAF-3: Data 35-45%, Systems 30-40%, Risks 20-30%; mid-points used).
   var AREAS = [{ name: "Data", range: "35–45%", w: 0.40, chs: [1, 2, 3, 4, 5, 6] },
@@ -937,7 +1065,7 @@
   // A chapter only counts fully once about 20 questions have been answered, so a few lucky answers can't look "ready".
   function analyse(hist) {
     var st = {}, mcqTotal = 0, papers = 0;
-    for (var c = 1; c <= 17; c++) st[c] = { mc: 0, mn: 0, sm: 0, sx: 0, sp: 0 };
+    for (var c = 1; c <= NCH; c++) st[c] = { mc: 0, mn: 0, sm: 0, sx: 0, sp: 0 };
     hist.forEach(function (a) {
       var d = a.detail || {}, mcq = d.mcq;
       if (!mcq && /^Chapter practice/.test(a.kind || "") && +a.chapters) { mcq = {}; mcq[+a.chapters] = [+a.correct || 0, +a.questions || 0]; }
@@ -1006,7 +1134,7 @@
       if (!d.assignments.length) { box.remove(); return; }
       box.innerHTML = '<h3 style="margin-top:0">My assigned mocks</h3>' + d.assignments.map(function (a) {
         var late = Date.now() > a.deadline;
-        return '<div class="mk-paper"><span><b>' + esc(a.title) + "</b> · " + (a.type === "mcq" ? a.mcqs + " MCQs" : "15 MCQs + Questions 2–7") +
+        return '<div class="mk-paper"><span><b>' + esc(a.title) + "</b> · " + (a.type === "mcq" ? a.mcqs + " MCQs" : a.type === "prc" ? a.mcqs + " MCQs + " + a.fs + " structured question" : "15 MCQs + Questions 2–7") +
           " · due " + new Date(a.deadline).toLocaleString() + "</span>" +
           (a.result ? "<b>" + a.result.total + "/" + a.result.max + " (" + a.result.pct + "%)</b>"
             : late ? '<b class="qz-err">Deadline passed</b>' : '<button type="button" class="btn primary" data-asg="' + esc(a.id) + '">Start →</button>') + "</div>";
@@ -1024,7 +1152,7 @@
         ". You get your result as soon as you submit.</p></div>" +
         (p.mcq.length ? '<div class="qz-card"><h3 style="margin-top:0">Question 1: MCQs</h3>' + p.mcq.map(function (q, i) {
           return '<fieldset class="as-q"><legend><b>' + (i + 1) + ".</b> " + esc(q.q) + "</legend>" + q.options.map(function (o, k) {
-            return '<label class="as-opt"><input type="radio" name="' + esc(q.id) + '" value="' + k + '"> ' + LETTERS[k] + ". " + esc(o) + "</label>";
+            return '<label class="as-opt"><input type="' + (q.multi ? "checkbox" : "radio") + '" name="' + esc(q.id) + '" value="' + k + '"> ' + LETTERS[k] + ". " + esc(o) + "</label>";
           }).join("") + "</fieldset>";
         }).join("") + "</div>" : "") +
         (p.secb.length ? '<div class="qz-card"><h3 style="margin-top:0">Questions 2 to 7 (write on paper)</h3>' + p.secb.map(function (q, i) {
@@ -1034,6 +1162,7 @@
                 (t.rows || []).map(function (r) { return "<tr>" + r.map(function (c) { return "<td>" + esc(c) + "</td>"; }).join("") + "</tr>"; }).join("") + "</table>";
             }).join("") + q.parts.map(function (pt) { return "<p><b>(" + esc(pt.label) + ")</b> " + esc(pt.text) + " <i>[" + pt.marks + "]</i></p>"; }).join("") + "</div>";
         }).join("") + '<label class="mk-drop"><input type="file" accept="image/*,application/pdf" multiple><span>📷 Add answer-sheet photos or a PDF</span></label><div class="mk-files"></div></div>' : "") +
+        (p.fs || []).map(function (q) { return '<div class="qz-card">' + fsForm(q) + "</div>"; }).join("") +
         '<div class="qz-card"><p class="qz-err" role="alert"></p><button type="button" class="btn primary as-submit">Submit for marking →</button>' +
         ' <button type="button" class="qz-link as-back">Back</button><div class="as-wait"></div></div>';
       var err = root.querySelector(".qz-err"), input = root.querySelector("input[type=file]");
@@ -1047,7 +1176,12 @@
       on(root, ".as-back", back);
       on(root, ".as-submit", function () {
         var answers = {}, missing = 0;
-        p.mcq.forEach(function (q) { var c = root.querySelector('input[name="' + q.id + '"]:checked'); if (c) answers[q.id] = +c.value; else missing++; });
+        p.mcq.forEach(function (q) {
+          var c = [].map.call(root.querySelectorAll('input[name="' + q.id + '"]:checked'), function (x) { return +x.value; });
+          if (c.length) answers[q.id] = q.multi ? c : c[0]; else missing++;
+        });
+        var fsIn = {};
+        (p.fs || []).forEach(function (q) { fsIn[q.id] = fsValues(root, q); });
         err.textContent = "";
         if (missing && !window.confirm(missing + " MCQ(s) are unanswered. Submit anyway?")) return;
         if (p.secb.length && !files.length) { err.textContent = "Please add photos or a PDF of your Questions 2 to 7."; return; }
@@ -1056,7 +1190,7 @@
         var wait = root.querySelector(".as-wait");
         wait.innerHTML = '<p class="mk-spin">' + (p.secb.length ? "Uploading and marking your script… this usually takes 1–2 minutes. Please keep this page open." : "Marking…") + "</p>";
         Promise.all(files.map(encode)).then(function (enc) { return enc.length ? upload("assign-" + id, enc) : []; })
-          .then(function (paths) { return fnCall("submitAssignment", { id: id, answers: answers, files: paths }); })
+          .then(function (paths) { return fnCall("submitAssignment", { id: id, answers: answers, files: paths, fs: fsIn }); })
           .then(function (r) { result(root, p, r, back); track("caf3_assigned_submit", { pct: r.pct }); },
             function (e) { wait.innerHTML = ""; err.textContent = e.message; root.querySelector(".as-submit").disabled = false; });
       });
@@ -1075,10 +1209,12 @@
           return "<details class=mk-q><summary><b>Question " + q.number + "</b> · " + esc(q.topic || "") + "<span>" + q.marks + " / " + q.max + "</span></summary>" +
             q.parts.map(function (pt) { return "<p><b>(" + esc(pt.label) + ") " + pt.awarded + "/" + pt.max + "</b> " + esc(pt.feedback) + "</p>"; }).join("") + "</details>";
         }).join("") + "</div>" : "") +
-      '<div class="qz-card"><h3 style="margin-top:0">Question 1 review</h3>' + r.mcqReview.map(function (x, i) {
+      (r.fs || []).map(fsReview).join("") +
+      '<div class="qz-card"><h3 style="margin-top:0">' + (PATTERN ? "MCQ review" : "Question 1 review") + "</h3>" + r.mcqReview.map(function (x, i) {
         var q = byId[x.id] || { q: "", options: [] };
         return '<div class="as-rev ' + (x.ok ? "ok" : "bad") + '"><p><b>' + (i + 1) + ".</b> " + esc(q.q) + "</p><p>" + (x.ok ? "✔ " : "✘ ") +
-          (x.chosen == null ? "Not answered" : "Your answer: " + LETTERS[x.chosen]) + (x.ok ? "" : " · Correct: " + LETTERS[x.answer] + ". " + esc(q.options[x.answer])) + "</p>" +
+          (x.chosen == null ? "Not answered" : "Your answer: " + [].concat(x.chosen).map(function (k) { return LETTERS[k]; }).join(", ")) +
+          (x.ok ? "" : " · Correct: " + [].concat(x.answer).map(function (k) { return LETTERS[k] + ". " + esc(q.options[k]); }).join("; ")) + "</p>" +
           (x.explain ? '<p class="qz-note">' + esc(x.explain) + "</p>" : "") + "</div>";
       }).join("") + '</div><button type="button" class="btn outline as-back">Back to my progress</button>';
     on(root, ".as-back", back);
@@ -1093,7 +1229,7 @@
     function render(hist) {
       if (!hist.length) {
         root.innerHTML = '<div class="qz-card"><h3 style="margin-top:0">No practice recorded yet</h3><p class="qz-note">Answer some chapter MCQs or sit a mock, ' +
-          "and your readiness score will appear here.</p>" + (CH[0] ? '<a class="btn primary" href="/learn/icap/caf3/' + CH[0].slug + '/">Start with Chapter 1 →</a>' : "") + "</div>";
+          "and your readiness score will appear here.</p>" + (CH[0] ? '<a class="btn primary" href="' + BASE + CH[0].slug + '/">Start with Chapter 1 →</a>' : "") + "</div>";
         return;
       }
       var r = analyse(hist);
@@ -1103,7 +1239,7 @@
       root.innerHTML =
         '<div class="qz-card qz-result ' + band[0] + '"><div class="qz-ring" style="--p:' + r.readiness + '"><b>' + r.readiness + "</b><small>out of 100</small></div>" +
         "<h3>Exam readiness: " + band[1] + "</h3>" +
-        '<p class="qz-meta">Based on ' + r.mcqTotal + " MCQs" + (r.papers ? " and " + r.papers + " AI-marked mock paper" + (r.papers > 1 ? "s" : "") : "") +
+        '<p class="qz-meta">Based on ' + r.mcqTotal + " MCQs" + (r.papers ? " and " + r.papers + (PATTERN ? " mock paper" : " AI-marked mock paper") + (r.papers > 1 ? "s" : "") : "") +
         ", weighted by the ICAP syllabus." + (r.mcqTotal < 150 ? " <b>Early estimate:</b> practise more chapters for an accurate score." : "") + "</p>" +
         '<div class="pg-areas">' + r.areas.map(function (a) {
           return '<div><span>' + a.name + " <small>(" + a.range + " of the exam)</small></span><div class=pg-bar><i style=\"width:" + Math.round(a.score * 100) + '%"></i></div><b>' +
@@ -1111,12 +1247,12 @@
         }).join("") + "</div></div>" +
         '<div class="qz-card"><h3 style="margin-top:0">Work on these next</h3><div class="pg-focus">' + focus.map(function (c) {
           var why = !c.answered && c.sb == null ? "Not practised yet" : c.conf < 1 ? "Only " + c.answered + " MCQs answered so far"
-            : c.sb != null && (c.mcq == null || c.sb < c.mcq) ? "Q2–7 written answers " + pc(c.sb) : "MCQ accuracy " + pc(c.mcq);
-          return '<a href="/learn/icap/caf3/' + info[c.ch].slug + '/"><b>Chapter ' + c.ch + "</b> " + esc(info[c.ch].title) + "<small>" + why + "</small></a>";
+            : c.sb != null && (c.mcq == null || c.sb < c.mcq) ? (PATTERN ? "Structured questions " : "Q2–7 written answers ") + pc(c.sb) : "MCQ accuracy " + pc(c.mcq);
+          return '<a href="' + BASE + info[c.ch].slug + '/"><b>Chapter ' + c.ch + "</b> " + esc(info[c.ch].title) + "<small>" + why + "</small></a>";
         }).join("") + "</div></div>" +
-        '<div class="qz-card"><h3 style="margin-top:0">By chapter</h3><table class="pg-table"><tr><th>Chapter</th><th>MCQs</th><th>MCQ score</th><th>Q2–7</th><th>Mastery</th></tr>' +
+        '<div class="qz-card"><h3 style="margin-top:0">By chapter</h3><table class="pg-table"><tr><th>Chapter</th><th>MCQs</th><th>MCQ score</th><th>' + SBL + '</th><th>Mastery</th></tr>' +
         r.chapters.map(function (c) {
-          return '<tr><td><a href="/learn/icap/caf3/' + info[c.ch].slug + '/">' + c.ch + ". " + esc(info[c.ch].title) + "</a></td><td>" + c.answered + "</td><td>" + pc(c.mcq) +
+          return '<tr><td><a href="' + BASE + info[c.ch].slug + '/">' + c.ch + ". " + esc(info[c.ch].title) + "</a></td><td>" + c.answered + "</td><td>" + pc(c.mcq) +
             "</td><td>" + pc(c.sb) + '</td><td><div class="pg-bar"><i style="width:' + Math.round(c.eff * 100) + '%"></i></div></td></tr>';
         }).join("") + "</table></div>" +
         '<div class="qz-card"><h3 style="margin-top:0">Recent activity</h3>' + hist.slice(0, 12).map(function (a) {
@@ -1147,6 +1283,13 @@
   var host = q || m || pg;
   try { FBCONF = host && host.dataset.firebase ? JSON.parse(host.dataset.firebase) : null; } catch (e) { FBCONF = null; }
   SUBJECT = host ? host.dataset.subject || "" : "";
+  try {
+    var cfg = host && host.dataset.cfg ? JSON.parse(host.dataset.cfg) : null;
+    if (cfg) {
+      BASE = cfg.base; NAME = cfg.name; KP = SUBJECT + ":"; NCH = cfg.nch; PATTERN = cfg.pattern || null; SBL = cfg.sbLabel || SBL;
+      if (cfg.areas) AREAS = cfg.areas;
+    }
+  } catch (e) { }
   ENDPOINT = GCLIENT = FBCONF ? "firebase" : "";   // older checks only test that a backend is configured
   if (q) practice(q);
   if (m) mock(m);

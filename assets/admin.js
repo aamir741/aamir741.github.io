@@ -12,7 +12,11 @@
       [8, "Enterprise Resource Planning (ERP) Systems"], [9, "Emerging Technologies"], [10, "Artificial Intelligence & Automation"],
       [11, "Cloud Computing"], [12, "Blockchain and Fintech"], [13, "Impact of Digital Disruption on Business & Accountancy"],
       [14, "IT Risk Management and Security"], [15, "Cybersecurity and Information Security Risks"], [16, "IT General Controls for Managing Risk"],
-      [17, "ICT's Role in Risk Management"]] }
+      [17, "ICT's Role in Risk Management"]] },
+    "icap-prc1": { name: "ICAP PRC-1 Fundamentals of Accounting", prc: true, chapters: [
+      [1, "Accounting basics"], [2, "Books of prime entry"], [3, "Ledgers and trial balance"], [4, "Accruals and prepayments"],
+      [5, "Bad and doubtful debts"], [6, "Property, plant and equipment"], [7, "Inventories"], [8, "Correction of errors"],
+      [9, "Bank reconciliations"], [10, "Preparation of financial statements"]] }
   };
 
   firebase.initializeApp(CONFIG);
@@ -396,7 +400,7 @@
     var local = new Date(def.getTime() - def.getTimezoneOffset() * 6e4).toISOString().slice(0, 16);
     app.innerHTML = "<h2>Assigned mocks</h2><div class=\"card\"><h3 style=\"margin-top:0\">Create a mock</h3><div class=\"form\">" +
       '<label>Title<input id="mt" maxlength="120" placeholder="e.g. Week 3 test: Chapters 1-5"></label>' +
-      '<label>Type<select id="mty"><option value="full">Full ICAP paper (15 MCQs + Q2–Q7, AI-marked)</option><option value="mcq">MCQs only</option></select></label>' +
+      '<label>Type<select id="mty"><option value="full">' + (SUBJECTS[subject].prc ? "PRC exam pattern (40 MCQs + structured question)" : "Full ICAP paper (15 MCQs + Q2–Q7, AI-marked)") + '</option><option value="mcq">MCQs only</option></select></label>' +
       '<label id="mnw" hidden>Number of MCQs<input id="mn" type="number" min="5" max="100" value="30"></label>' +
       '<label>Deadline<input id="md" type="datetime-local" value="' + local + '"></label>' +
       '<label>Send to<select id="mtg"><option value="all">All approved students</option><option value="institute">One institute</option><option value="emails">Chosen students</option></select></label>' +
@@ -410,7 +414,7 @@
         D.assignments.sort(function (a, b) { return (ts(b.created) || 0) - (ts(a.created) || 0); }).map(function (a) {
           var s = (subs[a._id] || []).filter(function (x) { return x.submitted; }), avg = s.length ? Math.round(s.reduce(function (t, x) { return t + x.pct; }, 0) / s.length) : null;
           var to = a.target.kind === "all" ? "All approved" : a.target.kind === "institute" ? esc(a.target.institute) : (a.target.emails || []).length + " students";
-          return '<tr class="click" data-a="' + a._id + '"><td><b>' + esc(a.title) + "</b><br><span class=muted>" + (a.type === "mcq" ? a.mcq.length + " MCQs" : "15 MCQs + Q2–Q7") +
+          return '<tr class="click" data-a="' + a._id + '"><td><b>' + esc(a.title) + "</b><br><span class=muted>" + (a.type === "mcq" ? a.mcq.length + " MCQs" : a.type === "prc" ? a.mcq.length + " MCQs + structured" : "15 MCQs + Q2–Q7") +
             " · Ch " + a.chapters.join(", ") + "</span></td><td>" + to + "</td><td>" + fmt(a.deadline) + "</td><td>" + s.length + "</td><td>" + (avg == null ? "—" : avg + "%") +
             "</td><td>" + (a.active ? '<button class="btn red" data-close="' + a._id + '">Close</button>' : '<span class="muted">closed</span>') + "</td></tr>";
         }).join("") + "</table></div>" : '<p class="muted">No mocks yet.</p>');
