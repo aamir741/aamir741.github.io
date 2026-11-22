@@ -11,7 +11,7 @@
   if (!dlg) return;
   var BOOK = dlg.dataset.book || "cisa", ICAP = BOOK !== "cisa", user = null;
   if (dlg.dataset.page) PAGE = dlg.dataset.page;
-  var form = document.getElementById("bkform"), msg = document.getElementById("bkmsg"), btn = form.querySelector("button[type=submit]");
+  var form = document.getElementById("bkform"), msg = document.getElementById("bkmsg"), btn = form.querySelector("button[type=submit]"), label = btn.textContent;
   var src = form.elements.source, other = document.getElementById("bkother"), gbtn = document.getElementById("bkgoogle"), idToken = null;
 
   function call(name, data) {
@@ -117,7 +117,7 @@
       source: src.value, sourceOther: f.sourceOther.value, updates: f.updates.checked, consent: f.consent.checked,
       website: f.website.value, utm: utm, referrer: document.referrer
     }).then(function (r) {
-      btn.disabled = false; btn.textContent = "Email me the study guide";
+      btn.disabled = false; btn.textContent = label;
       if (r.profile && user) {   // the exam-prep pages read this, so they open straight into practice
         try { localStorage.setItem("caf3:student", JSON.stringify(Object.assign({}, r.profile, { google: true, id: "G" + user.uid }))); } catch (e) { }
       }
@@ -126,7 +126,7 @@
       show("bksent");
     }, function (err) {
       msg.textContent = /fetch|network/i.test(err.message) ? "We couldn't reach the server. Please check your connection and try again." : err.message;
-      btn.disabled = false; btn.textContent = "Email me the study guide";
+      btn.disabled = false; btn.textContent = label;
     });
   }
 

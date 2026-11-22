@@ -24,7 +24,8 @@
   var app = document.getElementById("app"), me = null, role = null, subject = Object.keys(SUBJECTS)[0];
   var D = null;   // loaded data for the current subject
   var BOOK = "cisa-book";   // picker entry for the free CISA book report: its own dashboard, no CAF tabs
-  var IBOOKS = { "caf3-book": { book: "caf3", name: "CAF-3 Book (free study guide)", page: "mirakx.com/learn/icap/caf3" } };   // ICAP study guides
+  var IBOOKS = { "caf3-book": { book: "caf3", name: "CAF-3 Book (free study guide)", page: "mirakx.com/learn/icap/caf3" },
+    "prc1-book": { book: "prc1", name: "PRC-1 Book (free revision notes)", page: "mirakx.com/learn/icap/prc1" } };   // ICAP study guides
 
   // ---------------------------------------------------------------- helpers
   function esc(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
@@ -257,7 +258,7 @@
       return rows.map(function (r) { return '<div class="hbar"><span>' + esc(r[0]) + '</span><i style="width:' + r[1] / m * 100 + '%"></i><b>' + r[1] + "</b></div>"; }).join("") || '<p class="muted">No data yet.</p>';
     };
     var shares = sum("shareWhatsApp") + sum("shareLinkedIn") + sum("shareCopy");
-    app.innerHTML = "<h2>" + esc(cfg.name.replace(" (free study guide)", "")) + " · " + cfg.page + "</h2>" +
+    app.innerHTML = "<h2>" + esc(cfg.name.replace(/ \(free .*\)$/, "")) + " · " + cfg.page + "</h2>" +
       '<div class="kpis">' + k(sum("visit"), "page visits") + k(sum("formOpen"), "form opened") + k(leads.length, "students (unique)") +
       k(sum("mailed"), "links emailed") + k(leads.filter(function (l) { return l.mailError; }).length, "emails failed") +
       k(leads.length && sum("formOpen") ? Math.round(leads.length / sum("formOpen") * 100) + "%" : "—", "form opened → requested") + k(shares, "shares") + "</div>" +

@@ -9,7 +9,7 @@
   "use strict";
   var LETTERS = "ABCDEF", SEC_PER_Q = 90;
   // Per-subject settings from the page's data-cfg (JSON); the defaults are CAF-3 DSR.
-  var BASE = "/learn/icap/caf3/", NAME = "CAF-3 DSR", KP = "caf3:", NCH = 17, PATTERN = null, SBL = "Q2–7";
+  var REG_OPT = false, VIDEO = "", BASE = "/learn/icap/caf3/", NAME = "CAF-3 DSR", KP = "caf3:", NCH = 17, PATTERN = null, SBL = "Q2–7";
 
   // ---------------------------------------------------------------- helpers
   function esc(s) { return String(s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
@@ -208,9 +208,11 @@
   function accessBar() {
     var a = ACCESS;
     if (!a) return "";
-    if (a.access === "approved") return '<p class="ax-bar full">✔ <b>Full access</b></p>';
+    // signed-in students always see the walkthrough of every feature for this subject
+    var vid = VIDEO ? '<a class="ax-vid" href="' + VIDEO + '" target="_blank" rel="noopener">▶ How to use ' + NAME + " Exam Prep (video)</a>" : "";
+    if (a.access === "approved") return '<p class="ax-bar full">✔ <b>Full access</b>' + vid + "</p>";
     return '<div class="ax-bar"><span>' + (a.access === "requested" ? "Full access requested (under review)" : "Starter access") + " · <b>" + a.mcqLeft + "</b> of " +
-      a.freeMcqs + " MCQs and <b>" + a.mocksLeft + "</b> of " + a.freeMocks + " mock paper left</span>" +
+      a.freeMcqs + " MCQs and <b>" + a.mocksLeft + "</b> of " + a.freeMocks + " mock paper left</span>" + vid +
       (a.access === "free" ? '<button type="button" class="ax-open ax-cta"><span>🔓 Request FREE full access</span><small>Every MCQ · more mock papers · ' + (PATTERN ? "" : "AI marking · ") + 'readiness score</small></button>' : "") + '<div class="ax-req"></div></div>';
   }
 
@@ -268,14 +270,14 @@
     root.innerHTML = '<form class="qz-card qz-reg" novalidate>' +
       "<h3>" + (again ? "Your details" : "Before you start: sign in and add your details") + "</h3>" +
       (again ? "" : '<p class="qz-note">Completely free. Start straight away with ' + FREE_MCQS + " MCQs and " + FREE_MOCKS + " mock paper. Sign in once with your Google account, " +
-        "then add your mobile, city, institute and ICAP registration number. We may contact you about " + NAME + " classes and material.</p>") +
+        "then add your mobile, city, institute" + (REG_OPT ? " and, if you have it, your ICAP registration number" : " and ICAP registration number") + ". We may contact you about " + NAME + " classes and material.</p>") +
       '<div class="g-row"><div class="g-btn"></div><span class="g-hint">We only receive your name and email address from Google, never your password.</span></div>' +
       '<div class="qz-after" hidden><div class="qz-fields">' + field("name", "Full name", "text", 'autocomplete="name" maxlength="80"') +
       field("email", "Email address", "email", 'autocomplete="email" maxlength="120" readonly') +
       field("phone", "Mobile number", "tel", 'autocomplete="tel" placeholder="03001234567" maxlength="20"') +
       field("city", "City", "text", 'autocomplete="address-level2" placeholder="e.g. Lahore" maxlength="60"') +
       field("institute", "Institute / college", "text", 'placeholder="e.g. your CA tuition institute" maxlength="120"') +
-      field("icapRegNo", "ICAP registration number", "text", 'maxlength="30"') +
+      field("icapRegNo", "ICAP registration number" + (REG_OPT ? " (optional)" : ""), "text", 'maxlength="30"') +
       '<label class="qz-field"><span>How did you hear about us?</span><select name="source"><option value="">Choose one</option>' +
       ["YouTube", "LinkedIn", "Facebook", "Instagram", "TikTok", "Google search", "Friend or colleague", "My institute / teacher", "WhatsApp group", "Other"]
         .map(function (o) { return "<option" + (me && me.source === o ? " selected" : "") + ">" + o + "</option>"; }).join("") + "</select></label></div>" +
@@ -308,7 +310,7 @@
       else if (!/^(03\d{9}|\+923\d{9}|\+\d{10,15})$/.test(d.phone)) err = "Please enter a valid mobile number, e.g. 03001234567.";
       else if (d.city.length < 2) err = "Please enter your city.";
       else if (d.institute.length < 2) err = "Please enter your institute or college.";
-      else if (!/^[A-Za-z0-9\-\/ ]{3,30}$/.test(d.icapRegNo)) err = "Please enter your ICAP registration number as shown on your ICAP documents.";
+      else if ((d.icapRegNo || !REG_OPT) && !/^[A-Za-z0-9\-\/ ]{3,30}$/.test(d.icapRegNo)) err = "Please enter your ICAP registration number as shown on your ICAP documents.";
       else if (!form.elements.consent.checked) err = "Please tick the box to agree to the privacy notice.";
       if (err) { root.querySelector(".qz-err").textContent = err; return; }
       d.id = "G" + signed.sub;
@@ -1289,8 +1291,9 @@
   SUBJECT = host ? host.dataset.subject || "" : "";
   try {
     var cfg = host && host.dataset.cfg ? JSON.parse(host.dataset.cfg) : null;
+    VIDEO = (host && host.dataset.video) || "";
     if (cfg) {
-      BASE = cfg.base; NAME = cfg.name; KP = SUBJECT + ":"; NCH = cfg.nch; PATTERN = cfg.pattern || null; SBL = cfg.sbLabel || SBL;
+      BASE = cfg.base; NAME = cfg.name; KP = SUBJECT + ":"; NCH = cfg.nch; PATTERN = cfg.pattern || null; SBL = cfg.sbLabel || SBL; REG_OPT = !!cfg.regOptional;
       if (cfg.areas) AREAS = cfg.areas;
     }
   } catch (e) { }
