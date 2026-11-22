@@ -46,8 +46,8 @@
       show("bkform");
     });
   });
-  // links to /...#study-guide (menu, floating tiles) open the form straight away
-  if (ICAP && location.hash === "#study-guide") { track("formOpen"); show("bkform"); }
+  // links to /...#study-guide or /learn/cisa/#book (menu, floating tiles) open the form straight away
+  if (location.hash === (ICAP ? "#study-guide" : "#book")) { track("formOpen"); show("bkform"); }
   dlg.querySelector(".x").onclick = function () { dlg.close(); };
   dlg.addEventListener("click", function (e) { if (e.target === dlg) dlg.close(); });   // click on the backdrop
   document.getElementById("bkchange").onclick = function () { show("bkform"); form.elements.email.focus(); };
