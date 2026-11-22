@@ -228,3 +228,8 @@ a.c3-ch:hover{transform:translateY(-3px);box-shadow:0 16px 34px rgba(0,42,116,.1
 .fs-line input{width:190px;flex:none;text-align:right;font:600 16px/1.2 inherit;padding:9px 11px;border:1px solid #c9d3e2;border-radius:8px;font-variant-numeric:tabular-nums}
 .fs-line input:focus{outline:2px solid #9CD20C;border-color:#0F7A4A}
 @media (max-width:600px){.fs-line{flex-direction:column;align-items:stretch}.fs-line input{width:100%}}
+
+/* intro video beside 'How access works' */
+.c3-vacc{display:grid;grid-template-columns:1.25fr 1fr;gap:36px;align-items:start;margin:34px 0 46px}
+.c3-vacc .c3-faq{margin-top:0 !important}
+@media (max-width:900px){.c3-vacc{grid-template-columns:1fr}}
