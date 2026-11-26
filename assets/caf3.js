@@ -741,7 +741,10 @@
           showGrade(box, paper, d);
         }).catch(function (e) {
           wait.innerHTML = "";
-          err.textContent = e.message || "Something went wrong. Please try again.";
+          err.textContent = (e.message || "Something went wrong. Please try again.") +
+            " Meanwhile you can mark yourself with the model-answer PDF below.";
+          var self = root.querySelector(".mk-selfwrap");   // never leave the student stuck when AI marking is down
+          if (self) self.open = true;
           btn.disabled = !files.length;
         });
       };
