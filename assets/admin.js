@@ -118,7 +118,7 @@
     if (subject === BOOK) return book();
     if (IBOOKS[subject]) return icapBook(IBOOKS[subject]);
     if (!D) return loadAll().then(route, function (e) { app.innerHTML = '<p class="err">' + esc(e.message) + "</p>"; });
-    if ((tab === "mocks" || tab === "helpers") && role !== "owner") tab = "dashboard";
+    if (tab === "helpers" && role !== "owner") tab = "dashboard";
     document.querySelectorAll(".mxa-tabs a").forEach(function (a) { a.classList.toggle("on", a.getAttribute("href") === "#" + tab); });
     ({ dashboard: dashboard, requests: requests, students: students, marking: marking, mocks: mocks, helpers: helpers }[tab] || dashboard)();
   }
@@ -454,7 +454,7 @@
     var subs = {}; D.submissions.forEach(function (s) { (subs[s.assignment] = subs[s.assignment] || []).push(s); });
     var def = new Date(Date.now() + 7 * 864e5); def.setHours(23, 59, 0, 0);
     var local = new Date(def.getTime() - def.getTimezoneOffset() * 6e4).toISOString().slice(0, 16);
-    app.innerHTML = "<h2>Assigned mocks</h2><div class=\"card\"><h3 style=\"margin-top:0\">Create a mock</h3><div class=\"form\">" +
+    app.innerHTML = "<h2>Assigned mocks</h2><div class=\"card\"" + (role === "owner" ? "" : " hidden") + "><h3 style=\"margin-top:0\">Create a mock</h3><div class=\"form\">" +
       '<label>Title<input id="mt" maxlength="120" placeholder="e.g. Week 3 test: Chapters 1-5"></label>' +
       '<label>Type<select id="mty"><option value="full">' + (SUBJECTS[subject].prc ? "PRC exam pattern (40 MCQs + structured question)" : "Full ICAP paper (15 MCQs + Q2–Q7, AI-marked)") + '</option><option value="mcq">MCQs only</option></select></label>' +
       '<label id="mnw" hidden>Number of MCQs<input id="mn" type="number" min="5" max="100" value="30"></label>' +
@@ -472,7 +472,8 @@
           var to = a.target.kind === "all" ? "All approved" : a.target.kind === "institute" ? esc(a.target.institute) : (a.target.emails || []).length + " students";
           return '<tr class="click" data-a="' + a._id + '"><td><b>' + esc(a.title) + "</b><br><span class=muted>" + (a.type === "mcq" ? a.mcq.length + " MCQs" : a.type === "prc" ? a.mcq.length + " MCQs + structured" : "15 MCQs + Q2–Q7") +
             " · Ch " + a.chapters.join(", ") + "</span></td><td>" + to + "</td><td>" + fmt(a.deadline) + "</td><td>" + s.length + "</td><td>" + (avg == null ? "—" : avg + "%") +
-            "</td><td>" + (a.active ? '<button class="btn red" data-close="' + a._id + '">Close</button>' : '<span class="muted">closed</span>') + "</td></tr>";
+            "</td><td>" + (a.active ? '<button class="btn" data-msg="' + a._id + '">Message</button> ' +
+              (role === "owner" ? '<button class="btn red" data-close="' + a._id + '">Close</button>' : "") : '<span class="muted">closed</span>') + "</td></tr>";
         }).join("") + "</table></div>" : '<p class="muted">No mocks yet.</p>');
     $("#mty").onchange = function () { $("#mnw").hidden = this.value !== "mcq"; };
     $("#mtg").onchange = function () { $("#miw").hidden = this.value !== "institute"; $("#mew").hidden = this.value !== "emails"; };
@@ -487,8 +488,26 @@
       if (tg === "emails" && !target.emails.length) return ($("#mres").innerHTML = '<span class="err">Choose at least one student.</span>');
       var btn = this; btn.disabled = true;
       call("createAssignment", { subject: subject, title: $("#mt").value.trim(), type: $("#mty").value, n: +$("#mn").value, chapters: chs, target: target, deadline: dl })
-        .then(reload, function (e) { $("#mres").innerHTML = '<span class="err">' + esc(e.message) + "</span>"; btn.disabled = false; });
+        .then(function (r) { return reload().then(function () { $("#mres").innerHTML = '<span class="ok">Mock assigned and emailed to ' + r.emailed + " student" + (r.emailed === 1 ? "" : "s") + ".</span>"; }); },
+          function (e) { $("#mres").innerHTML = '<span class="err">' + esc(e.message) + "</span>"; btn.disabled = false; });
     };
+    // short message or reminder to the mock's students (owner and helpers)
+    app.querySelectorAll("[data-msg]").forEach(function (b) {
+      b.onclick = function (e) {
+        e.stopPropagation();
+        var a = D.assignments.filter(function (x) { return x._id === b.dataset.msg; })[0];
+        var d = drawer("<h2>Message: " + esc(a.title) + "</h2>" +
+          '<textarea id="mmt" rows="5" maxlength="500" style="width:100%">Reminder: please complete "' + esc(a.title) + '" before ' + fmt(a.deadline) + ".</textarea>" +
+          '<p><label><input type="checkbox" id="mmp" checked> Only students who have not submitted yet</label></p>' +
+          '<p><button class="btn primary" id="mms">Send email</button> <span id="mmr"></span></p>');
+        $("#mms", d).onclick = function () {
+          var btn = this; btn.disabled = true;
+          call("messageAssignment", { id: a._id, text: $("#mmt", d).value, onlyPending: $("#mmp", d).checked }).then(function (r) {
+            $("#mmr", d).innerHTML = '<span class="ok">Sent to ' + r.sent + " student" + (r.sent === 1 ? "" : "s") + ".</span>";
+          }, function (er) { $("#mmr", d).innerHTML = '<span class="err">' + esc(er.message) + "</span>"; btn.disabled = false; });
+        };
+      };
+    });
     app.querySelectorAll("[data-close]").forEach(function (b) {
       b.onclick = function (e) {
         e.stopPropagation();
