@@ -1,0 +1,190 @@
+<!doctype html>
+<html lang="en">
+<head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-TSKF7YS9F5"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-TSKF7YS9F5');
+</script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CISA Domain 4.16: Disaster Recovery Plans | Muhammad Aamir</title>
+<meta name="description" content="CISA Domain 4.16: RTO, RPO and MTTR, recovery alternatives, contracts, plan content, DR testing methods, test results and invoking the plan.">
+<meta name="author" content="Muhammad Aamir">
+<link rel="canonical" href="https://mirakx.com/blog/cisa-domain-4-16-disaster-recovery-plans/">
+<meta property="og:type" content="article"><meta property="og:site_name" content="Muhammad Aamir">
+<meta property="og:title" content="CISA Domain 4.16: Disaster Recovery Plans | Muhammad Aamir"><meta property="og:description" content="CISA Domain 4.16: RTO, RPO and MTTR, recovery alternatives, contracts, plan content, DR testing methods, test results and invoking the plan.">
+<meta property="og:url" content="https://mirakx.com/blog/cisa-domain-4-16-disaster-recovery-plans/"><meta property="og:image" content="https://mirakx.com/assets/og-image.jpg">
+<meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="CISA Domain 4.16: Disaster Recovery Plans | Muhammad Aamir">
+<meta name="twitter:description" content="CISA Domain 4.16: RTO, RPO and MTTR, recovery alternatives, contracts, plan content, DR testing methods, test results and invoking the plan."><meta name="twitter:image" content="https://mirakx.com/assets/og-image.jpg">
+<link rel="icon" type="image/png" href="/assets/favicon-64.png"><link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+<meta name="theme-color" content="#002A74">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet" media="print" onload="this.media='all'"><noscript><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet"></noscript>
+<link rel="stylesheet" href="/assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BlogPosting", "headline": "CISA Domain 4.16: Disaster Recovery Plans", "description": "CISA Domain 4.16: RTO, RPO and MTTR, recovery alternatives, contracts, plan content, DR testing methods, test results and invoking the plan.", "datePublished": "2026-11-28", "dateModified": "2026-11-28", "mainEntityOfPage": "https://mirakx.com/blog/cisa-domain-4-16-disaster-recovery-plans/", "image": "https://mirakx.com/assets/og-image.jpg", "author": {"@type": "Person", "name": "Muhammad Aamir", "url": "https://mirakx.com/"}, "publisher": {"@type": "Person", "name": "Muhammad Aamir"}}</script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<nav class="top"><div class="wrap">
+  <a class="logo" href="/"><img src="/assets/aamir-avatar.jpg" alt=""><span>MUHAMMAD <b>AAMIR</b></span></a>
+  <button class="burger" type="button" aria-label="Menu" aria-expanded="false" aria-controls="navlinks"
+    onclick="var o=this.getAttribute('aria-expanded')!=='true';this.setAttribute('aria-expanded',o);document.body.classList.toggle('navopen',o)"><span></span></button>
+  <ul id="navlinks">
+    <li class="dd"><a href="/learn/">Learn</a><ul>
+      <li class="mh"><a href="/learn/cisa/">CISA</a></li>
+      <li class="m2"><a href="/learn/cisa/">CISA Video Course &amp; Notes</a></li><li class="m2"><a href="/learn/cisa/#book">Free CISA Study Guide</a></li><li class="m2"><a href="https://certprepx.com/" target="_blank" rel="noopener">CISA Practice Exams on CertPrepX ↗</a></li>
+      <li class="mh"><a href="/learn/icap/">ICAP</a></li>
+      <li class="m1"><a href="/learn/icap/prc/">PRC</a></li><li class="m2"><a href="/learn/icap/prc1/">PRC-1 Fundamentals of Accounting</a></li><li class="m2"><a href="/learn/icap/prc1/#study-guide">Free PRC-1 Revision Notes</a></li>
+      <li class="m1"><a href="/learn/icap/caf/">CAF</a></li><li class="m2"><a href="/learn/icap/caf3/">CAF-3 Data, Systems &amp; Risks</a></li><li class="m2"><a href="/learn/icap/caf3/#study-guide">Free CAF-3 Study Guide</a></li></ul></li>
+    <li class="dd"><a href="/projects/">Projects</a><ul>
+      <li><a href="https://certprepx.com/" target="_blank" rel="noopener">CertPrepX ↗</a></li><li><a href="/learn/icap/prc1/">PRC-1 Exam Prep</a></li><li><a href="/learn/icap/caf3/">CAF-3 DSR Exam Prep</a></li><li><a href="/projects/">All projects</a></li></ul></li>
+    <li class="dd"><a href="/blog/">Blog</a><ul>
+      <li><a href="/blog/">All articles</a></li><li><a href="/ai/">AI articles</a></li><li><a href="/videos/">Videos</a></li></ul></li>
+    <li><a href="/profile/">Profile</a></li>
+    <li><a class="btn primary navcta" href="/#contact">Contact</a></li>
+  </ul>
+</div></nav>
+<main>
+<header class="pagehead" id="main"><div class="wrap"><span class="eyebrow" style="color:#9CD20C">Blog</span><h1>CISA Domain 4.16: Disaster Recovery Plans</h1><p>CISA Domain 4.16: RTO, RPO and MTTR, recovery alternatives, contracts, plan content, DR testing methods, test results and invoking the plan.</p><div class="byline"><img src="/assets/aamir-avatar.jpg" alt="Muhammad Aamir"><span>Muhammad Aamir · 28 November 2026</span></div></div></header>
+<section><div class="wrap"><article class="blog"><!--EMBED:cisa domain 4.16:--><!--/EMBED--><p>A disaster recovery test restores the servers in ninety minutes, against a two-hour target. But the database is four hours old, and the business can only afford to lose thirty minutes. Did the test pass? This lesson covers CISA Domain four, section 4.16: disaster recovery plans.</p>
+<h2>4.16 Objectives</h2>
+<p>A disaster recovery plan, or D R P, describes how to restore technology and data to support the business's required capability. It must be executable with the resources available during the relevant event.</p>
+<p><strong>Useless Room:</strong> A fully equipped recovery room is of little value without usable data, identities, keys, connectivity and trained people.</p>
+<p>Use the approved objectives from the B I A, and validate actual performance against them. R T O concerns elapsed recovery time. R P O concerns the recoverable state of data. And M T T R is an average repair measure.</p>
+<ul>
+<li><strong>RTO</strong>: Elapsed recovery time</li>
+<li><strong>RPO</strong>: Recoverable state of the data</li>
+<li><strong>MTTR</strong>: An average repair measure</li>
+</ul>
+<p><strong>Averages Mislead:</strong> A faster average component repair does not prove that a whole service meets its R T O. Recovery effectiveness includes timely restoration, acceptable data currency, functionality, integrity and the required service level.</p>
+<p><strong>Rto alone is not enough:</strong> Meeting R T O alone is not sufficient if recovered information is wrong or the required process cannot run. And improving the recovery design balances time, cost and risk. Optimized doesn't mean every improvement reduces both cost and time.</p>
+<h2>4.16.2 Recovery alternatives</h2>
+<p>Sections 4.16.2 and 4.16.3: recovery strategies and alternatives.</p>
+<p><strong>Select a combination:</strong> Select a feasible combination of alternative processing, resilient infrastructure, data protection, staffing, suppliers and business workarounds. Assess shared failure domains, geographic exposure, lead times, configuration compatibility, capacity and contractual priority.</p>
+<p>A mirrored, active active or standby arrangement maintains alternate capability, and can support rapid recovery, but isn't automatically zero downtime or zero loss. A hot site is equipped, compatible capability intended for relatively rapid recovery, though data, connectivity and configuration still need verification. A warm site has partial readiness, so measure the actual work and time. And a cold site has facilities and utilities, but needs substantial setup, so procurement and installation may be too slow.</p>
+<ul>
+<li><strong>Mirrored or active-active</strong>: Maintained alternate capability</li>
+<li><strong>Hot site</strong>: Equipped, compatible, rapid</li>
+<li><strong>Warm site</strong>: Partial readiness</li>
+<li><strong>Cold site</strong>: Facilities and utilities only</li>
+</ul>
+<p>A mobile site needs verified delivery time, access, power and staff logistics. A reciprocal agreement needs verified compatibility, spare capacity, rights and shared event exposure. Cloud recovery means testing identity, network, quotas, regions, data, capacity and exit dependencies. And a service bureau needs reserved compatible capacity, activation time and simultaneous demand exposure.</p>
+<ul>
+<li><strong>Mobile site</strong>: Verify delivery and access</li>
+<li><strong>Reciprocal agreement</strong>: Spare capacity and rights</li>
+<li><strong>Cloud or DR as a service</strong>: Identity, quotas, regions</li>
+<li><strong>Service bureau</strong>: Reserved compatible capacity</li>
+</ul>
+<p><strong>Exam Trap:</strong> Site labels have no universal recovery hours. A contract offering a hot site may exclude data loading, network setup or application work. Validate scope, total cost and demonstrated capability against the approved need.</p>
+<p><strong>Cold and reciprocal:</strong> A cold site can suit a long recovery window, but only when setup and procurement are feasible. Reciprocal arrangements need evidence of capacity, rights, compatibility and availability during a shared event. And geographic separation should address the relevant threats while remaining technically workable.</p>
+<h2>4.16.4 Contracts and plans</h2>
+<p>Sections 4.16.4 to 4.16.6: contracts, plan development and responsibilities.</p>
+<p>Define guaranteed capacity, compatible configurations, delivery and access times, shared site priorities, test arrangements, support, security, termination and remedies.</p>
+<ul>
+<li><strong>Guaranteed capacity</strong>: And compatible configurations</li>
+<li><strong>Delivery and access times</strong>: Shared-site priorities</li>
+<li><strong>Test arrangements</strong>: Support and security</li>
+<li><strong>Termination and remedies</strong>: What happens if they fail</li>
+</ul>
+<p><strong>Promises without resources:</strong> A reciprocal promise without reserved resources can fail when both parties need them. And procurement plans must account for shortages, logistics, compatible software and licensing. Vendor assurances alone do not establish delivery capability.</p>
+<p>Document activation criteria and authority, dependencies, recovery sequence, resources, technical steps, backups and keys, contacts, communications, validation, alternate operation and return to normal. Provide accessible protected copies.</p>
+<ul>
+<li><strong>Activation criteria</strong>: And authority</li>
+<li><strong>Dependencies and sequence</strong>: Recovery order</li>
+<li><strong>Backups and keys</strong>: Plus contacts</li>
+<li><strong>Validation</strong>: Alternate operation, return to normal</li>
+</ul>
+<p><strong>One Engineer:</strong> Detail should allow trained substitutes to act, rather than require undocumented knowledge held by one engineer.</p>
+<p><strong>Contaminated Recovery:</strong> Identify scenario differences, such as site loss versus cyber compromise. Restoring into a contaminated environment can reintroduce the failure. Account for identity, DNS, time, certificates, networks, security tooling and management access before dependent applications. And define data reconciliation and business acceptance of recovered operations.</p>
+<p><strong>Roles and audit:</strong> Assign coordination, assessment, infrastructure, application and data recovery, communications, business validation, relocation and salvage roles, with handovers and decision rights. Protect damaged equipment and evidence. Audit may observe tests and evaluate evidence without directing recovery.</p>
+<h2>4.16.7 Testing methods</h2>
+<p>A paper test reviews the plan. A tabletop or walkthrough discusses decisions. A preparedness test executes selected recovery activities. Simulation rehearses agreed responses. A parallel test runs recovery systems on representative work while production continues. And full interruption intentionally interrupts production. Labels vary, so define exactly what will be executed and which service remains live.</p>
+<ul>
+<li><strong>Paper test</strong>: Reviews the plan</li>
+<li><strong>Tabletop</strong>: Discusses decisions</li>
+<li><strong>Preparedness test</strong>: Executes selected activities</li>
+<li><strong>Simulation</strong>: Rehearsed responses</li>
+<li><strong>Parallel test</strong>: Recovery runs alongside production</li>
+<li><strong>Full interruption</strong>: Production is interrupted</li>
+</ul>
+<p><strong>Exam Reasoning:</strong> Document and discussion reviews identify gaps, but do not demonstrate technical recovery. Execution exercises provide evidence within their scope and conditions.</p>
+<p><strong>Not always cheapest:</strong> Select a safe, authorized exercise that can answer the objective. Parallel testing is not universally the most cost effective, and a preparedness exercise isn't an exact synonym for a parallel test. A full interruption isn't automatically best when a narrower exercise can safely answer the question.</p>
+<p><strong>Who does what:</strong> Management owns exercise authorization, safety, invocation decisions and remediation. The auditor evaluates objectives and safeguards, observes or tests independently, verifies the results and follows significant weaknesses to closure. Acting as the recovery operator would impair that independent role.</p>
+<h2>4.16.8 Test results</h2>
+<p>Sections 4.16.8 and 4.16.9: test results and invoking the plan.</p>
+<p>Test against explicit R T O, R P O, functionality, data integrity and S D O criteria. Measure activation delays and dependency work, not only a selected restore command. Verify business transactions and representative workload.</p>
+<ul>
+<li><strong>RTO and RPO</strong>: Time and data age</li>
+<li><strong>Functionality</strong>: Payments really work</li>
+<li><strong>Integrity and SDO</strong>: Right data, right capacity</li>
+</ul>
+<p><strong>Worked Example:</strong> A test recovers servers in ninety minutes against a two hour R T O, but the database is four hours old against a thirty minute R P O. The recovery does not meet the approved objectives. A second test restores current data on time, but can't process payments. That hasn't demonstrated recovery of the required service either.</p>
+<p><strong>Follow-up and failback:</strong> Record what was excluded, pre-staged or simulated, so conclusions stay within the evidence. Retain findings, owners, deadlines and retest results. And include failback: synchronize changes, reconcile transactions and return under authorization without introducing loss or duplicates.</p>
+<p>Assess the event, protect safety, invoke through defined authority, communicate and execute the relevant sequence. Maintain an action and decision record, and reconcile work before declaring normal operations. Afterward, review lessons and update both technical and business plans.</p>
+<ul>
+<li><strong>Assess and protect safety</strong>: Then invoke through authority</li>
+<li><strong>Communicate and execute</strong>: The relevant sequence</li>
+<li><strong>Decision record</strong>: Reassess as facts change</li>
+<li><strong>Review lessons</strong>: Update technical and business plans</li>
+</ul>
+<h2>Auditor perspective</h2>
+<p>Now the auditor perspective.</p>
+<p><strong>Select on evidence:</strong> A proposed hot site demonstrates the required service in four hours, while the available warm arrangement needs more than a day. For a six hour target, the tested capability is the meaningful basis for selection.</p>
+<p><strong>Isolated Restore:</strong> An isolated exercise restores the application and database at the alternate site, but the production identity service and the external payment interface were simulated. Identify which dependencies and traffic changes still need evidence, then select an authorized follow-up test that exercises those paths at appropriate risk. Record the remaining limitations before accepting end-to-end readiness.</p>
+<h2>Practice questions</h2>
+<p>Test yourself with three exam-style questions.
+To recap. Meet all the objectives, not just the R T O. Site labels aren't recovery hours, so rely on demonstrated capability. Match the test to the evidence you need, because discussion isn't execution. And follow up on findings, and plan the failback.</p>
+<ul>
+<li><strong>Meet all objectives</strong>: RTO, RPO, function</li>
+<li><strong>Labels aren't hours</strong>: Demonstrated capability</li>
+<li><strong>Match test to evidence</strong>: Paper isn't execution</li>
+<li><strong>Follow up and failback</strong>: Retest weaknesses</li>
+</ul>
+<h2>Practice questions</h2>
+<p><strong>1. A test recovers servers in 90 minutes against a two-hour RTO, but the database is four hours old against a 30-minute RPO. What should the IS auditor conclude?</strong>
+Answer: The recovery does not meet the approved objectives. Option A is the trap: meeting the R T O alone is not sufficient. Option C waives the R P O because the servers were quick, but speed doesn't excuse stale data. And option D calls the test inconclusive, though the result clearly breaches the approved objectives.</p>
+<p><strong>2. A hot site demonstrates the required service in four hours, but a warm site needs over a day. The target is six hours. What is the BEST basis for selection?</strong>
+Answer: The tested capability measured against the six-hour target. Option A relies on a site label, but labels have no universal recovery hours. Option B picks on cost alone, ignoring whether the target is met. And option C, distance, matters for shared threats, but doesn't show the capability to recover in time.</p>
+<p><strong>3. Management wants a safe exercise showing recovery systems can handle representative work while production continues. Which method fits BEST?</strong>
+Answer: A parallel test, checking representative load, reconciliation and timing. Option A, a paper test, reviews the plan but doesn't execute recovery. Option B, full interruption, is not automatically best when a narrower exercise can answer the question safely. And option D, a tabletop, discusses decisions but doesn't prove restore speed or capacity.</p>
+<h2>Keep going</h2>
+<ul>
+<li>Get the free companion book, the <a href="/learn/cisa/">CISA Complete Study Guide</a> by Muhammad Aamir.</li>
+<li>Watch the full <a href="https://www.youtube.com/playlist?list=PLHzAINATBrBs">CISA Complete Course by Mirak X</a>. Next up is Section 4.17, Recap, Memory Aids and Exam Traps.</li>
+<li><a href="https://www.youtube.com/@MirakXOfficial?sub_confirmation=1">Subscribe to Mirak X on YouTube</a>. The full CISA course, every domain, is on the channel and at <a href="https://mirakx.com/learn/cisa/">mirakx.com/learn/cisa</a>.</li>
+<li>Try free CISA practice questions and mock exams at <a href="https://certprepx.com/">https://certprepx.com/</a>.</li>
+</ul>
+<p><em>Free study material. Not affiliated with or endorsed by ISACA. CISA is a registered trademark of ISACA.</em></p></article><div class="authorbox"><img src="/assets/aamir-avatar.jpg" alt="Muhammad Aamir"><div><b>Muhammad Aamir</b><br><span style="color:var(--muted);font-size:15px">Technology risk and digital transformation leader, co-founder of <a href="https://certprepx.com/" target="_blank" rel="noopener">CertPrepX</a>, author and educator. More explainers on <a href="https://www.youtube.com/@MirakXOfficial" target="_blank" rel="noopener">YouTube</a>.</span></div></div></div></section>
+</main>
+<section class="creds" aria-label="Certifications of Muhammad Aamir"><div class="wrap">
+  <h2 class="vh">Certifications of Muhammad Aamir</h2>
+  <ul class="crgrid"><li class="cr"><div class="crl"><img src="/assets/logos/cisa.png" alt="CISA logo" width="58" height="48"></div><h3>CISA<sup>®</sup></h3><p>Certified Information Systems Auditor</p><small>ISACA</small></li><li class="cr"><div class="crl"><img src="/assets/logos/iso-27001.png" alt="ISO 27001 logo" width="52" height="48"></div><h3>ISO/IEC 27001</h3><p>Lead Auditor</p><small>CQI-IRCA certified course</small></li><li class="cr"><div class="crl"><span class="exin"><b>EXIN</b>CDCP</span></div><h3>CDCP<sup>®</sup></h3><p>Certified Data Centre Professional</p><small>EXIN · EPI</small></li><li class="cr"><div class="crl"><span class="exin"><b>EXIN</b>CNCDP</span></div><h3>CNCDP<sup>®</sup></h3><p>Certified Network Cabling Design Professional</p><small>EXIN · EPI</small></li><li class="cr"><div class="crl"><img src="/assets/logos/oracle.png" alt="Oracle logo" width="110" height="33"></div><h3>Oracle Cloud Infrastructure 2025</h3><p>Foundations &amp; AI Foundations Associate</p><small>Oracle</small></li><li class="cr"><div class="crl"><img src="/assets/logos/microsoft.png" alt="Microsoft logo" width="44" height="42"></div><h3>Microsoft</h3><p>MCITP · MCSE</p><small>Microsoft</small></li><li class="cr"><div class="crl"><img src="/assets/logos/ec-council.png" alt="EC-Council logo" width="100" height="36"></div><h3>EC-Council</h3><p>Network &amp; Cyber Security</p><small>EC-Council</small></li></ul>
+</div></section>
+<div class="brandbar"><a href="/"><img src="/assets/mirakx-logo.png" alt="Mirak X | mirakx.com" width="640" height="110" loading="lazy"></a></div>
+<footer><div class="wrap fgrid">
+  <div><em class="motto">Technology as an Enabler,<br>Not a Back-Office Function</em></div>
+  <div><h3>Explore</h3><a href="/profile/">Profile</a><a href="/ai/">AI</a><a href="/learn/">Learn</a><a href="/projects/">Projects</a></div>
+  <div><h3>Content</h3><a href="/blog/">Blog</a><a href="/videos/">Videos</a><a href="https://www.youtube.com/@MirakXOfficial" target="_blank" rel="noopener">YouTube</a></div>
+  <div><h3>Contact</h3><a href="mailto:aamir@mirakx.com">aamir@mirakx.com</a><a href="https://linkedin.com/in/aamiryaqoob" target="_blank" rel="noopener">LinkedIn</a><a href="/#contact">Contact form</a></div>
+</div><div class="wrap fbase">
+  <span>© 2026 Muhammad Aamir. All rights reserved. · <a href="/privacy.html">Privacy</a> · <a href="/terms.html">Terms</a></span>
+  <span>Views are my own and do not represent my employer.</span>
+</div></footer>
+<details class="fab"><summary aria-label="Free books and exam prep"><span class="fab-book"><img src="/assets/cisa-guide-cover.jpg" alt="" width="46" height="60"></span><span class="fab-t">Free books</span></summary>
+  <div class="fab-tiles">
+    <a href="/learn/cisa/#book"><span class="fo-l"><b>CISA Study Guide</b><small>Free PDF · 352 pages</small></span><span class="fo-o fo-book"><img src="/assets/cisa-guide-cover.jpg" alt="" width="52" height="68" loading="lazy"></span></a>
+    <a href="https://www.youtube.com/watch?v=vuCL3uT5bnU&amp;list=PLHzAINATBrBs" target="_blank" rel="noopener"><span class="fo-l"><b>CISA Video Course ↗</b><small>Free full lessons on YouTube</small></span><span class="fo-o"><span class="fo-tile fo-yt"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 7.5v9l7.5-4.5z"/></svg></span></span></a>
+    <a href="/learn/icap/prc1/#study-guide"><span class="fo-l"><b>PRC-1 Revision Notes</b><small>Free PDF · 58 pages</small></span><span class="fo-o fo-book"><img src="/assets/prc1-notes-cover.jpg" alt="" width="52" height="74" loading="lazy"></span></a>
+    <a href="/learn/icap/caf3/#study-guide"><span class="fo-l"><b>CAF-3 DSR Study Guide</b><small>Free PDF · 457 pages</small></span><span class="fo-o fo-book"><img src="/assets/caf3-dsr-cover.jpg" alt="" width="52" height="68" loading="lazy"></span></a>
+    <a href="/learn/icap/"><span class="fo-l"><b>ICAP Exam Prep</b><small>PRC-1 &amp; CAF-3 · MCQs &amp; mocks</small></span><span class="fo-o"><span class="fo-tile fo-c3"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4V3h6v1M8.5 10.5l1.5 1.5 3-3M8.5 16h7"/></svg></span></span></a>
+    <a href="https://certprepx.com/" target="_blank" rel="noopener"><span class="fo-l"><b>CertPrepX ↗</b><small>CISA practice &amp; mock exams</small></span><span class="fo-o"><span class="fo-tile fo-cx"><img src="/assets/certprepx.png" alt="" width="44" height="44" loading="lazy"></span></span></a>
+  </div></details>
+<script>document.addEventListener("click",function(e){var f=document.querySelector(".fab:not(.fab-home)");if(f&&f.open&&!f.contains(e.target))f.open=false})</script>
+<script src="/assets/tilt.js" defer></script>
+</body>
+</html>
