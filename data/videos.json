@@ -1,10 +1,108 @@
 [
  {
-  "id": "dvBppusQ7mo",
-  "title": "CISA Domain 2 Full Course: Governance and Management of IT | All 12 Lessons (2+ Hours)",
+  "id": "ALLnmx0FUmc",
+  "title": "CISA Domain 4.5: End-User Computing & Shadow IT, Spreadsheet Controls & Low-Code Risks | Full Lesson",
+  "date": "2026-11-28",
+  "description": "",
+  "thumb": "https://i.ytimg.com/vi/ALLnmx0FUmc/hqdefault.jpg"
+ },
+ {
+  "id": "mvg0HMZ-1fo",
+  "title": "CISA Domain 4.4: System Interfaces, Risks, Controls & Reconciliation Across Boundaries | Full Lesson",
+  "date": "2026-11-28",
+  "description": "",
+  "thumb": "https://i.ytimg.com/vi/mvg0HMZ-1fo/hqdefault.jpg"
+ },
+ {
+  "id": "Qe5PCaD10hg",
+  "title": "CISA Domain 4.3: Job Scheduling & Automation, Safe Reruns, Idempotency & Input Checks | Full Lesson",
+  "date": "2026-11-28",
+  "description": "",
+  "thumb": "https://i.ytimg.com/vi/Qe5PCaD10hg/hqdefault.jpg"
+ },
+ {
+  "id": "xtUVAfd9l6g",
+  "title": "CISA Domain 4.2: IT Asset Management, Inventory, Lifecycle, Disposal & Licenses | Full Lesson",
   "date": "2026-11-27",
-  "description": "The complete CISA Domain 2 (Governance and Management of IT) in one video: all 12 lessons from the free CISA Complete Study Guide, with 3 exam-style practice questions in every lesson and the traps explained.\n\nUse the chapters to jump to any section, or watch the lessons one by one in the course pla",
-  "thumb": "https://i.ytimg.com/vi/dvBppusQ7mo/hqdefault.jpg"
+  "description": "",
+  "thumb": "https://i.ytimg.com/vi/xtUVAfd9l6g/hqdefault.jpg"
+ },
+ {
+  "id": "6ChIt-DTWV0",
+  "title": "CISA Domain 4.1: IT Components, OSI & TCP/IP, LAN/WAN, NAT, Proxies & Maintenance | Full Lesson",
+  "date": "2026-11-27",
+  "description": "",
+  "thumb": "https://i.ytimg.com/vi/6ChIt-DTWV0/hqdefault.jpg"
+ },
+ {
+  "id": "vBDw3jZoiG0",
+  "title": "CISA Domain 3.9: Domain 3 Recap, Memory Aids & Exam Traps | Full Lesson",
+  "date": "2026-11-27",
+  "description": "",
+  "thumb": "https://i.ytimg.com/vi/vBDw3jZoiG0/hqdefault.jpg"
+ },
+ {
+  "id": "K0DxBTFHceE",
+  "title": "CISA Domain 3.8: Postimplementation Review, Benefits Realization, Baselines & Pilots | Full Lesson",
+  "date": "2026-11-27",
+  "description": "",
+  "thumb": "https://i.ytimg.com/vi/K0DxBTFHceE/hqdefault.jpg"
+ },
+ {
+  "id": "BNQYBoqBP-s",
+  "title": "CISA Domain 3.7: Data Migration, Conversion, Fallback & Cutover | Full Lesson",
+  "date": "2026-11-27",
+  "description": "",
+  "thumb": "https://i.ytimg.com/vi/BNQYBoqBP-s/hqdefault.jpg"
+ },
+ {
+  "id": "WZ-4Yt6r_R4",
+  "title": "CISA Domain 3.6: Configuration, Release & Deployment Management, Baselines | Full Lesson",
+  "date": "2026-11-27",
+  "description": "",
+  "thumb": "https://i.ytimg.com/vi/WZ-4Yt6r_R4/hqdefault.jpg"
+ },
+ {
+  "id": "xreSTMin1AU",
+  "title": "CISA Domain 3.5: Testing Levels & Types, ACID, UAT, CI/CD & Go-Live | Full Lesson",
+  "date": "2026-11-27",
+  "description": "",
+  "thumb": "https://i.ytimg.com/vi/xreSTMin1AU/hqdefault.jpg"
+ },
+ {
+  "id": "XYC-8Zh2OAQ",
+  "title": "CISA Domain 3.4: Application Controls, Input, Batch & Output Controls | Full Lesson",
+  "date": "2026-11-27",
+  "description": "",
+  "thumb": "https://i.ytimg.com/vi/XYC-8Zh2OAQ/hqdefault.jpg"
+ },
+ {
+  "id": "4RUqAjcFkjg",
+  "title": "CISA Domain 3.3: SDLC, Agile, DevOps, Acquisition & Supply Chain | Full Lesson",
+  "date": "2026-11-27",
+  "description": "",
+  "thumb": "https://i.ytimg.com/vi/4RUqAjcFkjg/hqdefault.jpg"
+ },
+ {
+  "id": "8nEHoPojUZo",
+  "title": "CISA Domain 3.2: Business Case, Feasibility, ROI, Payback, NPV & IRR | Full Lesson",
+  "date": "2026-11-27",
+  "description": "",
+  "thumb": "https://i.ytimg.com/vi/8nEHoPojUZo/hqdefault.jpg"
+ },
+ {
+  "id": "DHcRAKkdjEw",
+  "title": "CISA Domain 3.1: Project Governance, Earned Value, Critical Path & PERT | Full Lesson",
+  "date": "2026-11-27",
+  "description": "",
+  "thumb": "https://i.ytimg.com/vi/DHcRAKkdjEw/hqdefault.jpg"
+ },
+ {
+  "id": "oY55fT2gW9k",
+  "title": "CISA Domain 2.12: Domain 2 Recap, Memory Aids & Exam Traps | Full Lesson",
+  "date": "2026-11-27",
+  "description": "",
+  "thumb": "https://i.ytimg.com/vi/oY55fT2gW9k/hqdefault.jpg"
  },
  {
   "id": "Lwa25PTlb9A",
