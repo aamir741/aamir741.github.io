@@ -3,99 +3,22 @@
   "id": "YwQzQb_8VWk",
   "title": "CISA Domain 4 Full Course: Information Systems Operations and Business Resilience | 3+ Hours",
   "date": "2026-11-28",
-  "description": "",
+  "description": "The complete CISA Domain 4 (Information Systems Operations and Business Resilience) in one video: all 17 lessons from the free CISA Complete Study Guide, with 3 exam-style practice questions in every lesson and the traps explained.\n\nUse the chapters to jump to any section, or watch the lessons one b",
   "thumb": "https://i.ytimg.com/vi/YwQzQb_8VWk/hqdefault.jpg"
- },
- {
-  "id": "PvajT2zCevQ",
-  "title": "CISA Domain 4.17: Domain 4 Recap, Memory Aids & Exam Traps | Full Lesson",
-  "date": "2026-11-28",
-  "description": "",
-  "thumb": "https://i.ytimg.com/vi/PvajT2zCevQ/hqdefault.jpg"
- },
- {
-  "id": "WdmQ_Fl6OXo",
-  "title": "CISA Domain 4.16: Disaster Recovery Plans, RTO vs RPO, Hot Warm Cold Sites, DR Testing | Full Lesson",
-  "date": "2026-11-28",
-  "description": "",
-  "thumb": "https://i.ytimg.com/vi/WdmQ_Fl6OXo/hqdefault.jpg"
- },
- {
-  "id": "nWGssrzF6OA",
-  "title": "CISA Domain 4.15: Business Continuity Plan, BCP vs DRP, Testing, Insurance, Audit | Full Lesson",
-  "date": "2026-11-28",
-  "description": "",
-  "thumb": "https://i.ytimg.com/vi/nWGssrzF6OA/hqdefault.jpg"
  },
  {
   "id": "OJXLhhnxtUI",
   "title": "CISA Domain 3 Full Course: Information Systems Acquisition, Development and Implementation",
   "date": "2026-11-28",
-  "description": "",
+  "description": "The complete CISA Domain 3 (Information Systems Acquisition, Development and Implementation) in one video: all 9 lessons from the free CISA Complete Study Guide, with 3 exam-style practice questions in every lesson and the traps explained.\n\nUse the chapters to jump to any section, or watch the lesso",
   "thumb": "https://i.ytimg.com/vi/OJXLhhnxtUI/hqdefault.jpg"
- },
- {
-  "id": "slwTbL0uebw",
-  "title": "CISA Domain 4.14: Backup, Storage & Restoration, RAID, Incremental vs Differential | Full Lesson",
-  "date": "2026-11-28",
-  "description": "",
-  "thumb": "https://i.ytimg.com/vi/slwTbL0uebw/hqdefault.jpg"
- },
- {
-  "id": "6_9-Y2cpOSU",
-  "title": "CISA Domain 4.13: System & Operational Resilience, Failover, Failure Domains, SDO | Full Lesson",
-  "date": "2026-11-28",
-  "description": "",
-  "thumb": "https://i.ytimg.com/vi/6_9-Y2cpOSU/hqdefault.jpg"
  },
  {
   "id": "iY9ArLaDCPg",
   "title": "Turn AI Into Your Patient 24/7 Personal Tutor | AI for Common People",
   "date": "2026-11-28",
-  "description": "",
+  "description": "Have you ever wanted to understand a tough topic, practice a new language, or help your kids with their school homework, but felt stuck because you didn't have someone patient to walk you through it?\n\nIn Episode 6 of AI for Common People from MirakX, learn how to turn any free AI app into a patient,",
   "thumb": "https://i.ytimg.com/vi/iY9ArLaDCPg/hqdefault.jpg"
- },
- {
-  "id": "RPspcupdK_0",
-  "title": "CISA Domain 4.12: Business Impact Analysis, RTO, RPO, MTD, WRT & SDO Explained | Full Lesson",
-  "date": "2026-11-28",
-  "description": "",
-  "thumb": "https://i.ytimg.com/vi/RPspcupdK_0/hqdefault.jpg"
- },
- {
-  "id": "Bqi6QMV6Zv4",
-  "title": "CISA Domain 4.11: Database Management, ACID, Integrity, DBA Controls, NoSQL | Full Lesson",
-  "date": "2026-11-28",
-  "description": "",
-  "thumb": "https://i.ytimg.com/vi/Bqi6QMV6Zv4/hqdefault.jpg"
- },
- {
-  "id": "KbAxugjLJkQ",
-  "title": "CISA Domain 4.10: IT Service Level Management, SLA vs OLA, Underpinning Contracts | Full Lesson",
-  "date": "2026-11-28",
-  "description": "",
-  "thumb": "https://i.ytimg.com/vi/KbAxugjLJkQ/hqdefault.jpg"
- },
- {
-  "id": "aIHNIccQyj8",
-  "title": "CISA Domain 4.9: Operational Log Management, SIEM, WORM, Time Sync | Full Lesson",
-  "date": "2026-11-28",
-  "description": "",
-  "thumb": "https://i.ytimg.com/vi/aIHNIccQyj8/hqdefault.jpg"
- },
- {
-  "id": "bYs7v-_Ibbs",
-  "title": "CISA Domain 4.8: Change, Configuration & Patch Management, Emergency Changes | Full Lesson",
-  "date": "2026-11-28",
-  "description": "",
-  "thumb": "https://i.ytimg.com/vi/bYs7v-_Ibbs/hqdefault.jpg"
- },
- {
-  "id": "H4LhyhCmw80",
-  "title": "CISA Domain 4.7: Problem & Incident Management, Known Errors, CSIRT, Escalation | Full Lesson",
-  "date": "2026-11-28",
-  "description": "",
-  "thumb": "https://i.ytimg.com/vi/H4LhyhCmw80/hqdefault.jpg"
  },
  {
   "id": "dvBppusQ7mo",
@@ -210,11 +133,11 @@
   "thumb": "https://i.ytimg.com/vi/Z11a0JEJamg/hqdefault.jpg"
  },
  {
-  "id": "mevjwltiDP8",
-  "title": "AI Breach Hits 18 Agents, OpenAI Scraps Robotics Team | MirakX Daily Brief",
-  "date": "2026-11-16",
-  "description": "NEAR AI reports an attacker exploited a flaw in SGLang and reached one of its servers, taking data from 18 AI agents and about 100 users. OpenAI has disbanded its stand alone robotics team, and its GPT-6 Astra model can run robots directly, scoring 74.8 percent in a simulated test. Capgemini reports",
-  "thumb": "https://i.ytimg.com/vi/mevjwltiDP8/hqdefault.jpg"
+  "id": "FNlpx-xhCRM",
+  "title": "AI Agent Stole 2,000 Tajik Files, GitHub Keys Hijacked | MirakX Daily Brief",
+  "date": "2026-11-14",
+  "description": "An AI agent stole more than 2,000 national security documents from Tajikistan. Hackers hijacked nearly 5,000 GitHub accounts and stole cloud and AI keys from more than 1,800 projects. Google launched Gemini 4 Hydrogen at 1 dollar 50 per million input tokens. And Anthropic now lets firms run its Clau",
+  "thumb": "https://i.ytimg.com/vi/FNlpx-xhCRM/hqdefault.jpg"
  },
  {
   "id": "M21irMRTWn4",
