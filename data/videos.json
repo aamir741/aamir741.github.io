@@ -1,108 +1,24 @@
 [
  {
-  "id": "oItdZARN8zE",
-  "title": "CISA Domain 5.13: Security Monitoring, IDS vs IPS, Log Protection, SIEM & SOC | Full Lesson",
-  "date": "2026-11-28",
-  "description": "",
-  "thumb": "https://i.ytimg.com/vi/oItdZARN8zE/hqdefault.jpg"
- },
- {
-  "id": "9ruLWhED4AA",
-  "title": "CISA Domain 5.12: Pen Testing vs Vulnerability Scans & Rules of Engagement | Full Lesson",
-  "date": "2026-11-28",
-  "description": "",
-  "thumb": "https://i.ytimg.com/vi/9ruLWhED4AA/hqdefault.jpg"
- },
- {
-  "id": "EzYvkDhGnaM",
-  "title": "CISA Domain 5.11: Attack Methods, SQL Injection vs XSS, Malware & Ransomware | Full Lesson",
-  "date": "2026-11-28",
-  "description": "",
-  "thumb": "https://i.ytimg.com/vi/EzYvkDhGnaM/hqdefault.jpg"
- },
- {
-  "id": "hlG5aFkfvME",
-  "title": "CISA Domain 5.10: Security Awareness Training, Measuring Behavior & Social Engineering | Full Lesson",
-  "date": "2026-11-28",
-  "description": "",
-  "thumb": "https://i.ytimg.com/vi/hlG5aFkfvME/hqdefault.jpg"
- },
- {
-  "id": "ADrVt1e6gC0",
-  "title": "CISA Domain 5.9: MDM, BYOD, WPA3, Rogue AP, IoT Security | Full Lesson",
-  "date": "2026-11-28",
-  "description": "",
-  "thumb": "https://i.ytimg.com/vi/ADrVt1e6gC0/hqdefault.jpg"
- },
- {
-  "id": "vTkaK-3jHNw",
-  "title": "CISA Domain 5.8: Cloud, Virtualization, Containers, Shared Responsibility | Full Lesson",
-  "date": "2026-11-28",
-  "description": "",
-  "thumb": "https://i.ytimg.com/vi/vTkaK-3jHNw/hqdefault.jpg"
- },
- {
-  "id": "zrTsUXWdRCw",
-  "title": "CISA Domain 5.7: PKI, Certificates, CA/RA, CRL vs OCSP, CP/CPS | Full Lesson",
-  "date": "2026-11-28",
-  "description": "",
-  "thumb": "https://i.ytimg.com/vi/zrTsUXWdRCw/hqdefault.jpg"
- },
- {
-  "id": "OWxTi2x9TPg",
-  "title": "CISA Domain 5.6: Digital Envelope, Signatures, Hashing, AES, TLS | Full Lesson",
-  "date": "2026-11-28",
-  "description": "",
-  "thumb": "https://i.ytimg.com/vi/OWxTi2x9TPg/hqdefault.jpg"
- },
- {
-  "id": "riB3xeanaWQ",
-  "title": "CISA Domain 5.5: DLP Data States, Content Analysis, Coverage Testing | Full Lesson",
-  "date": "2026-11-28",
-  "description": "",
-  "thumb": "https://i.ytimg.com/vi/riB3xeanaWQ/hqdefault.jpg"
- },
- {
-  "id": "dxBBhlZnjzk",
-  "title": "CISA Domain 5.4: Firewalls, DMZ, VPN, IDS/IPS, EDR | Full Lesson",
-  "date": "2026-11-28",
-  "description": "",
-  "thumb": "https://i.ytimg.com/vi/dxBBhlZnjzk/hqdefault.jpg"
- },
- {
-  "id": "RkEWijHH6vk",
-  "title": "CISA Domain 5.3: IAM, Zero Trust, PAM, SSO, Biometrics FAR/FRR | Full Lesson",
-  "date": "2026-11-28",
-  "description": "",
-  "thumb": "https://i.ytimg.com/vi/RkEWijHH6vk/hqdefault.jpg"
- },
- {
-  "id": "09ie1KhybBc",
-  "title": "CISA Domain 5.2: Physical & Environmental Controls, Mantraps, Tailgating, UPS, ICS | Full Lesson",
-  "date": "2026-11-28",
-  "description": "",
-  "thumb": "https://i.ytimg.com/vi/09ie1KhybBc/hqdefault.jpg"
- },
- {
-  "id": "1xFgU7lQHbg",
-  "title": "CISA Domain 5.1: Security Policies, Frameworks, Standards, Classification & Privacy | Full Lesson",
-  "date": "2026-11-28",
-  "description": "",
-  "thumb": "https://i.ytimg.com/vi/1xFgU7lQHbg/hqdefault.jpg"
- },
- {
   "id": "YwQzQb_8VWk",
   "title": "CISA Domain 4 Full Course: Information Systems Operations and Business Resilience | 3+ Hours",
   "date": "2026-11-28",
-  "description": "",
+  "description": "The complete CISA Domain 4 (Information Systems Operations and Business Resilience) in one video: all 17 lessons from the free CISA Complete Study Guide, with 3 exam-style practice questions in every lesson and the traps explained.\n\nUse the chapters to jump to any section, or watch the lessons one b",
   "thumb": "https://i.ytimg.com/vi/YwQzQb_8VWk/hqdefault.jpg"
  },
  {
-  "id": "PvajT2zCevQ",
-  "title": "CISA Domain 4.17: Domain 4 Recap, Memory Aids & Exam Traps | Full Lesson",
+  "id": "OJXLhhnxtUI",
+  "title": "CISA Domain 3 Full Course: Information Systems Acquisition, Development and Implementation",
   "date": "2026-11-28",
-  "description": "",
-  "thumb": "https://i.ytimg.com/vi/PvajT2zCevQ/hqdefault.jpg"
+  "description": "The complete CISA Domain 3 (Information Systems Acquisition, Development and Implementation) in one video: all 9 lessons from the free CISA Complete Study Guide, with 3 exam-style practice questions in every lesson and the traps explained.\n\nUse the chapters to jump to any section, or watch the lesso",
+  "thumb": "https://i.ytimg.com/vi/OJXLhhnxtUI/hqdefault.jpg"
+ },
+ {
+  "id": "iY9ArLaDCPg",
+  "title": "Turn AI Into Your Patient 24/7 Personal Tutor | AI for Common People",
+  "date": "2026-11-28",
+  "description": "Have you ever wanted to understand a tough topic, practice a new language, or help your kids with their school homework, but felt stuck because you didn't have someone patient to walk you through it?\n\nIn Episode 6 of AI for Common People from MirakX, learn how to turn any free AI app into a patient,",
+  "thumb": "https://i.ytimg.com/vi/iY9ArLaDCPg/hqdefault.jpg"
  },
  {
   "id": "dvBppusQ7mo",
@@ -236,13 +152,6 @@
   "date": "2026-11-10",
   "description": "📋 CISA Domain 1, Section 1.5 in full: how an IS audit engagement is planned, run, documented and kept under control.\n\n📘 Free companion book: CISA Complete Study Guide (First Edition 2026) by Muhammad Aamir: https://mirakx.com/learn/cisa/\n\n🎯 Objective vs scope vs criteria vs audit program\n🔄 The 8 aud",
   "thumb": "https://i.ytimg.com/vi/zcWZFX_YBZY/hqdefault.jpg"
- },
- {
-  "id": "bu_zQ95Oiw0",
-  "title": "CISA Domain 1.4: Types of Controls, ITGC vs Application Controls | Full Lesson + Practice Qs",
-  "date": "2026-11-09",
-  "description": "🛡️ CISA Domain 1, Section 1.4 in full: what a control is, how to classify it, and what an auditor checks before relying on it.\n\n📘 Free companion book: CISA Complete Study Guide (First Edition 2026) by Muhammad Aamir: https://mirakx.com/learn/cisa/\n\n🎯 Control objective vs control vs control practice\n",
-  "thumb": "https://i.ytimg.com/vi/bu_zQ95Oiw0/hqdefault.jpg"
  },
  {
   "id": "bu_zQ95Oiw0",
