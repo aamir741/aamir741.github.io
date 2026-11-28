@@ -56,13 +56,6 @@
   "thumb": "https://i.ytimg.com/vi/4Q0aQpGGK40/hqdefault.jpg"
  },
  {
-  "id": "aw3k49TozrE",
-  "title": "The 3-Part Formula for Talking to AI | AI for Common People",
-  "date": "2026-11-25",
-  "description": "You type a question into ChatGPT or Gemini and the answer comes back generic and useless. The AI is not broken, and you do not need to be a tech expert. You just need to give it better instructions.\n\nIn Episode 2 of AI for Common People from MirakX, learn a simple 3-part formula for talking to AI: T",
-  "thumb": "https://i.ytimg.com/vi/aw3k49TozrE/hqdefault.jpg"
- },
- {
   "id": "mnnJP_5NbTg",
   "title": "CISA Domain 1 Full Course: Information System Auditing Process | All 11 Lessons + Practice Questions",
   "date": "2026-11-20",
@@ -124,6 +117,13 @@
   "date": "2026-11-13",
   "description": "Microsoft 365 went down worldwide on Thursday, and the outage spread to 74 countries within an hour. Outlook, Teams, Copilot, OneDrive and SharePoint all went down. Microsoft says it was not a cyberattack — a core server process became overwhelmed, servers failed health checks and dropped capacity. ",
   "thumb": "https://i.ytimg.com/vi/M21irMRTWn4/hqdefault.jpg"
+ },
+ {
+  "id": "Cb5Ya3jR_g8",
+  "title": "CISA Domain 1.6: Audit Testing & Sampling, Compliance vs Substantive, Discovery, PPS | Full Lesson",
+  "date": "2026-11-11",
+  "description": "🧪 CISA Domain 1, Section 1.6 in full: how an audit test turns an objective into evidence, and how sampling lets you conclude about a whole population.\n\n🔍 Compliance vs substantive testing, and direction of testing\n🎲 Population, frame, statistical and nonstatistical sampling\n🔢 Attribute vs variable s",
+  "thumb": "https://i.ytimg.com/vi/Cb5Ya3jR_g8/hqdefault.jpg"
  },
  {
   "id": "Cb5Ya3jR_g8",
